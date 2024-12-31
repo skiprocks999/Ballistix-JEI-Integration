@@ -45,6 +45,8 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ItemTracker extends ItemElectric {
 
+    public static final double USAGE = 150;
+
     public static HashMap<ServerLevel, HashSet<Integer>> validuuids = new HashMap<>();
 
     public ItemTracker() {
@@ -84,7 +86,7 @@ public class ItemTracker extends ItemElectric {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-        if (player != null && player.level() instanceof ServerLevel server && getJoulesStored(stack) >= 150) {
+        if (player != null && player.level() instanceof ServerLevel server && getJoulesStored(stack) >= USAGE) {
             Inventory inv = player.getInventory();
             inv.removeItem(stack);
             stack.set(BallistixDataComponentTypes.TRACKER_ID, entity.getId());
@@ -96,7 +98,7 @@ public class ItemTracker extends ItemElectric {
             } else {
                 inv.offhand.set(0, stack);
             }
-            extractPower(stack, 150, false);
+            extractPower(stack, USAGE, false);
         }
         return InteractionResult.PASS;
     }
