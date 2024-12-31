@@ -5,15 +5,14 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import electrodynamics.api.capability.ElectrodynamicsCapabilities;
 import electrodynamics.api.capability.types.electrodynamic.ICapabilityElectrodynamic;
+import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class BlastEMP extends Blast implements IHasCustomRenderer {
 
@@ -60,12 +59,18 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 					BlockEntity entity = world.getBlockEntity(p);
 					if (entity != null) {
 						for (Direction dir : Direction.values()) {
-							if (entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir).isPresent()) {
-								LazyOptional<ICapabilityElectrodynamic> c = entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir);
-								c.resolve().get().setJoulesStored(0);
-							} else if (entity.getCapability(ForgeCapabilities.ENERGY, dir).isPresent()) {
-								LazyOptional<IEnergyStorage> c = entity.getCapability(ForgeCapabilities.ENERGY, dir);
-								c.resolve().get().extractEnergy(Integer.MAX_VALUE, false);
+							ICapabilityElectrodynamic electro = world.getCapability(ElectrodynamicsCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK, p, world.getBlockState(p), entity, dir);
+
+							if(electro != null) {
+
+								electro.setJoulesStored(0);
+
+							} else {
+								IEnergyStorage fe = world.getCapability(Capabilities.EnergyStorage.BLOCK, p, world.getBlockState(p), entity, dir);
+
+								if(fe != null) {
+									fe.extractEnergy(Integer.MAX_VALUE, false);
+								}
 							}
 						}
 					} // TODO: Implement player inventory energy clearing

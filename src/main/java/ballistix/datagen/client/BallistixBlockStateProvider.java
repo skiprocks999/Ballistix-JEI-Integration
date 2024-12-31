@@ -8,9 +8,9 @@ import ballistix.registers.BallistixBlocks;
 import electrodynamics.datagen.client.ElectrodynamicsBlockStateProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvider {
 
@@ -21,28 +21,28 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 	@Override
 	protected void registerStatesAndModels() {
 
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.attractive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.breaching), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.chemical), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.condensive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.contagious), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.debilitation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.emp), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.fragmentation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.incendiary), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.nuclear), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.obsidian), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.repulsive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.shrapnel), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.thermobaric), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.attractive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.chemical), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.obsidian), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.repulsive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
 
-		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.antimatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.antimatter)), true);
-		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.darkmatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.darkmatter)), true);
-		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.landmine), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.landmine)), true);
-		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter)), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter)), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter)), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine)), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter)), true);
 
-		horrRotatedBlock(BallistixBlocks.blockMissileSilo, existingBlock(BallistixBlocks.blockMissileSilo), 90, 0, false);
-		horrRotatedBlock(BallistixBlocks.blockRadar, existingBlock(BallistixBlocks.blockRadar), 90, 0, false);
+		horrRotatedBlock(BallistixBlocks.BLOCK_MISSILESILO, existingBlock(BallistixBlocks.BLOCK_MISSILESILO), 90, 0, false);
+		horrRotatedBlock(BallistixBlocks.BLOCK_RADAR, existingBlock(BallistixBlocks.BLOCK_RADAR), 90, 0, false);
 
 	}
 

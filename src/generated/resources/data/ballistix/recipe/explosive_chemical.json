@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "ballistix:debilitation"
+    },
+    "P": {
+      "tag": "c:dusts/poison"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PDP",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:chemical"
+  }
+}

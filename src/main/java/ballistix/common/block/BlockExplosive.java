@@ -7,8 +7,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -31,7 +31,7 @@ public class BlockExplosive extends Block {
 	public final SubtypeBlast explosive;
 
 	public BlockExplosive(SubtypeBlast explosive) {
-		super(BlockBehaviour.Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
+		super(Blocks.TNT.properties().instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
 		this.explosive = explosive;
 	}
 
@@ -88,22 +88,22 @@ public class BlockExplosive extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		ItemStack itemstack = player.getItemInHand(handIn);
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		ItemStack itemstack = player.getItemInHand(hand);
 		Item item = itemstack.getItem();
 		if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
-			return super.use(state, worldIn, pos, player, handIn, hit);
+			return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
 		}
-		onCaughtFire(state, worldIn, pos, hit.getDirection(), player);
-		worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
-		if (!player.isCreative()) {
+		onCaughtFire(state, level, pos, hitResult.getDirection(), player);
+		level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
+		if (!player.isCreative() && !level.isClientSide()) {
 			if (item == Items.FLINT_AND_STEEL) {
-				itemstack.hurtAndBreak(1, player, player1 -> player1.broadcastBreakEvent(handIn));
+				itemstack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 			} else {
 				itemstack.shrink(1);
 			}
 		}
-		return InteractionResult.sidedSuccess(worldIn.isClientSide);
+		return ItemInteractionResult.sidedSuccess(level.isClientSide);
 	}
 
 	@Override

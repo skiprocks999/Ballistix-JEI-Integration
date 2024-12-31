@@ -10,7 +10,7 @@ public class ItemMissile extends ItemElectrodynamics {
 	public final SubtypeMissile missile;
 
 	public ItemMissile(SubtypeMissile missile) {
-		super(new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get());
+		super(new Item.Properties(), BallistixCreativeTabs.MAIN);
 		this.missile = missile;
 	}
 

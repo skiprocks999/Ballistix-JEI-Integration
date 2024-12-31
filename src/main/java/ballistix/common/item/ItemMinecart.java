@@ -6,8 +6,9 @@ import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.api.ISubtype;
 import electrodynamics.common.item.ItemElectrodynamics;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.tags.BlockTags;
@@ -27,7 +28,7 @@ public class ItemMinecart extends ItemElectrodynamics {
 	private SubtypeMinecart minecart;
 
 	public ItemMinecart(SubtypeMinecart minecart) {
-		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN.get());
+		super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
 		this.minecart = minecart;
 		DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
 	}
@@ -50,8 +51,8 @@ public class ItemMinecart extends ItemElectrodynamics {
 
 			EntityMinecart cart = new EntityMinecart(level);
 			cart.setPos(blockpos.getX() + 0.5D, blockpos.getY() + 0.0625D + d0, blockpos.getZ() + 0.5D);
-			if (itemstack.hasCustomHoverName()) {
-				cart.setCustomName(itemstack.getHoverName());
+			if (itemstack.has(DataComponents.CUSTOM_NAME)) {
+				cart.setCustomName(itemstack.get(DataComponents.CUSTOM_NAME));
 			}
 			cart.setExplosiveType(minecart);
 
@@ -72,12 +73,12 @@ public class ItemMinecart extends ItemElectrodynamics {
 
 		@Override
 		public ItemStack execute(BlockSource source, ItemStack stack) {
-			Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-			Level level = source.getLevel();
-			double d0 = source.x() + direction.getStepX() * 1.125D;
-			double d1 = Math.floor(source.y()) + direction.getStepY();
-			double d2 = source.z() + direction.getStepZ() * 1.125D;
-			BlockPos blockpos = source.getPos().relative(direction);
+			Direction direction = source.state().getValue(DispenserBlock.FACING);
+			Level level = source.level();
+			double d0 = source.pos().getX() + direction.getStepX() * 1.125D;
+			double d1 = Math.floor(source.pos().getY()) + direction.getStepY();
+			double d2 = source.pos().getZ() + direction.getStepZ() * 1.125D;
+			BlockPos blockpos = source.pos().relative(direction);
 			BlockState blockstate = level.getBlockState(blockpos);
 			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock rail ? rail.getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
 			double d3;
@@ -103,8 +104,8 @@ public class ItemMinecart extends ItemElectrodynamics {
 
 			EntityMinecart cart = new EntityMinecart(level);
 			cart.setPos(d0, d1 + d3, d2);
-			if (stack.hasCustomHoverName()) {
-				cart.setCustomName(stack.getHoverName());
+			if (stack.has(DataComponents.CUSTOM_NAME)) {
+				cart.setCustomName(stack.get(DataComponents.CUSTOM_NAME));
 			}
 			cart.setExplosiveType(((ItemMinecart) stack.getItem()).minecart);
 			level.addFreshEntity(cart);
@@ -114,7 +115,7 @@ public class ItemMinecart extends ItemElectrodynamics {
 
 		@Override
 		protected void playSound(BlockSource source) {
-			source.getLevel().levelEvent(1000, source.getPos(), 0);
+			source.level().levelEvent(1000, source.pos(), 0);
 		}
 	};
 

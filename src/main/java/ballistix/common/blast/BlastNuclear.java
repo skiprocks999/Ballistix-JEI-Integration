@@ -2,31 +2,30 @@ package ballistix.common.blast;
 
 import java.util.Iterator;
 
+import ballistix.References;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.nuclearscience.RadiationHandler;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.api.sound.SoundAPI;
-import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.network.NetworkDirection;
-import nuclearscience.api.radiation.RadiationSystem;
-import nuclearscience.registers.NuclearScienceBlocks;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
@@ -67,7 +66,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			if (threadRay == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.DESTROY);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
 			boolean rayDone = false;
 			if (threadRay.isComplete && !rayDone) {
 				hasStarted = true;
@@ -94,7 +93,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 						world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 						world.setBlock(p, state, 2);
 						if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
-							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
 						}
 					}
 					if (particleHeight < 23) {
@@ -109,7 +108,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 							for (int k = -radius; k <= radius; k++) {
 								if (i * i + k * k < radius * radius && world.random.nextFloat() < (particleHeight > 18 ? 0.1 : 0.3)) {
 									BlockPos p = position.offset(i, particleHeight, k);
-									((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+									((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
 								}
 							}
 						}
@@ -118,14 +117,14 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 					if (!cachedIteratorRay.hasNext()) {
 						rayDone = true;
 					}
-					if (ModList.get().isLoaded("nuclearscience")) {
-						RadiationSystem.emitRadiationFromLocation(world, new Location(position), Constants.EXPLOSIVE_NUCLEAR_SIZE * 4, 150000);
+					if (ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
+						RadiationHandler.addNuclearExplosionRadiation(world, position);
 					}
 				}
 			}
 			if (threadSimple.isComplete && rayDone) {
-				if (!ModList.get().isLoaded("nuclearscience")) {
-					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
+				if (!ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
+					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
 					return true;
 				}
 				if (perticksimple == -1) {
@@ -137,21 +136,10 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 					if (finished-- < 0) {
 						break;
 					}
-					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
-					BlockState state = world.getBlockState(p);
-					Block block = state.getBlock();
-					if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
-						if (world.random.nextFloat() < 0.7) {
-							world.setBlock(p, NuclearScienceBlocks.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
-						}
-					} else if (state.is(BlockTags.LEAVES)) {
-						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
-					} else if (state.getBlock() == Blocks.AIR || state.getBlock() == Blocks.CAVE_AIR) {
-						world.setBlock(p, NuclearScienceBlocks.blockRadioactiveAir.defaultBlockState(), 2 | 16 | 32);
-					}
+					RadiationHandler.addNuclearExplosiveIrradidatedBlock(new BlockPos(cachedIterator.next()).offset(position), world);
 				}
 				if (!cachedIterator.hasNext()) {
-					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
+					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
 					return true;
 				}
 			}

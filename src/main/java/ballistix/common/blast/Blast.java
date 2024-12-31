@@ -15,21 +15,24 @@ import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.EventHooks;
 
 public abstract class Blast {
 	public BlockPos position;
@@ -58,7 +61,7 @@ public abstract class Blast {
 	@Deprecated(since = "Should not be called externally!", forRemoval = false)
 	public final void preExplode() {
 		PreBlastEvent evt = new PreBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+		NeoForge.EVENT_BUS.post(evt);
 
 		if (!evt.isCanceled()) {
 			doPreExplode();
@@ -68,7 +71,7 @@ public abstract class Blast {
 	@Deprecated(since = "Should not be called externally!", forRemoval = false)
 	public final boolean explode(int callcount) {
 		BlastEvent evt = new BlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+		NeoForge.EVENT_BUS.post(evt);
 		if (!evt.isCanceled()) {
 			return doExplode(callcount);
 		}
@@ -78,7 +81,7 @@ public abstract class Blast {
 	@Deprecated(since = "Should not be called externally!", forRemoval = false)
 	public final void postExplode() {
 		PostBlastEvent evt = new PostBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+		NeoForge.EVENT_BUS.post(evt);
 
 		if (!evt.isCanceled()) {
 			doPostExplode();
@@ -87,9 +90,9 @@ public abstract class Blast {
 
 	public EntityBlast performExplosion() {
 		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
-		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY);
-		if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
+		NeoForge.EVENT_BUS.post(evt);
+		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+		if (!EventHooks.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 			if (isInstantaneous()) {
 				doPreExplode();
 				doExplode(0);
@@ -105,11 +108,11 @@ public abstract class Blast {
 		return null;
 	}
 
-	protected void attackEntities(float size) {
-		this.attackEntities(size, true);
+	protected void attackEntities(float size, Explosion explosion) {
+		this.attackEntities(size, true, explosion);
 	}
 
-	protected void attackEntities(float size, boolean useRaytrace) {
+	protected void attackEntities(float size, boolean useRaytrace, Explosion explosion) {
 		Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
 		float f2 = size * 2.0F;
 		int k1 = Mth.floor(position.getX() - (double) f2 - 1.0D);
@@ -122,7 +125,7 @@ public abstract class Blast {
 		Vec3 vector3d = new Vec3(position.getX(), position.getY(), position.getZ());
 
 		for (Entity entity : list) {
-			if (!entity.ignoreExplosion()) {
+			if (!entity.ignoreExplosion(explosion)) {
 				double d12 = Mth.sqrt((float) entity.distanceToSqr(vector3d)) / f2;
 				if (d12 <= 1.0D) {
 					double d5 = entity.getX() - position.getX();
@@ -138,7 +141,13 @@ public abstract class Blast {
 						entity.hurt(entity.damageSources().explosion(null, null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
 						double d11 = d10;
 						if (entity instanceof LivingEntity le) {
-							d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(le, d10);
+							double damage = d10;
+							int i = EnchantmentHelper.getEnchantmentLevel(world.registryAccess().holderOrThrow(Enchantments.BLAST_PROTECTION), le);
+							if (i > 0) {
+								damage *= Mth.clamp(1.0D - (double)i * 0.15D, 0.0D, 1.0D);
+							}
+
+							d11 = damage;
 						}
 
 						entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
@@ -153,7 +162,7 @@ public abstract class Blast {
 		}
 		for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
 			if (entry.getKey() instanceof ServerPlayer serverplayerentity) {
-				serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
+				serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue(), BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
 			}
 		}
 	}

@@ -24,7 +24,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 	private static HashMap<Player, Long> millisecondMap = new HashMap<>();
 
 	public ItemRocketLauncher() {
-		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN.get());
+		super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return Integer.MAX_VALUE;
 	}
 
@@ -80,7 +80,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 					ex = st;
 				}
 			}
-			if (!hasRange && it == BallistixItems.getItem(SubtypeMissile.closerange)) {
+			if (!hasRange && it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.closerange)) {
 				hasRange = true;
 				missile = st;
 			}

@@ -3,12 +3,10 @@ package ballistix.common.entity;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,7 +16,6 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 
 public class EntityExplosive extends Entity implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityExplosive.class, EntityDataSerializers.INT);
@@ -56,19 +53,19 @@ public class EntityExplosive extends Entity implements IDefusable {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		entityData.define(FUSE, 80);
-		entityData.define(TYPE, -1);
-	}
-
-	@Override
 	public void defuse() {
 		remove(RemovalReason.DISCARDED);
 		if (blastOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.ITEMS_EXPLOSIVE.getValue(explosive)));
 			level().addFreshEntity(item);
 		}
+	}
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(FUSE, 80);
+		builder.define(TYPE, -1);
 	}
 
 	@Override
@@ -121,8 +118,4 @@ public class EntityExplosive extends Entity implements IDefusable {
 		blastOrdinal = compound.getInt("type");
 	}
 
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
 }

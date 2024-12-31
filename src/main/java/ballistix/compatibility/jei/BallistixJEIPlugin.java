@@ -17,7 +17,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	@Override
 	public ResourceLocation getPluginUid() {
-		return new ResourceLocation(References.ID, "jei");
+		return ResourceLocation.fromNamespaceAndPath(References.ID, "jei");
 	}
 
 	@Override

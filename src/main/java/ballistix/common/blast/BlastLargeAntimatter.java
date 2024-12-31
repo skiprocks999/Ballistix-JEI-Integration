@@ -8,6 +8,8 @@ import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.api.sound.SoundAPI;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -49,8 +51,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 	    if (thread == null) {
 		return true;
 	    }
-	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		    (float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, false, BlockInteraction.DESTROY);
+	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
 	    if (thread.isComplete) {
 		hasStarted = true;
 		if (pertick == -1) {
@@ -74,7 +75,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 		}
 		if (!iterator.hasNext()) {
 		    position = position.above().above();
-		    attackEntities((float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS * 2);
+		    attackEntities((float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS * 2, ex);
 		    return true;
 		}
 	    }

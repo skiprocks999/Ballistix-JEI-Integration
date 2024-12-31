@@ -5,16 +5,17 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.network.NetworkDirection;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BlastThermobaric extends Blast {
 
@@ -41,7 +42,7 @@ public class BlastThermobaric extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
 			if (thread.isComplete) {
 				synchronized (thread.resultsSync) {
 					if (pertick == -1) {
@@ -58,11 +59,11 @@ public class BlastThermobaric extends Blast {
 						world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 						if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
-							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
 						}
 					}
 					if (!cachedIterator.hasNext()) {
-						attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2);
+						attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
 						return true;
 					}
 				}

@@ -22,7 +22,7 @@ public class ItemGrenade extends ItemElectrodynamics {
 	private SubtypeGrenade grenade;
 
 	public ItemGrenade(SubtypeGrenade grenade) {
-		super(new Item.Properties().stacksTo(16), () -> BallistixCreativeTabs.MAIN.get());
+		super(new Item.Properties().stacksTo(16), BallistixCreativeTabs.MAIN);
 		this.grenade = grenade;
 	}
 
@@ -32,7 +32,7 @@ public class ItemGrenade extends ItemElectrodynamics {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 60;
 	}
 
@@ -50,7 +50,7 @@ public class ItemGrenade extends ItemElectrodynamics {
 		}
 		world.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 
-		float throwEnergy = (float) (getUseDuration(itemStack) - timeLeft) / (float) getUseDuration(itemStack) + 0.7f;
+		float throwEnergy = (float) (getUseDuration(itemStack, entityLiving) - timeLeft) / (float) getUseDuration(itemStack, entityLiving) + 0.7f;
 
 		EntityGrenade grenade = new EntityGrenade(world);
 		grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(), entityLiving.getXRot());
