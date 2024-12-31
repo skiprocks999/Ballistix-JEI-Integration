@@ -1,9 +1,14 @@
 package ballistix.common.tile;
 
+import ballistix.registers.BallistixDataComponentTypes;
 import electrodynamics.api.multiblock.subnodebased.Subnode;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
+import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -42,6 +47,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.items.IItemHandler;
+import org.jetbrains.annotations.Nullable;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockParentTile {
 
@@ -74,7 +81,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         super(BallistixTiles.TILE_MISSILESILO.get(), pos, state);
 
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-        addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).valid(this::isItemValidForSlot));
+        addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
         addComponent(new ComponentPacketHandler(this));
         addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
 
@@ -127,9 +134,10 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         if (index == 0) {
             return item instanceof ItemMissile;
-        }
-        if (index == 1) {
+        } else if (index == 1) {
             return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive;
+        } else if (index == 2) {
+            return stack.is(BallistixItems.ITEM_RADARGUN) || stack.is(BallistixItems.ITEM_LASERDESIGNATOR);
         }
         return false;
     }
@@ -217,6 +225,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         handleExplosive(inv, index);
 
+
+
     }
 
     private void handleMissile(ComponentInventory inv, int index) {
@@ -268,6 +278,30 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         }
     }
 
+    private void handleSync(ComponentInventory inv, int index) {
+        if(index == 2 || index == -1) {
+
+            ItemStack sync = inv.getItem(2);
+
+            if(sync.isEmpty()) {
+                return;
+            }
+
+            if(sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
+
+                sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.get());
+
+            } else if (sync.is(BallistixItems.ITEM_RADARGUN)) {
+
+                if(sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+                    target.set(sync.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
+                }
+
+            }
+
+        }
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
@@ -307,6 +341,16 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     @Override
     public ItemInteractionResult onSubnodeUseWithItem(ItemStack used, Player player, InteractionHand hand, BlockHitResult hit, TileMultiSubnode subnode) {
         return useWithItem(used, player, hand, hit);
+    }
+
+    @Override
+    public InteractionResult onSubnodeUseWithoutItem(Player player, BlockHitResult hit, TileMultiSubnode subnode) {
+        return useWithoutItem(player, hit);
+    }
+
+    @Override
+    public @Nullable IItemHandler getSubnodeItemHandlerCapability(TileMultiSubnode subnode, @Nullable Direction side) {
+        return getItemHandlerCapability(side);
     }
 
     public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {

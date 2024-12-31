@@ -91,10 +91,11 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");
-                addGuiLabel("missilesilo.x", "X-Coord");
-                addGuiLabel("missilesilo.y", "Y-Coord");
-                addGuiLabel("missilesilo.z", "Z-Coord");
-                addGuiLabel("missilesilo.freq", "Freq");
+                addGuiLabel("missilesilo.x", "X");
+                addGuiLabel("missilesilo.y", "Y");
+                addGuiLabel("missilesilo.z", "Z");
+                addGuiLabel("missilesilo.freq", "" + '\u039b');
+                addGuiLabel("missilesilo.sync", "Sync");
 
                 addDamageSource("chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
                 addDamageSource("shrapnel", "%s was hit by shrapnel!");
