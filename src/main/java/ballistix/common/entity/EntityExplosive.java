@@ -92,7 +92,7 @@ public class EntityExplosive extends Entity implements IDefusable {
 			remove(RemovalReason.DISCARDED);
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-				Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
+				Blast b = explosive.createBlast(level(), blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}

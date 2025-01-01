@@ -40,45 +40,48 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 
 	@Override
 	public boolean doExplode(int callCount) {
-		if (!world.isClientSide) {
-			if (thread == null) {
-				return true;
+		if (world.isClientSide) {
+			return false;
+		}
+		if (thread == null) {
+			return true;
+		}
+		if (!thread.isComplete) {
+			return false;
+		}
+		hasStarted = true;
+		if (pertick == -1) {
+			pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+			cachedIterator = thread.results.iterator();
+		}
+		int finished = pertick;
+		while (cachedIterator.hasNext()) {
+			if (finished-- < 0) {
+				break;
 			}
-			if (thread.isComplete) {
-				hasStarted = true;
-				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
-					cachedIterator = thread.results.iterator();
-				}
-				int finished = pertick;
-				while (cachedIterator.hasNext()) {
-					if (finished-- < 0) {
-						break;
-					}
-					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
-					BlockEntity entity = world.getBlockEntity(p);
-					if (entity != null) {
-						for (Direction dir : Direction.values()) {
-							ICapabilityElectrodynamic electro = world.getCapability(ElectrodynamicsCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK, p, world.getBlockState(p), entity, dir);
+			BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+			BlockEntity entity = world.getBlockEntity(p);
+			if (entity != null) {
+				for (Direction dir : Direction.values()) {
 
-							if(electro != null) {
+					ICapabilityElectrodynamic electro = world.getCapability(ElectrodynamicsCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK, p, world.getBlockState(p), entity, dir);
 
-								electro.setJoulesStored(0);
+					if(electro != null) {
 
-							} else {
-								IEnergyStorage fe = world.getCapability(Capabilities.EnergyStorage.BLOCK, p, world.getBlockState(p), entity, dir);
+						electro.setJoulesStored(0);
 
-								if(fe != null) {
-									fe.extractEnergy(Integer.MAX_VALUE, false);
-								}
-							}
+					} else {
+						IEnergyStorage fe = world.getCapability(Capabilities.EnergyStorage.BLOCK, p, world.getBlockState(p), entity, dir);
+
+						if(fe != null) {
+							fe.extractEnergy(Integer.MAX_VALUE, false);
 						}
-					} // TODO: Implement player inventory energy clearing
+					}
 				}
-				if (!cachedIterator.hasNext()) {
-					return true;
-				}
-			}
+			} // TODO: Implement player inventory energy clearing
+		}
+		if (!cachedIterator.hasNext()) {
+			return true;
 		}
 		return false;
 	}

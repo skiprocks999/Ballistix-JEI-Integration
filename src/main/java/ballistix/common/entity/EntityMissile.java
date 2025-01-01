@@ -82,7 +82,7 @@ public class EntityMissile extends Entity {
 					if (blastOrdinal != -1 && (target.equals(BlockEntityUtils.OUT_OF_REACH) || tickCount > 20)) {
 						SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 						setPos(getX() - getDeltaMovement().x * 2, getY() - getDeltaMovement().y * 2, getZ() - getDeltaMovement().z * 2);
-						Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
+						Blast b = explosive.createBlast(level(), blockPosition());
 						if (b != null) {
 							blastEntity = b.performExplosion();
 							if (blastEntity == null) {

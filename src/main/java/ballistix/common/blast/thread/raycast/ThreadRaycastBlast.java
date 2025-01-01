@@ -40,7 +40,9 @@ public class ThreadRaycastBlast extends ThreadBlast {
                         //
                         position,
                         //
-                        new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
+                        new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE)
+                        //
+                );
                 if (resistance > 200) {
                     resistance = 0.75f * (float) Math.sqrt(resistance);
                 }

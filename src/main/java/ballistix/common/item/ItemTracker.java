@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
-
 import ballistix.References;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
@@ -20,19 +18,14 @@ import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -101,33 +94,6 @@ public class ItemTracker extends ItemElectric {
             extractPower(stack, USAGE, false);
         }
         return InteractionResult.PASS;
-    }
-
-    public static float getAngle(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int par) {
-        Entity sourceEntity = entity != null ? entity : stack.getEntityRepresentation();
-        if (sourceEntity == null || !stack.has(BallistixDataComponentTypes.TRACKER_TARGET)) {
-            return 0F;
-        }
-
-        Target target = stack.get(BallistixDataComponentTypes.TRACKER_TARGET);
-
-        double angleOfSource = 0.0D;
-        if (entity instanceof Player player && player.isLocalPlayer()) {
-            angleOfSource = entity.getYRot();
-        } else if (sourceEntity instanceof ItemFrame itemFrameEntity) {
-            Direction direction = itemFrameEntity.getDirection();
-            int j = direction.getAxis().isVertical() ? 90 * direction.getAxisDirection().getStep() : 0;
-            angleOfSource = Mth.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
-        } else if (sourceEntity instanceof ItemEntity item) {
-            angleOfSource = 180.0F - item.getSpin(0.5F) / ((float) Math.PI * 2F) * 360.0F;
-        } else if (entity != null) {
-            angleOfSource = entity.yBodyRot;
-        }
-
-        double rawAngleToTarget = Math.atan2(target.z() - sourceEntity.getZ(), target.x() - sourceEntity.getX()) / ((float) Math.PI * 2F);
-        double adjustedAngleToTarget = 0.5D - (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
-
-        return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
     }
 
     @Override

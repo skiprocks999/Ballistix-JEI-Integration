@@ -73,7 +73,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
             float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
             matrixStack.scale(scale, scale, scale);
             BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentItemSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY.EMPTY, RenderType.solid());
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentItemSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.solid());
             if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
                 matrixStack.scale(5, 5, 5);
                 RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);

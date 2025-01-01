@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.Mth;
@@ -32,7 +31,7 @@ public class BlastDebilitation extends Blast {
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
 		int radius = (int) Constants.EXPLOSIVE_DEBILITATION_SIZE;
-		if (world.isClientSide && world instanceof ClientLevel && callCount % 3 == 0) {
+		if (world.isClientSide && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
 					for (int z = -radius; z <= radius; z++) {
@@ -44,16 +43,18 @@ public class BlastDebilitation extends Blast {
 			}
 		}
 		if (!world.isClientSide) {
+
 			float x = position.getX();
 			float y = position.getY();
 			float z = position.getZ();
-			int k1 = Mth.floor(x - (double) radius - 1.0D);
-			int l1 = Mth.floor(x + (double) radius + 1.0D);
-			int i2 = Mth.floor(y - (double) radius - 1.0D);
-			int i1 = Mth.floor(y + (double) radius + 1.0D);
-			int j2 = Mth.floor(z - (double) radius - 1.0D);
-			int j1 = Mth.floor(z + (double) radius + 1.0D);
-			List<Entity> list = world.getEntities(null, new AABB(k1, i2, j2, l1, i1, j1));
+
+			int x0 = Mth.floor(x - (double) radius - 1.0D);
+			int x1 = Mth.floor(x + (double) radius + 1.0D);
+			int y0 = Mth.floor(y - (double) radius - 1.0D);
+			int y1 = Mth.floor(y + (double) radius + 1.0D);
+			int z0 = Mth.floor(z - (double) radius - 1.0D);
+			int z1 = Mth.floor(z + (double) radius + 1.0D);
+			List<Entity> list = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 			for (Entity entity : list) {
 				if (entity instanceof LivingEntity living) {
 					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360));

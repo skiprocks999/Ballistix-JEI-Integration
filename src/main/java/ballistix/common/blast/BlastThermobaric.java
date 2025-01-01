@@ -19,68 +19,69 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BlastThermobaric extends Blast {
 
-	public BlastThermobaric(Level world, BlockPos position) {
-		super(world, position);
-	}
+    public BlastThermobaric(Level world, BlockPos position) {
+        super(world, position);
+    }
 
-	@Override
-	public void doPreExplode() {
-		if (!world.isClientSide) {
-			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
-			thread.start();
-		}
+    @Override
+    public void doPreExplode() {
+        if (!world.isClientSide) {
+            thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
+            thread.start();
+        }
 
-	}
+    }
 
-	private ThreadRaycastBlast thread;
-	private int pertick = -1;
-	private Iterator<BlockPos> cachedIterator;
+    private ThreadRaycastBlast thread;
+    private int pertick = -1;
+    private Iterator<BlockPos> cachedIterator;
 
-	@Override
-	public boolean doExplode(int callCount) {
-		if (!world.isClientSide) {
-			if (thread == null) {
-				return true;
-			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
-			if (thread.isComplete) {
-				synchronized (thread.resultsSync) {
-					if (pertick == -1) {
-						hasStarted = true;
-						pertick = (int) (thread.resultsSync.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
-						cachedIterator = thread.resultsSync.iterator();
-					}
-					int finished = pertick;
-					while (cachedIterator.hasNext()) {
-						if (finished-- < 0) {
-							break;
-						}
-						BlockPos p = new BlockPos(cachedIterator.next());
-						world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
-						if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
-							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
-						}
-					}
-					if (!cachedIterator.hasNext()) {
-						attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean doExplode(int callCount) {
+        if (world.isClientSide) {
+            return false;
+        }
+        if (thread == null) {
+            return true;
+        }
+        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+        if (thread.isComplete) {
+            synchronized (thread.resultsSync) {
+                if (pertick == -1) {
+                    hasStarted = true;
+                    pertick = (int) (thread.resultsSync.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
+                    cachedIterator = thread.resultsSync.iterator();
+                }
+                int finished = pertick;
+                while (cachedIterator.hasNext()) {
+                    if (finished-- < 0) {
+                        break;
+                    }
+                    BlockPos p = new BlockPos(cachedIterator.next());
+                    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
+                    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                    if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
+                        serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
+                    }
+                }
+                if (!cachedIterator.hasNext()) {
+                    attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public boolean isInstantaneous() {
-		return false;
-	}
+    @Override
+    public boolean isInstantaneous() {
+        return false;
+    }
 
-	@Override
-	public SubtypeBlast getBlastType() {
-		return SubtypeBlast.thermobaric;
-	}
-	// TODO: Finish block model
+    @Override
+    public SubtypeBlast getBlastType() {
+        return SubtypeBlast.thermobaric;
+    }
+    // TODO: Finish block model
 
 }

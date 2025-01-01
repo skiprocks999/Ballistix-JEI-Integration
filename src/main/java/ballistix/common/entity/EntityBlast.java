@@ -39,7 +39,7 @@ public class EntityBlast extends Entity {
 
 	public void setBlastType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
-		blast = Blast.createFromSubtype(getBlastType(), level(), blockPosition());
+		blast = getBlastType().createBlast(level(), blockPosition());
 	}
 
 	public SubtypeBlast getBlastType() {
@@ -80,7 +80,7 @@ public class EntityBlast extends Entity {
 				remove(RemovalReason.DISCARDED);
 			}
 		} else {
-			blast = Blast.createFromSubtype(getBlastType(), level(), blockPosition());
+			blast = getBlastType().createBlast(level(), blockPosition());
 		}
 	}
 

@@ -27,8 +27,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS,
-                    Integer.MAX_VALUE, null, true);
+            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
             thread.start();
         } else {
             SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1, position);
@@ -47,38 +46,37 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
     @Override
     public boolean doExplode(int callCount) {
-        if (!world.isClientSide) {
-            if (thread == null) {
-                return true;
+        if(thread == null) {
+            return true;
+        }
+        if(world.isClientSide || !thread.isComplete) {
+            return false;
+        }
+        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+        hasStarted = true;
+        if (pertick == -1) {
+            pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+            iterator = thread.results.iterator();
+        }
+        int finished = pertick;
+        while (iterator.hasNext()) {
+            if (finished-- < 0) {
+                break;
             }
-            Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
-            if (thread.isComplete) {
-                hasStarted = true;
-                if (pertick == -1) {
-                    pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
-                    iterator = thread.results.iterator();
-                }
-                int finished = pertick;
-                while (iterator.hasNext()) {
-                    if (finished-- < 0) {
-                        break;
-                    }
-                    BlockPos p = new BlockPos(iterator.next()).offset(position);
-                    BlockState state = world.getBlockState(p);
-                    Block block = state.getBlock();
+            BlockPos p = new BlockPos(iterator.next()).offset(position);
+            BlockState state = world.getBlockState(p);
+            Block block = state.getBlock();
 
-                    if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
-                            && state.getDestroySpeed(world, p) >= 0) {
-                        block.wasExploded(world, p, ex);
-                        world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
-                    }
-                }
-                if (!iterator.hasNext()) {
-                    position = position.above().above();
-                    attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2, ex);
-                    return true;
-                }
+            if (!state.isAir() && state.getDestroySpeed(world, p) >= 0) {
+
+                block.wasExploded(world, p, ex);
+                world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
             }
+        }
+        if (!iterator.hasNext()) {
+            position = position.above().above();
+            attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2, ex);
+            return true;
         }
         return false;
     }
