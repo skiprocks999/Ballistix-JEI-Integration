@@ -4,6 +4,8 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
@@ -11,6 +13,13 @@ public class BlastIncendiary extends Blast {
 
 	public BlastIncendiary(Level world, BlockPos position) {
 		super(world, position);
+	}
+
+	@Override
+	public void doPreExplode() {
+		if(!world.isClientSide) {
+			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
+		}
 	}
 
 	@Override

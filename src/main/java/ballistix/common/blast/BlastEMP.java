@@ -5,10 +5,12 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.api.capability.types.electrodynamic.ICapabilityElectrodynamic;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -25,6 +27,7 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 		if (!world.isClientSide) {
 			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, true);
 			thread.start();
+			world.playSound(null, position, BallistixSounds.SOUND_EMPEXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
 		}
 	}
 

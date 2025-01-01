@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class RenderBlast extends EntityRenderer<EntityBlast> {
+
     public RenderBlast(Context renderManagerIn) {
         super(renderManagerIn);
         shadowRadius = 0.5F;

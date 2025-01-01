@@ -7,6 +7,7 @@ import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.Level;
@@ -115,9 +116,10 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("tracker.tracking", "Tracking: %s");
                 addTooltip("tracker.none", "NONE");
 
-                addSubtitle("antimatterexplosion", "Antimatter bomb explodes");
-                addSubtitle("darkmatter", "Dark matter bomb ignites and explodes");
-                addSubtitle("nuclearexplosion", "Nuclear bomb explodes");
+                addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
+                addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");
+                addSubtitle(BallistixSounds.SOUND_NUCLEAREXPLOSION, "Nuclear bomb detonates");
+                addSubtitle(BallistixSounds.SOUND_EMPEXPLOSION, "EMP detonates");
 
                 addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
                 addDimension(Level.NETHER.location().getPath(), "The Nether");

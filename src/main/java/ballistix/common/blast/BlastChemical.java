@@ -2,6 +2,9 @@ package ballistix.common.blast;
 
 import java.util.List;
 
+import ballistix.registers.BallistixSounds;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import org.joml.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -26,6 +29,13 @@ public class BlastChemical extends Blast {
 	@Override
 	public boolean isInstantaneous() {
 		return false;
+	}
+
+	@Override
+	public void doPreExplode() {
+		if(!world.isClientSide) {
+			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
+		}
 	}
 
 	@Override

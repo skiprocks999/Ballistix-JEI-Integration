@@ -23,6 +23,8 @@ public class EntityBlast extends Entity {
 	public boolean shouldRenderCustom = false;
 	public int ticksWhenCustomRender;
 
+	private boolean detonated = false;
+
 	@Override
 	public boolean shouldRender(double x, double y, double z) {
 		return true;
@@ -48,13 +50,22 @@ public class EntityBlast extends Entity {
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		builder.define(CALLCOUNT, 80);
+		builder.define(CALLCOUNT, 0);
 		builder.define(TYPE, -1);
 		builder.define(SHOULDSTARTCUSTOMRENDER, false);
 	}
 
 	@Override
 	public void tick() {
+		if(detonated || tickCount > 1000) {
+			if(!level().isClientSide) {
+				remove(RemovalReason.DISCARDED);
+			}
+			return;
+		}
+
+		tickCount++;
+
 		if (!level().isClientSide) {
 			entityData.set(TYPE, blastOrdinal);
 			entityData.set(CALLCOUNT, callcount);
@@ -62,25 +73,29 @@ public class EntityBlast extends Entity {
 		} else {
 			blastOrdinal = entityData.get(TYPE);
 			callcount = entityData.get(CALLCOUNT);
-			if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
+			if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER)) {
 				ticksWhenCustomRender = tickCount;
 			}
 			shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
 		}
+
+		if(blastOrdinal == -1) {
+			return;
+		}
+
+		if(blast == null) {
+			blast = getBlastType().createBlast(level(), blockPosition());
+		}
+
 		if (blast != null) {
 			if (callcount == 0) {
 				blast.preExplode();
 			} else if (blast.explode(callcount)) {
+				detonated = true;
 				blast.postExplode();
-				remove(RemovalReason.DISCARDED);
+
 			}
 			callcount++;
-		} else if (blastOrdinal == -1) {
-			if (tickCount > 60) {
-				remove(RemovalReason.DISCARDED);
-			}
-		} else {
-			blast = getBlastType().createBlast(level(), blockPosition());
 		}
 	}
 

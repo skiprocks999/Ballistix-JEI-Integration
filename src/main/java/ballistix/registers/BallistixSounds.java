@@ -14,6 +14,7 @@ public class BallistixSounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_ANTIMATTEREXPLOSION = sound("antimatterexplosion");
 	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_DARKMATTER = sound("darkmatter");
 	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_NUCLEAREXPLOSION = sound("nuclearexplosion");
+	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_EMPEXPLOSION = sound("empexplosion");
 
 	private static DeferredHolder<SoundEvent, SoundEvent> sound(String name) {
 		return SOUNDS.register(name, () -> SoundEvent.createFixedRangeEvent(ResourceLocation.parse(References.ID + ":" + name), 16.0F));

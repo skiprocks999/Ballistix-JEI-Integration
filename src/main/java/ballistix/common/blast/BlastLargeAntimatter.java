@@ -6,7 +6,6 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.api.sound.SoundAPI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -29,8 +28,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
         if (!world.isClientSide) {
             thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
             thread.start();
-        } else {
-            SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1, position);
+            world.playSound(null, position, BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
         }
     }
 

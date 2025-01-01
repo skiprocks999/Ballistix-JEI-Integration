@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -28,6 +29,7 @@ public class BlastThermobaric extends Blast {
         if (!world.isClientSide) {
             thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
             thread.start();
+            world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
         }
 
     }
@@ -59,7 +61,7 @@ public class BlastThermobaric extends Blast {
                     }
                     BlockPos p = new BlockPos(cachedIterator.next());
                     world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-                    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                    world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
                     if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
                         serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
                     }
