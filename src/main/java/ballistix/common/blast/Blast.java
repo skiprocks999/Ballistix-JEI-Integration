@@ -1,11 +1,12 @@
 package ballistix.common.blast;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
+import ballistix.common.settings.Constants;
 import com.google.common.collect.Maps;
 
 import ballistix.api.event.BlastEvent;
@@ -14,24 +15,35 @@ import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.EventHooks;
 
 public abstract class Blast {
+
+	private static final UUID FAKE_PLAYER_ID = UUID.fromString("111aa11a-11a1-111a-aaaa-a1a11a111123");
+	private static final GameProfile FAKE_PLAYER_PROFILE = new GameProfile(FAKE_PLAYER_ID, "Ballistix Explosive Player");
+
 	public BlockPos position;
 	public Level world;
 	public boolean hasStarted;
@@ -58,7 +70,7 @@ public abstract class Blast {
 	@Deprecated(since = "Should not be called externally!", forRemoval = false)
 	public final void preExplode() {
 		PreBlastEvent evt = new PreBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+		NeoForge.EVENT_BUS.post(evt);
 
 		if (!evt.isCanceled()) {
 			doPreExplode();
@@ -68,7 +80,7 @@ public abstract class Blast {
 	@Deprecated(since = "Should not be called externally!", forRemoval = false)
 	public final boolean explode(int callcount) {
 		BlastEvent evt = new BlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+		NeoForge.EVENT_BUS.post(evt);
 		if (!evt.isCanceled()) {
 			return doExplode(callcount);
 		}
@@ -78,7 +90,7 @@ public abstract class Blast {
 	@Deprecated(since = "Should not be called externally!", forRemoval = false)
 	public final void postExplode() {
 		PostBlastEvent evt = new PostBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+		NeoForge.EVENT_BUS.post(evt);
 
 		if (!evt.isCanceled()) {
 			doPostExplode();
@@ -87,9 +99,9 @@ public abstract class Blast {
 
 	public EntityBlast performExplosion() {
 		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
-		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY);
-		if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
+		NeoForge.EVENT_BUS.post(evt);
+		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+		if (!EventHooks.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 			if (isInstantaneous()) {
 				doPreExplode();
 				doExplode(0);
@@ -105,65 +117,82 @@ public abstract class Blast {
 		return null;
 	}
 
-	protected void attackEntities(float size) {
-		this.attackEntities(size, true);
+	protected void attackEntities(float size, Explosion explosion) {
+		this.attackEntities(size, true, explosion);
 	}
 
-	protected void attackEntities(float size, boolean useRaytrace) {
+	protected void attackEntities(float size, boolean useRaytrace, Explosion explosion) {
 		Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
-		float f2 = size * 2.0F;
-		int k1 = Mth.floor(position.getX() - (double) f2 - 1.0D);
-		int l1 = Mth.floor(position.getX() + (double) f2 + 1.0D);
-		int i2 = Mth.floor(position.getY() - (double) f2 - 1.0D);
-		int i1 = Mth.floor(position.getY() + (double) f2 + 1.0D);
-		int j2 = Mth.floor(position.getZ() - (double) f2 - 1.0D);
-		int j1 = Mth.floor(position.getZ() + (double) f2 + 1.0D);
-		List<Entity> list = world.getEntities(null, new AABB(k1, i2, j2, l1, i1, j1));
-		Vec3 vector3d = new Vec3(position.getX(), position.getY(), position.getZ());
+		float doubleSize = size * 2.0F;
+		int x0 = Mth.floor(position.getX() - (double) doubleSize - 1.0D);
+		int x1 = Mth.floor(position.getX() + (double) doubleSize + 1.0D);
+		int y0 = Mth.floor(position.getY() - (double) doubleSize - 1.0D);
+		int y1 = Mth.floor(position.getY() + (double) doubleSize + 1.0D);
+		int z0 = Mth.floor(position.getZ() - (double) doubleSize - 1.0D);
+		int z1 = Mth.floor(position.getZ() + (double) doubleSize + 1.0D);
 
-		for (Entity entity : list) {
-			if (!entity.ignoreExplosion()) {
-				double d12 = Mth.sqrt((float) entity.distanceToSqr(vector3d)) / f2;
-				if (d12 <= 1.0D) {
-					double d5 = entity.getX() - position.getX();
-					double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - position.getY();
-					double d9 = entity.getZ() - position.getZ();
-					double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
-					if (d13 != 0.0D) {
-						d5 = d5 / d13;
-						d7 = d7 / d13;
-						d9 = d9 / d13;
-						double d14 = useRaytrace ? Explosion.getSeenPercent(vector3d, entity) : 1;
-						double d10 = (1.0D - d12) * d14;
-						entity.hurt(entity.damageSources().explosion(null, null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
-						double d11 = d10;
-						if (entity instanceof LivingEntity le) {
-							d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(le, d10);
-						}
+		List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 
-						entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-						if (entity instanceof Player playerentity) {
-							if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {
-								playerKnockbackMap.put(playerentity, new Vec3(d5 * d10, d7 * d10, d9 * d10));
-							}
-						}
-					}
+		Vec3 posVector = new Vec3(position.getX(), position.getY(), position.getZ());
+
+		for (Entity entity : entities) {
+			if(entity.ignoreExplosion(explosion)) {
+				continue;
+			}
+			double normalizedDiameter = Mth.sqrt((float) entity.distanceToSqr(posVector)) / doubleSize;
+			if (normalizedDiameter > 1.0D) {
+				continue;
+			}
+			double deltaX = entity.getX() - position.getX();
+			double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - position.getY();
+			double deltaZ = entity.getZ() - position.getZ();
+			double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+
+			if(deltaDistance == 0.0D) {
+				continue;
+			}
+
+			deltaX = deltaX / deltaDistance;
+			deltaY = deltaY / deltaDistance;
+			deltaZ = deltaZ / deltaDistance;
+
+			double seenAmount = useRaytrace ? Explosion.getSeenPercent(posVector, entity) : 1;
+
+			double damageAmount = (1.0D - normalizedDiameter) * seenAmount;
+
+			entity.hurt(entity.damageSources().explosion(null, null), (int) ((damageAmount * damageAmount + damageAmount) / 2.0D * 7.0D * doubleSize + 1.0D));
+
+			double actualDamange = damageAmount;
+
+			if (entity instanceof LivingEntity le) {
+				double damage = damageAmount;
+				int i = EnchantmentHelper.getEnchantmentLevel(world.registryAccess().holderOrThrow(Enchantments.BLAST_PROTECTION), le);
+				if (i > 0) {
+					damage *= Mth.clamp(1.0D - (double)i * 0.15D, 0.0D, 1.0D);
+				}
+
+				actualDamange = damage;
+			}
+
+			entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * actualDamange, deltaY * actualDamange, deltaZ * actualDamange));
+			if (entity instanceof Player playerentity) {
+				if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {
+					playerKnockbackMap.put(playerentity, new Vec3(deltaX * damageAmount, deltaY * damageAmount, deltaZ * damageAmount));
 				}
 			}
 		}
 		for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
 			if (entry.getKey() instanceof ServerPlayer serverplayerentity) {
-				serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
+				serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue(), BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
 			}
 		}
 	}
 
-	public static Blast createFromSubtype(SubtypeBlast explosive, Level world, BlockPos pos) {
-		try {
-			return (Blast) explosive.blastClass.getConstructor(Level.class, BlockPos.class).newInstance(world, pos);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public FakePlayer getFakePlayer(ServerLevel level) {
+		return Constants.SHOULD_EXPLOSIONS_BYPASS_CLAIMS ? null : FakePlayerFactory.get(level, FAKE_PLAYER_PROFILE);
+	}
+
+	public static interface BlastFactory<T extends Blast> {
+		T create(Level world, BlockPos pos);
 	}
 }

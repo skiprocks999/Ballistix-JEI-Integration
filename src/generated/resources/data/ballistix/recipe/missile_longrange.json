@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:circuits/elite"
+    },
+    "G": {
+      "tag": "c:gunpowders"
+    },
+    "M": {
+      "item": "ballistix:missilemediumrange"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PGP",
+    "PMP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:missilelongrange"
+  }
+}

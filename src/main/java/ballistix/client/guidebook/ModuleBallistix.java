@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModuleBallistix extends Module {
 
-	private static final ImageWrapperObject LOGO = new ImageWrapperObject(0, 0, 0, 0, 32, 32, 32, 32, new ResourceLocation(References.ID, "textures/screen/guidebook/ballistixlogo.png"));
+	private static final ImageWrapperObject LOGO = new ImageWrapperObject(0, 0, 0, 0, 32, 32, 32, 32, ResourceLocation.fromNamespaceAndPath(References.ID, "textures/screen/guidebook/ballistixlogo.png"));
 
 	@Override
 	public ImageWrapperObject getLogo() {

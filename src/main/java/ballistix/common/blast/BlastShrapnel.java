@@ -4,12 +4,21 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.settings.Constants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 
 public class BlastShrapnel extends Blast {
 
 	public BlastShrapnel(Level world, BlockPos position) {
 		super(world, position);
+	}
+
+	@Override
+	public void doPreExplode() {
+		if(!world.isClientSide) {
+			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
+		}
 	}
 
 	@Override

@@ -6,11 +6,14 @@ import java.util.List;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.AABB;
@@ -31,30 +34,34 @@ public class BlastRepulsive extends Blast {
 		float x = position.getX();
 		float y = position.getY();
 		float z = position.getZ();
-		float size = 5f;
-		float f2 = size * 2.0F;
-		int k1 = Mth.floor(x - (double) f2 - 1.0D);
-		int l1 = Mth.floor(x + (double) f2 + 1.0D);
-		int i2 = Mth.floor(y - (double) f2 - 1.0D);
-		int i1 = Mth.floor(y + (double) f2 + 1.0D);
-		int j2 = Mth.floor(z - (double) f2 - 1.0D);
-		int j1 = Mth.floor(z + (double) f2 + 1.0D);
-		List<Entity> list = world.getEntities(null, new AABB(k1, i2, j2, l1, i1, j1));
 
-		for (Entity entity : list) {
-			double d5 = entity.getX() - x;
-			double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
-			double d9 = entity.getZ() - z;
-			double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
-			if (d13 != 0.0D) {
-				d5 = d5 / d13;
-				d7 = d7 / d13;
-				d9 = d9 / d13;
-				double d11 = Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
-				entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-				if (entity instanceof ServerPlayer serverplayerentity) {
-					serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
-				}
+		float size = 5f;
+		float doubleSize = size * 2.0F;
+
+		int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
+		int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
+		int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
+		int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
+		int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
+		int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
+
+		List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+
+		for (Entity entity : entities) {
+			double deltaX = entity.getX() - x;
+			double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
+			double deltaZ = entity.getZ() - z;
+			double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+			if (deltaDistance == 0.0D) {
+				continue;
+			}
+			deltaX = deltaX / deltaDistance;
+			deltaY = deltaY / deltaDistance;
+			deltaZ = deltaZ / deltaDistance;
+			double d11 = Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
+			entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
+			if (entity instanceof ServerPlayer serverplayerentity) {
+				serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
 			}
 		}
 		return true;

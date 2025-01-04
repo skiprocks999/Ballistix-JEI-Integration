@@ -2,10 +2,11 @@ package ballistix.common.item;
 
 import java.util.List;
 
-import ballistix.common.network.SiloRegistry;
+import ballistix.api.silo.SiloRegistry;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
+import ballistix.registers.BallistixDataComponentTypes;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -14,7 +15,6 @@ import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,10 +31,8 @@ public class ItemLaserDesignator extends ItemElectric {
 
 	public static final double USAGE = 150.0;
 
-	public static final String FREQUENCY_KEY = "freq";
-
 	public ItemLaserDesignator() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
 
 	@Override
@@ -47,14 +45,11 @@ public class ItemLaserDesignator extends ItemElectric {
 				silo = c;
 			}
 		}
-		if (silo != null) {
+		if (silo != null && !context.getLevel().isClientSide) {
 
-			if (context.getLevel().isClientSide) {
-				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
-			} else {
-				CompoundTag nbt = stack.getOrCreateTag();
-				nbt.putInt(FREQUENCY_KEY, silo.frequency.get());
-			}
+			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
+
+			stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.frequency.get());
 
 		}
 		return super.onItemUseFirst(stack, context);
@@ -69,7 +64,7 @@ public class ItemLaserDesignator extends ItemElectric {
 
 		ItemStack designator = playerIn.getItemInHand(handIn);
 
-		if (getJoulesStored(designator) < USAGE || !designator.getOrCreateTag().contains(FREQUENCY_KEY)) {
+		if (getJoulesStored(designator) < USAGE || !designator.has(BallistixDataComponentTypes.BOUND_FREQUENCY)) {
 			return super.use(worldIn, playerIn, handIn);
 		}
 
@@ -86,7 +81,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			return InteractionResultHolder.pass(playerIn.getItemInHand(handIn));
 		}
 
-		int frequency = getFrequency(designator);
+		int frequency = designator.get(BallistixDataComponentTypes.BOUND_FREQUENCY);
 
 		int range;
 
@@ -94,7 +89,7 @@ public class ItemLaserDesignator extends ItemElectric {
 
 		double distance;
 
-		for (TileMissileSilo silo : SiloRegistry.getSilos(frequency, worldIn)) {
+		for (TileMissileSilo silo : SiloRegistry.getSilos(frequency)) {
 
 			range = silo.range.get();
 
@@ -138,21 +133,13 @@ public class ItemLaserDesignator extends ItemElectric {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			CompoundTag nbt = stack.getTag();
-			if (nbt.contains(FREQUENCY_KEY)) {
-				int freq = getFrequency(stack);
-				tooltip.add(BallistixTextUtils.tooltip("laserdesignator.frequency", freq));
-			} else {
-				tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency"));
-			}
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		if (stack.has(BallistixDataComponentTypes.BOUND_FREQUENCY)) {
+			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.frequency", stack.get(BallistixDataComponentTypes.BOUND_FREQUENCY)));
+		} else {
+			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency"));
 		}
-	}
-
-	public static int getFrequency(ItemStack stack) {
-		return stack.getOrCreateTag().getInt(FREQUENCY_KEY);
 	}
 
 }

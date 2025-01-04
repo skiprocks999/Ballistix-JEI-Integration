@@ -8,13 +8,11 @@ import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.NBTUtils;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
+import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import electrodynamics.registers.ElectrodynamicsItems;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,7 +30,7 @@ public class ItemRadarGun extends ItemElectric {
 	public static final double USAGE = 150.0;
 
 	public ItemRadarGun() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
 
 	@Override
@@ -48,8 +46,8 @@ public class ItemRadarGun extends ItemElectric {
 				silo = c;
 			}
 		}
-		if (silo != null) {
-			silo.target.set(getCoordiantes(stack));
+		if (silo != null && stack.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+			silo.target.set(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
 		}
 		return super.onItemUseFirst(stack, context);
 	}
@@ -73,7 +71,7 @@ public class ItemRadarGun extends ItemElectric {
 			return super.use(worldIn, playerIn, handIn);
 		}
 
-		storeCoordiantes(radarGun, trace.toBlockPos());
+		radarGun.set(ElectrodynamicsDataComponentTypes.BLOCK_POS, trace.toBlockPos());
 
 		extractPower(radarGun, USAGE, false);
 
@@ -100,21 +98,13 @@ public class ItemRadarGun extends ItemElectric {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag() && stack.getTag().contains(NBTUtils.LOCATION)) {
-			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		if(stack.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS).toShortString()));
 		} else {
 			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));
 		}
-	}
-
-	public static void storeCoordiantes(ItemStack stack, BlockPos pos) {
-		stack.getOrCreateTag().put(NBTUtils.LOCATION, NbtUtils.writeBlockPos(pos));
-	}
-
-	public static BlockPos getCoordiantes(ItemStack stack) {
-		return NbtUtils.readBlockPos(stack.getOrCreateTag().getCompound(NBTUtils.LOCATION));
 	}
 
 }

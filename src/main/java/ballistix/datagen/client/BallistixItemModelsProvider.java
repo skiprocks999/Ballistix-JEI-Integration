@@ -6,7 +6,7 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixItems;
 import electrodynamics.datagen.client.ElectrodynamicsItemModelsProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvider {
 
@@ -18,11 +18,11 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
 	protected void registerModels() {
 
 		for (SubtypeGrenade grenade : SubtypeGrenade.values()) {
-			layeredItem(BallistixItems.getItem(grenade), Parent.GENERATED, itemLoc("grenade/" + name(BallistixItems.getItem(grenade))));
+			layeredItem(BallistixItems.ITEMS_GRENADE.getValue(grenade), Parent.GENERATED, itemLoc("grenade/" + name(BallistixItems.ITEMS_GRENADE.getValue(grenade))));
 		}
 
 		for (SubtypeMinecart minecart : SubtypeMinecart.values()) {
-			layeredItem(BallistixItems.getItem(minecart), Parent.GENERATED, itemLoc("minecart/" + BallistixItems.getItem(minecart)));
+			layeredItem(BallistixItems.ITEMS_MINECART.getValue(minecart), Parent.GENERATED, itemLoc("minecart/" + name(BallistixItems.ITEMS_MINECART.getValue(minecart))));
 
 		}
 

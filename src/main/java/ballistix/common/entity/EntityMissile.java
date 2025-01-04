@@ -3,11 +3,11 @@ package ballistix.common.entity;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -16,13 +16,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.network.NetworkHooks;
+
+import java.util.Optional;
 
 public class EntityMissile extends Entity {
+	
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> RANGE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-	public BlockPos target;
+	public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
 	public int blastOrdinal = -1;
 	public int range = -1;
 	public boolean isItem = false;
@@ -47,15 +49,15 @@ public class EntityMissile extends Entity {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		entityData.define(TYPE, -1);
-		entityData.define(RANGE, -1);
-		entityData.define(ISSTUCK, -1);
+	public AABB getBoundingBoxForCulling() {
+		return super.getBoundingBoxForCulling().expandTowards(20, 20, 20);
 	}
 
 	@Override
-	public AABB getBoundingBoxForCulling() {
-		return super.getBoundingBoxForCulling().expandTowards(20, 20, 20);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(TYPE, -1);
+		builder.define(RANGE, -1);
+		builder.define(ISSTUCK, -1);
 	}
 
 	@Override
@@ -76,11 +78,11 @@ public class EntityMissile extends Entity {
 				setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 			}
 			if (!level().isClientSide) {
-				if (!state.getCollisionShape(level(), blockPosition()).isEmpty() || !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
-					if (blastOrdinal != -1 && (target == null || tickCount > 20)) {
+				if (!state.getCollisionShape(level(), blockPosition()).isEmpty() || !isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && getY() < target.getY() && getDeltaMovement().y() < 0) {
+					if (blastOrdinal != -1 && (target.equals(BlockEntityUtils.OUT_OF_REACH) || tickCount > 20)) {
 						SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 						setPos(getX() - getDeltaMovement().x * 2, getY() - getDeltaMovement().y * 2, getZ() - getDeltaMovement().z * 2);
-						Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
+						Blast b = explosive.createBlast(level(), blockPosition());
 						if (b != null) {
 							blastEntity = b.performExplosion();
 							if (blastEntity == null) {
@@ -92,7 +94,7 @@ public class EntityMissile extends Entity {
 					}
 				}
 				if (!isItem && getY() > 500) {
-					if (target == null) {
+					if (target.equals(BlockEntityUtils.OUT_OF_REACH)) {
 						removeAfterChangingDimensions();
 					} else {
 						setPos(target.getX(), 499, target.getZ());
@@ -113,7 +115,7 @@ public class EntityMissile extends Entity {
 					setPos(getX() - getDeltaMovement().x * 1, getY() - getDeltaMovement().y * 1, getZ() - getDeltaMovement().z * 1);
 				}
 			}
-			if (!isItem && target != null && getDeltaMovement().y < 3 && getDeltaMovement().y >= 0) {
+			if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && getDeltaMovement().y < 3 && getDeltaMovement().y >= 0) {
 				setDeltaMovement(getDeltaMovement().add(0, 0.02, 0));
 			}
 			for (int i = 0; i < 5; i++) {
@@ -121,9 +123,9 @@ public class EntityMissile extends Entity {
 				float ranX = str * (level().random.nextFloat() - 0.5f);
 				float ranY = str * (level().random.nextFloat() - 0.5f);
 				float ranZ = str * (level().random.nextFloat() - 0.5f);
-				float x = (float) (getX() - getDimensions(getPose()).width / 1.0f);
-				float y = (float) (getY() + getDimensions(getPose()).height / 1.0f);
-				float z = (float) (getZ() - getDimensions(getPose()).width / 1.0f);
+				float x = (float) (getX() - getDimensions(getPose()).width() / 1.0f);
+				float y = (float) (getY() + getDimensions(getPose()).height() / 1.0f);
+				float z = (float) (getZ() - getDimensions(getPose()).width() / 1.0f);
 				level().addParticle(ParticleTypes.LARGE_SMOKE, x - 0.5 + ranX, y + ranY, z - 0.5 + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
 
 			}
@@ -149,15 +151,7 @@ public class EntityMissile extends Entity {
 		compound.putInt("type", blastOrdinal);
 		compound.putInt("range", range);
 		compound.putBoolean("isItem", isItem);
-		if (target != null) {
-			compound.putInt("targetX", target.getX());
-			compound.putInt("targetY", target.getY());
-			compound.putInt("targetZ", target.getZ());
-		} else {
-			compound.putInt("targetX", 0);
-			compound.putInt("targetY", 0);
-			compound.putInt("targetZ", 0);
-		}
+		compound.put("target", NbtUtils.writeBlockPos(target));
 
 	}
 
@@ -169,11 +163,8 @@ public class EntityMissile extends Entity {
 		if (blastOrdinal != -1) {
 			setBlastType(getBlastType());
 		}
-		target = new BlockPos(compound.getInt("targetX"), compound.getInt("targetY"), compound.getInt("targetZ"));
+		Optional<BlockPos> pos = NbtUtils.readBlockPos(compound, "target");
+        target = pos.orElse(BlockEntityUtils.OUT_OF_REACH);
 	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
+	
 }
