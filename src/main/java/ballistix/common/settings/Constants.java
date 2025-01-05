@@ -74,7 +74,7 @@ public class Constants {
 	public static int MEDIUMRANGE_MISSILE_RANGE = 10000;
 	@IntValue(def = -1, comment = "Set to -1 for unlimited range")
 	public static int LONGRANGE_MISSILE_RANGE = -1;
-	@BooleanValue(def = false, comment = "Whether explosions will be cached; may use a lot of memory!")
-	public static boolean SHOULD_CACHE_EXPLOSIONS = false;
+	@BooleanValue(def = true, comment = "Whether explosions will be cached; may use a lot of memory!")
+	public static boolean SHOULD_CACHE_EXPLOSIONS = true;
 
 }

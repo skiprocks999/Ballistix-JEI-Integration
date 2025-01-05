@@ -37,7 +37,7 @@ public class BlastDarkmatter extends Blast {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true, getBlastType().ordinal());
+            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1);
         }

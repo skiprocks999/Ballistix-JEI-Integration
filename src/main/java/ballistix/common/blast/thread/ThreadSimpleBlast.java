@@ -16,15 +16,14 @@ import net.minecraft.world.level.Level;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-    private static final HashSet<BlockPos>[] CACHED_RESULTS = new HashSet[SubtypeBlast.values().length];
+    //private static final HashSet<BlockPos>[] CACHED_RESULTS = new HashSet[SubtypeBlast.values().length];
     private static final HashSet<BlockPos>[] CACHED_EUCLIDEAN_RESULTS = new HashSet[SubtypeBlast.values().length];
-    private final boolean euclideanDistanceBased;
+    //private final boolean euclideanDistanceBased;
 
     private final int ordinal;
 
-    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, boolean euclideanDistanceBased, int ordinal) {
+    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, int ordinal) {
         super(world, position, range, energy, source);
-        this.euclideanDistanceBased = euclideanDistanceBased;
         setName("Simple blast thread");
         this.ordinal = ordinal;
     }
@@ -36,15 +35,12 @@ public class ThreadSimpleBlast extends ThreadBlast {
     public void run() {
         int explosionRadius = this.explosionRadius;
         Random random = Electrodynamics.RANDOM;
-        if (euclideanDistanceBased) {
-            runEuclidian(explosionRadius, random);
-        } else {
-            runNonEuclidian(explosionRadius, random);
-        }
+        runEuclidian(explosionRadius, random);
         super.run();
     }
 
     //This helps eliminate checking the boolean every single iteration of the loop making is much faster
+    /*
     public void runNonEuclidian(int explosionRadius, Random random) {
 
         if (Constants.SHOULD_CACHE_EXPLOSIONS) {
@@ -100,6 +96,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
         }
 
     }
+     */
 
     public void runEuclidian(int explosionRadius, Random random) {
 
@@ -155,6 +152,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 
 
     }
+
 }
 
 
