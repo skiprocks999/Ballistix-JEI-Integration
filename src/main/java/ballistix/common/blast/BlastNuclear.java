@@ -36,7 +36,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     public void doPreExplode() {
         if (!world.isClientSide) {
             threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null);
-            threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2), Integer.MAX_VALUE, null, true);
+            threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2), Integer.MAX_VALUE, null, true, getBlastType().ordinal());
             threadSimple.strictnessAtEdges = 1.7;
             threadRay.start();
             threadSimple.start();

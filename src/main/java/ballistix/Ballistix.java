@@ -3,6 +3,7 @@ package ballistix;
 import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.BallistixVoxelShapes;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.UnifiedBallistixRegister;
@@ -25,10 +26,10 @@ public class Ballistix {
 		ConfigurationHandler.registerConfig(Constants.class);
 		BallistixVoxelShapes.init();
 		UnifiedBallistixRegister.register(bus);
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, Integer.MAX_VALUE, null, true).start();
+		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true, SubtypeBlast.antimatter.ordinal()).start();
+		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true, SubtypeBlast.darkmatter.ordinal()).start();
+		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true, SubtypeBlast.largeantimatter.ordinal()).start();
+		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, Integer.MAX_VALUE, null, true, SubtypeBlast.nuclear.ordinal()).start();
 	}
 
 	@SubscribeEvent
