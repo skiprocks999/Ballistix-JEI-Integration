@@ -188,9 +188,9 @@ public abstract class Blast {
 		}
 	}
 
-	public FakePlayer getFakePlayer(ServerLevel level) {
-		return Constants.SHOULD_EXPLOSIONS_BYPASS_CLAIMS ? null : FakePlayerFactory.get(level, FAKE_PLAYER_PROFILE);
-	}
+	//public FakePlayer getFakePlayer(ServerLevel level) {
+	//	return Conastants.SHOULD_EXPLOSIONS_BYPASS_CLAIMS ? null : FakePlayerFactory.get(level, FAKE_PLAYER_PROFILE);
+	//}
 
 	public static interface BlastFactory<T extends Blast> {
 		T create(Level world, BlockPos pos);

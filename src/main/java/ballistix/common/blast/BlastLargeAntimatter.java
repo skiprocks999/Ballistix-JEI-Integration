@@ -28,7 +28,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
         if (!world.isClientSide) {
             thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
             thread.start();
-            world.playSound(null, position, BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
+            world.playSound(null, position, BallistixSounds.SOUND_LARGE_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
         }
     }
 
