@@ -61,17 +61,7 @@ public class ThreadRaySideBlast extends Thread {
 
 				float d = 0.03F;
 
-				int maxIterations = 10;
-				int numIterations = 0;
-
 				while(power > 0.0F) {
-
-					numIterations++;
-
-					//this prevents infinite loops. It can get stuck if there's nothing but air
-					if(numIterations > maxIterations) {
-						break;
-					}
 
 					Electrodynamics.LOGGER.info("iterated");
 
