@@ -22,6 +22,6 @@ public class BallistixSounds {
 		return sound(name, name, range);
 	}
 	private static DeferredHolder<SoundEvent, SoundEvent> sound(String name, String soundName, float range) {
-		return SOUNDS.register(name, () -> SoundEvent.createFixedRangeEvent(ResourceLocation.parse(References.ID + ":" + name), range));
+		return SOUNDS.register(name, () -> SoundEvent.createFixedRangeEvent(ResourceLocation.parse(References.ID + ":" + soundName), range));
 	}
 }

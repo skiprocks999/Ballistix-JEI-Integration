@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import ballistix.common.blast.Blast;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
@@ -24,6 +26,8 @@ import net.minecraft.world.phys.AABB;
 public class EntityShrapnel extends ThrowableProjectile {
     private static final EntityDataAccessor<Boolean> ISEXPLOSIVE = SynchedEntityData.defineId(EntityShrapnel.class, EntityDataSerializers.BOOLEAN);
     public boolean isExplosive = false;
+
+    private final Blast.GriefPreventionMethod griefPreventionMethod = Blast.getGriefPreventionMethod();
 
     public EntityShrapnel(EntityType<? extends EntityShrapnel> type, Level worldIn) {
         super(type, worldIn);
@@ -49,6 +53,21 @@ public class EntityShrapnel extends ThrowableProjectile {
         if (onGround() || tickCount > (isExplosive ? 400 : 100) || level().getBlockState(blockPosition()).blocksMotion()) {
             remove(RemovalReason.DISCARDED);
         }
+
+        switch(griefPreventionMethod) {
+            case GRIEF_DEFENDER:
+                if(!GriefDefenderHandler.shouldHarmBlock(blockPosition())) {
+                    if(!level().isClientSide) {
+                        remove(RemovalReason.DISCARDED);
+                    }
+                    return;
+
+                }
+                break;
+            default:
+                break;
+        }
+
         if (!level().isClientSide) {
             List<LivingEntity> livings = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
             for (LivingEntity living : livings) {

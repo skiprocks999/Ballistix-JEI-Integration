@@ -7,6 +7,7 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.compatibility.nuclearscience.RadiationHandler;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
@@ -84,6 +85,16 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
                     }
                     BlockPos p = new BlockPos(cachedIteratorRay.next());
 
+                    switch (griefPreventionMethod) {
+                        case GRIEF_DEFENDER :
+                            if(!GriefDefenderHandler.shouldHarmBlock(p)) {
+                                continue;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
                     BlockState state = Blocks.AIR.defaultBlockState();
                     double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
                     if (world.random.nextFloat() < 1 / 5.0 && dis < 15) {
@@ -127,7 +138,13 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
         if (threadSimple.isComplete && rayDone) {
             if (!ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
                 attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
-                if(addRadiation) {
+
+                boolean add = switch(griefPreventionMethod) {
+                    case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(position);
+                    default -> true;
+                };
+
+                if(add && addRadiation) {
                     RadiationHandler.addNuclearExplosionRadiation(world, position);
                 }
                 return true;
@@ -141,7 +158,19 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
                 if (finished-- < 0) {
                     break;
                 }
-                RadiationHandler.addNuclearExplosiveIrradidatedBlock(new BlockPos(cachedIterator.next()).offset(position), world);
+
+                BlockPos pos = new BlockPos(cachedIterator.next()).offset(position);
+
+                switch (griefPreventionMethod) {
+                    case GRIEF_DEFENDER :
+                        if(!GriefDefenderHandler.shouldHarmBlock(pos)) {
+                            continue;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                RadiationHandler.addNuclearExplosiveIrradidatedBlock(pos, world);
             }
             if (!cachedIterator.hasNext()) {
                 attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);

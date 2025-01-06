@@ -1,5 +1,6 @@
 package ballistix.common.blast.thread.raycast;
 
+import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,13 +53,54 @@ public class ThreadRaySideBlast extends Thread {
 
 				Vec3 delta = new Vec3(x, y, z).normalize();
 
-				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * random.nextFloat() / 2;
+				float power = mainBlast.explosionEnergy - (mainBlast.explosionEnergy * random.nextFloat() / 2);
 
 				Vec3 currentVector = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 
 				BlockPos currentBlockPos = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
 
+				float d = 0.03F;
+
+				int maxIterations = 10;
+				int numIterations = 0;
+
+				while(power > 0.0F) {
+
+					numIterations++;
+
+					//this prevents infinite loops. It can get stuck if there's nothing but air
+					if(numIterations > maxIterations) {
+						break;
+					}
+
+					Electrodynamics.LOGGER.info("iterated");
+
+					BlockPos next = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
+					if (!next.equals(currentBlockPos)) {
+						currentBlockPos = next;
+						BlockState block = world.getBlockState(currentBlockPos);
+						if (!block.isAir()) {
+							if (block.getDestroySpeed(world, currentBlockPos) >= 0) {
+								power -= Math.max(1, mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block));
+								if (power > 0f) {
+									int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2) + Math.pow(currentBlockPos.getY() - position.getY(), 2) + Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
+									synchronized (mainBlast.resultsSync) {
+										mainBlast.resultsSync.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(), idistancesq));
+									}
+								}
+							} else {
+								power = 0;
+							}
+						}
+					}
+					currentVector = new Vec3(currentVector.x + delta.x, currentVector.y + delta.y, currentVector.z + delta.z);
+					power -= (d * 0.75F * 5);
+				}
+
+				/*
 				for (float d = 0.3F; power > 0f; power -= (d * 0.75F * 5)) {
+
+					Electrodynamics.LOGGER.info("power " + power);
 
 					BlockPos next = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
 
@@ -90,6 +132,8 @@ public class ThreadRaySideBlast extends Thread {
 						power = 0;
 					}
 				}
+
+				 */
 			}
 		}
 		mainBlast.underBlasts.remove(this);

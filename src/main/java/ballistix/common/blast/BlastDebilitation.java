@@ -2,6 +2,7 @@ package ballistix.common.blast;
 
 import java.util.List;
 
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import org.joml.Vector3f;
@@ -44,8 +45,19 @@ public class BlastDebilitation extends Blast {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
 					for (int z = -radius; z <= radius; z++) {
-						if (x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 20.0) {
-							world.addParticle(new DustParticleOptions(new Vector3f(1, 1, 1), 5), position.getX() + x + 0.5 + world.random.nextDouble() - 1.0, position.getY() + y + 0.5 + world.random.nextDouble() - 1.0, position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0, 0.0D, 0.0D, 0.0D);
+
+						double xPos = position.getX() + x + 0.5 + world.random.nextDouble() - 1.0;
+						double yPos = position.getY() + y + 0.5 + world.random.nextDouble() - 1.0;
+						double zPos = position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0;
+
+
+						boolean add = switch(griefPreventionMethod) {
+							case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(new BlockPos((int) xPos, (int) yPos, (int) zPos));
+							default -> true;
+						};
+
+						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 20.0) {
+							world.addParticle(new DustParticleOptions(new Vector3f(1, 1, 1), 5), xPos, yPos, zPos, 0.0D, 0.0D, 0.0D);
 						}
 					}
 				}
@@ -65,6 +77,17 @@ public class BlastDebilitation extends Blast {
 			int z1 = Mth.floor(z + (double) radius + 1.0D);
 			List<Entity> list = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 			for (Entity entity : list) {
+
+				switch (griefPreventionMethod) {
+					case GRIEF_DEFENDER :
+						if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+							continue;
+						}
+						break;
+					default:
+						break;
+				}
+
 				if (entity instanceof LivingEntity living) {
 					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360));
 					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360));

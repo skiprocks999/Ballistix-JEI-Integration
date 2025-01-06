@@ -5,6 +5,7 @@ import java.util.List;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
@@ -48,6 +49,17 @@ public class BlastRepulsive extends Blast {
 		List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 
 		for (Entity entity : entities) {
+
+			switch (griefPreventionMethod) {
+				case GRIEF_DEFENDER:
+					if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+						continue;
+					}
+					break;
+				default:
+					break;
+			}
+
 			double deltaX = entity.getX() - x;
 			double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
 			double deltaZ = entity.getZ() - z;

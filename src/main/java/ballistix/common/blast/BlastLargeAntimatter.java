@@ -5,6 +5,7 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -69,8 +70,19 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
             Block block = state.getBlock();
 
             if (!state.isAir() && state.getDestroySpeed(world, p) >= 0) {
-                block.wasExploded(world, p, ex);
-                world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                switch (griefPreventionMethod) {
+                    case NONE :
+                        block.wasExploded(world, p, ex);
+                        world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                        break;
+                    case GRIEF_DEFENDER:
+                        GriefDefenderHandler.destroyBlock(block, ex, p, world);
+                        break;
+                    case SABER_FACTIONS:
+
+
+                        break;
+                }
             }
         }
         if (!iterator.hasNext()) {

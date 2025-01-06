@@ -5,6 +5,7 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.api.capability.types.electrodynamic.ICapabilityElectrodynamic;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
@@ -63,6 +64,17 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 				break;
 			}
 			BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+
+			switch (griefPreventionMethod) {
+				case GRIEF_DEFENDER :
+					if(!GriefDefenderHandler.shouldHarmBlock(p)) {
+						continue;
+					}
+					break;
+				default:
+					break;
+			}
+
 			BlockEntity entity = world.getBlockEntity(p);
 			if (entity != null) {
 				for (Direction dir : Direction.values()) {

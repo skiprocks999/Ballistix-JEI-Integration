@@ -2,6 +2,7 @@ package ballistix.common.blast;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -37,7 +38,13 @@ public class BlastIncendiary extends Blast {
 						int yActual = position.getY() + y;
 						int zActual = position.getZ() + z;
 						BlockPos pos = new BlockPos(xActual, yActual, zActual);
-						if (world.isEmptyBlock(pos) && !world.isEmptyBlock(pos.relative(Direction.DOWN))) {
+
+						boolean add = switch(griefPreventionMethod) {
+							case GRIEF_DEFENDER -> GriefDefenderHandler.shouldHarmBlock(pos);
+							default -> true;
+						};
+
+						if (add && world.isEmptyBlock(pos) && !world.isEmptyBlock(pos.relative(Direction.DOWN))) {
 							world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 						}
 					}
