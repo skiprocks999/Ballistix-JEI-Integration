@@ -42,23 +42,31 @@ public class ThreadRaySideBlast extends Thread {
 		final IResistanceCallback callback = mainBlast.callBack;
 		final Entity explosionSource = mainBlast.explosionSource;
 
+		final boolean xNotZero = orientation.getX() != 0;
+		final boolean yNotZero = orientation.getY() != 0;
+		final boolean zNotZero = orientation.getZ() != 0;
+
+		final int expX = orientation.getX() * explosionRadius;
+		final int expY = orientation.getY() * explosionRadius;
+		final int expZ = orientation.getZ() * explosionRadius
+
 		for (int i = iMin; i < iMax; i++) {
 			for (int j = jMin; j < jMax; j++) {
 
 				int x = 0, y = 0, z = 0;
 
-				if (orientation.getX() != 0) {
-					x = orientation.getX() * explosionRadius;
+				if (xNotZero) {
+					x = expX;
 					y += i;
 					z += j;
-				} else if (orientation.getY() != 0) {
+				} else if (yNotZero) {
 					x += i;
-					y = orientation.getY() * explosionRadius;
+					y = expY;
 					z += j;
-				} else if (orientation.getZ() != 0) {
+				} else if (zNotZero) {
 					x += i;
 					y += j;
-					z = orientation.getZ() * explosionRadius;
+					z = expZ;
 				}
 
 				Vec3 delta = new Vec3(x, y, z).normalize();
