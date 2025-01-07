@@ -18,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class ThreadRaycastBlast extends ThreadBlast {
 
-    public IResistanceCallback callBack;
-    public HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
-    public Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<>());
+    public final IResistanceCallback callBack;
+    public final HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
+    public final Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<>());
     public boolean locked = false;
 
     public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
