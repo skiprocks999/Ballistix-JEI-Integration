@@ -21,26 +21,11 @@ public class ThreadRaySideBlast extends Thread {
 
 	public Direction direction;
 	private final RandomSource random = RandomSource.createThreadSafe();
-	private final IResistanceCallback callback;
-	private final int explosionRadius;
-	private final BlockPos position;
-	private final Level world;
-	private final Entity explosionSource;
-	private final float explosionEnergy;
-	private final Set<BlockPos> resultSync;
 
 	private static final float DEFAULT_POWER_DEC = 0.03F * 0.75F * 5F;
 
 	public ThreadRaySideBlast(ThreadRaycastBlast threadRaycastBlast, Direction dir) {
 		mainBlast = threadRaycastBlast;
-		direction = dir;
-		this.callback = threadRaycastBlast.callBack;
-		this.explosionSource = threadRaycastBlast.explosionSource;
-		this.position = mainBlast.position;
-		this.explosionRadius = mainBlast.explosionRadius;
-		this.world = mainBlast.level;
-		this.explosionEnergy = mainBlast.explosionEnergy;
-		this.resultSync = threadRaycastBlast.resultsSync;
 		setName("Raycast Blast Side Thread");
 	}
 
@@ -48,11 +33,15 @@ public class ThreadRaySideBlast extends Thread {
 	@SuppressWarnings("java:S2184")
 	public void run() {
 
-		Electrodynamics.LOGGER.info("dir " + direction);
-		long time = System.currentTimeMillis();
+		final int explosionRadius = mainBlast.explosionRadius;
+		final BlockPos position = mainBlast.position;
+		final Level world = mainBlast.level;
+		final int iMin = -explosionRadius, iMax = explosionRadius, jMax = explosionRadius, jMin = -explosionRadius;
+		final Vec3i orientation = direction.getNormal();
+		final float explosionEnergy = mainBlast.explosionEnergy;
+		final IResistanceCallback callback = mainBlast.callBack;
+		final Entity explosionSource = mainBlast.explosionSource;
 
-		int iMin = -explosionRadius, iMax = explosionRadius, jMax = explosionRadius, jMin = -explosionRadius;
-		Vec3i orientation = direction.getNormal();
 		for (int i = iMin; i < iMax; i++) {
 			for (int j = jMin; j < jMax; j++) {
 
@@ -74,85 +63,51 @@ public class ThreadRaySideBlast extends Thread {
 
 				Vec3 delta = new Vec3(x, y, z).normalize();
 
-				float power = explosionEnergy - (explosionEnergy * random.nextFloat() / 2);
+				float power = explosionEnergy - explosionEnergy * random.nextFloat() / 2;
 
 				Vec3 currentVector = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 
 				BlockPos currentBlockPos = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
 
-				int air = 0;
-
 				while(power > 0.0F) {
 
-					if(air > 10) {
-						break;
-					}
-
 					BlockPos next = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
-					currentVector = new Vec3(currentVector.x + delta.x, currentVector.y + delta.y, currentVector.z + delta.z);
 
 					if (!next.equals(currentBlockPos)) {
+
 						currentBlockPos = next;
+
 						BlockState block = world.getBlockState(currentBlockPos);
+
 						if (!block.isAir()) {
 							if (block.getDestroySpeed(world, currentBlockPos) >= 0) {
+
 								power -= Math.max(1, callback.getResistance(world, position, currentBlockPos, explosionSource, block));
+
 								if (power > 0f) {
+
 									int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2) + Math.pow(currentBlockPos.getY() - position.getY(), 2) + Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
-									resultSync.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(), idistancesq));
+
+									synchronized (mainBlast.resultsSync) {
+
+										mainBlast.resultsSync.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(), idistancesq));
+
+									}
 								}
+
 							} else {
+
 								power = 0;
+
 							}
-						} else {
-							air++;
 						}
 					}
-
+					currentVector = new Vec3(currentVector.x + delta.x, currentVector.y + delta.y, currentVector.z + delta.z);
 					power -= DEFAULT_POWER_DEC;
 				}
 
-				/*
-				for (float d = 0.3F; power > 0f; power -= (d * 0.75F * 5)) {
-
-					Electrodynamics.LOGGER.info("power " + power);
-
-					BlockPos next = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
-
-					// move to front to allow for use of continue
-
-					currentVector = new Vec3(currentVector.x + delta.x, currentVector.y + delta.y, currentVector.z + delta.z);
-
-					if (next.equals(currentBlockPos)) {
-						continue;
-					}
-
-					currentBlockPos = next;
-
-					BlockState block = world.getBlockState(currentBlockPos);
-
-					if (block.isAir()) {
-						continue;
-					}
-
-					if (block.getDestroySpeed(world, currentBlockPos) >= 0) {
-						power -= Math.max(1, mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block));
-						if (power > 0f) {
-							int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2) + Math.pow(currentBlockPos.getY() - position.getY(), 2) + Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
-							synchronized (mainBlast.resultsSync) {
-								mainBlast.resultsSync.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(), idistancesq));
-							}
-						}
-					} else {
-						power = 0;
-					}
-				}
-
-				 */
 			}
 		}
-
-		Electrodynamics.LOGGER.info("dir " + direction + ", time" + (System.currentTimeMillis() - time) / 1000);
 		mainBlast.underBlasts.remove(this);
 	}
 }
