@@ -66,7 +66,7 @@ public class BlastThermobaric extends Blast {
                     switch (griefPreventionMethod) {
                         case NONE :
                             block.wasExploded(world, p, ex);
-                            world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                            world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
                             break;
                         case GRIEF_DEFENDER:
                             GriefDefenderHandler.destroyBlock(block, ex, p, world);
