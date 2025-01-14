@@ -101,6 +101,8 @@
   "tooltip.ballistix.laserdesignator.frequency": "Frequency: %s",
   "tooltip.ballistix.laserdesignator.invalidfreq": "Set a frequency for the silo",
   "tooltip.ballistix.laserdesignator.nofrequency": "Unbound",
+  "tooltip.ballistix.missile.range": "Range: %s Blocks",
+  "tooltip.ballistix.missile.unlimited": "Unlimited",
   "tooltip.ballistix.radargun.notag": "No Coordinates Stored",
   "tooltip.ballistix.radargun.pos": "Stored: %s",
   "tooltip.ballistix.tracker.none": "NONE",

@@ -13,6 +13,7 @@ import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import electrodynamics.registers.ElectrodynamicsItems;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -101,9 +102,9 @@ public class ItemRadarGun extends ItemElectric {
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if(stack.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
-			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS).toShortString()));
+			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS).toShortString()).withStyle(ChatFormatting.GRAY));
 		} else {
-			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));
+			tooltip.add(BallistixTextUtils.tooltip("radargun.notag").withStyle(ChatFormatting.GRAY));
 		}
 	}
 
