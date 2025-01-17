@@ -14,11 +14,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ThreadRaycastBlast extends ThreadBlast {
-    public IResistanceCallback callBack;
-    public HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
-    public Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<BlockPos>());
+
+    public final IResistanceCallback callBack;
+    public final HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
+    public final Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<>());
     public boolean locked = false;
 
     public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
@@ -28,28 +30,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
     }
 
     public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source) {
-        this(world, position, range, energy, source, (world1, pos, targetPosition, source1, block) -> {
-            float resistance = 0;
-
-            if (!block.getFluidState().isEmpty()) {
-                resistance = 0.25f;
-            } else {
-                resistance = block.getExplosionResistance(
-                        //
-                        world1,
-                        //
-                        position,
-                        //
-                        new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE)
-                        //
-                );
-                if (resistance > 200) {
-                    resistance = 0.75f * (float) Math.sqrt(resistance);
-                }
-            }
-
-            return resistance;
-        });
+        this(world, position, range, energy, source, new IResistanceCallbackImp(new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE)));
 
     }
 
@@ -72,4 +53,24 @@ public class ThreadRaycastBlast extends ThreadBlast {
         }
         super.run();
     }
+
+    public static record IResistanceCallbackImp(Explosion explosion) implements IResistanceCallback {
+
+        @Override
+        public float getResistance(Level world, BlockPos position, BlockPos targetPosition, Entity source, BlockState block) {
+
+            if (!block.getFluidState().isEmpty()) {
+                return 0.25f;
+            } else {
+                float resistance = block.getExplosionResistance(world, position, explosion);
+                if (resistance > 200) {
+                    resistance = 0.75f * (float) Math.sqrt(resistance);
+                }
+                return resistance;
+            }
+
+
+        }
+    }
+
 }

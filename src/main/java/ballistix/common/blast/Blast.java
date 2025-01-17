@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import ballistix.common.settings.Constants;
+import ballistix.References;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import com.google.common.collect.Maps;
 
 import ballistix.api.event.BlastEvent;
@@ -19,7 +20,6 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -34,9 +34,8 @@ import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.EventHooks;
 
 public abstract class Blast {
@@ -47,11 +46,21 @@ public abstract class Blast {
 	public BlockPos position;
 	public Level world;
 	public boolean hasStarted;
+	public final GriefPreventionMethod griefPreventionMethod;
 
 	protected Blast(Level world, BlockPos position) {
 		this.world = world;
 		this.position = position;
+		griefPreventionMethod = getGriefPreventionMethod();
 	}
+
+	public static GriefPreventionMethod getGriefPreventionMethod() {
+		if(ModList.get().isLoaded(References.GRIEF_DEFENDER_ID)) {
+			return GriefPreventionMethod.GRIEF_DEFENDER;
+		}
+		return GriefPreventionMethod.NONE;
+	}
+
 
 	public boolean isInstantaneous() {
 		return true;
@@ -136,9 +145,28 @@ public abstract class Blast {
 		Vec3 posVector = new Vec3(position.getX(), position.getY(), position.getZ());
 
 		for (Entity entity : entities) {
-			if(entity.ignoreExplosion(explosion)) {
-				continue;
+
+			boolean ignoreExplosion = entity.ignoreExplosion(explosion);
+
+			switch(griefPreventionMethod) {
+				case NONE:
+					if(ignoreExplosion) {
+						continue;
+					}
+					break;
+				case GRIEF_DEFENDER:
+					if(!GriefDefenderHandler.shouldEntityBeHarmed(entity) && ignoreExplosion) {
+						continue;
+					}
+					break;
+				case SABER_FACTIONS:
+
+					break;
+
 			}
+
+
+
 			double normalizedDiameter = Mth.sqrt((float) entity.distanceToSqr(posVector)) / doubleSize;
 			if (normalizedDiameter > 1.0D) {
 				continue;
@@ -188,11 +216,19 @@ public abstract class Blast {
 		}
 	}
 
-	public FakePlayer getFakePlayer(ServerLevel level) {
-		return Constants.SHOULD_EXPLOSIONS_BYPASS_CLAIMS ? null : FakePlayerFactory.get(level, FAKE_PLAYER_PROFILE);
-	}
+	//public FakePlayer getFakePlayer(ServerLevel level) {
+	//	return Conastants.SHOULD_EXPLOSIONS_BYPASS_CLAIMS ? null : FakePlayerFactory.get(level, FAKE_PLAYER_PROFILE);
+	//}
 
 	public static interface BlastFactory<T extends Blast> {
 		T create(Level world, BlockPos pos);
+	}
+
+	public static enum GriefPreventionMethod {
+
+		NONE,
+		GRIEF_DEFENDER,
+		SABER_FACTIONS;
+
 	}
 }

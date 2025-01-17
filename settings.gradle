@@ -2,24 +2,42 @@ pluginManagement {
     repositories {
         mavenLocal()
         gradlePluginPortal()
-        maven { 
-		url = 'https://maven.neoforged.net/releases' 
-	}
-	maven {
-		// location of the maven that hosts JEI files since January 2023
-		name = "Jared's maven"
-		url = "https://maven.blamejared.com/"
-  	}
-  	maven {
-		// location of a maven mirror for JEI files, as a fallback
-	    	name = "ModMaven"
-	    	url = "https://modmaven.dev"
-	}
-    	maven {
+        mavenCentral()
+        maven {
+            url = 'https://maven.neoforged.net/releases'
+        }
+        maven {
+            // location of the maven that hosts JEI files since January 2023
+            name = "Jared's maven"
+            url = "https://maven.blamejared.com/"
+        }
+        maven {
+            // location of a maven mirror for JEI files, as a fallback
+            name = "ModMaven"
+            url = "https://modmaven.dev"
+        }
+        maven {
             url "https://plugins.gradle.org/m2/"
         }
+
+        maven {
+            name = 'griefdefender'
+            url = 'https://repo.glaremasters.me/repository/bloodshot'
+        }
+        /*
+        maven {
+            name = 'jitpack.io'
+            url = 'https://jitpack.io'
+        }
+        maven {
+            name = "CodeMC"
+            url = uri("https://repo.codemc.io/repository/maven-public/")
+        }
+
+         */
     }
-    	
+
+
 }
 
 plugins {

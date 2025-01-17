@@ -14,6 +14,7 @@ import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -136,9 +137,9 @@ public class ItemLaserDesignator extends ItemElectric {
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(BallistixDataComponentTypes.BOUND_FREQUENCY)) {
-			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.frequency", stack.get(BallistixDataComponentTypes.BOUND_FREQUENCY)));
+			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.frequency", stack.get(BallistixDataComponentTypes.BOUND_FREQUENCY)).withStyle(ChatFormatting.GRAY));
 		} else {
-			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency"));
+			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency").withStyle(ChatFormatting.GRAY));
 		}
 	}
 

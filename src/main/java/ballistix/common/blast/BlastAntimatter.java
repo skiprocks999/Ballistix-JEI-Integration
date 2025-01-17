@@ -5,6 +5,7 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,7 +27,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
+            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
         }
@@ -67,8 +68,21 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
             if (!state.isAir() && state.getDestroySpeed(world, p) >= 0) {
 
-                block.wasExploded(world, p, ex);
-                world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                switch (griefPreventionMethod) {
+                    case NONE :
+                        block.wasExploded(world, p, ex);
+                        world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                        break;
+                    case GRIEF_DEFENDER:
+                        GriefDefenderHandler.destroyBlock(block, ex, p, world);
+                        break;
+                    case SABER_FACTIONS:
+
+
+                        break;
+                }
+
+
             }
         }
         if (!iterator.hasNext()) {

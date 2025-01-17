@@ -98,6 +98,10 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    //below here is the dependency support mods
+    compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
+    //compileOnly group: 'com.github.SaberLLC', name: 'Saber-Factions', version: '4.1.4-STABLE'
+    //compileOnly group: 'de.tr7zw', name: 'item-nbt-api', version: '2.14.1'
 }
 
 tasks.register('sourcesJar', Jar).configure {
@@ -177,4 +181,21 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
+    //below here is the dependency support mods
+    //grief defender
+    maven {
+        name = 'griefdefender'
+        url = 'https://repo.glaremasters.me/repository/bloodshot'
+    }
+    //SaberFactions
+    /*
+    maven {
+        name = 'jitpack.io'
+        url = 'https://jitpack.io'
+    }
+    maven {
+        name = "CodeMC"
+        url = uri("https://repo.codemc.io/repository/maven-public/")
+    }
+     */
 }

@@ -57,7 +57,7 @@ public class EntityBlast extends Entity {
 
 	@Override
 	public void tick() {
-		if(detonated || tickCount > 1000) {
+		if(detonated /*|| tickCount > 1000 */) {
 			if(!level().isClientSide) {
 				remove(RemovalReason.DISCARDED);
 			}
@@ -117,4 +117,5 @@ public class EntityBlast extends Entity {
 	public Blast getBlast() {
 		return blast;
 	}
+
 }

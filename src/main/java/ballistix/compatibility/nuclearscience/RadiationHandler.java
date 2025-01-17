@@ -14,7 +14,7 @@ import nuclearscience.registers.NuclearScienceBlocks;
 public class RadiationHandler {
 
     public static void addNuclearExplosionRadiation(Level world, BlockPos location) {
-        RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE), false, 0, location, false));
+        RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE) / 2, false, 0, location, false));
     }
 
     public static void addNuclearExplosiveIrradidatedBlock(BlockPos p, Level world) {

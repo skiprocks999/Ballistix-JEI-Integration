@@ -115,6 +115,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("laserdesignator.invalidfreq", "Set a frequency for the silo");
                 addTooltip("tracker.tracking", "Tracking: %s");
                 addTooltip("tracker.none", "NONE");
+                addTooltip("missile.range", "Range: %s Blocks");
+                addTooltip("missile.unlimited", "Unlimited");
 
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");

@@ -7,6 +7,7 @@ import java.util.List;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -37,7 +39,7 @@ public class BlastDarkmatter extends Blast {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
+            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1);
         }
@@ -75,8 +77,21 @@ public class BlastDarkmatter extends Blast {
                 }
                 BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
                 BlockState state = world.getBlockState(p);
+                Block block = state.getBlock();
                 if (!state.isAir() && state.getDestroySpeed(world, p) >= 0) {
-                    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                    switch (griefPreventionMethod) {
+                        case NONE :
+                            block.wasExploded(world, p, ex);
+                            world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                            break;
+                        case GRIEF_DEFENDER:
+                            GriefDefenderHandler.destroyBlock(block, ex, p, world);
+                            break;
+                        case SABER_FACTIONS:
+
+
+                            break;
+                    }
                 }
             }
             if (!cachedIterator.hasNext()) {
@@ -103,6 +118,17 @@ public class BlastDarkmatter extends Blast {
         List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 
         for (Entity entity : entities) {
+
+            switch (griefPreventionMethod) {
+                case GRIEF_DEFENDER :
+                    if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+                        continue;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
 
             double deltaX = entity.getX() - x;
             double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;

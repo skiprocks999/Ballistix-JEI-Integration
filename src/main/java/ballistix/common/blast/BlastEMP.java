@@ -5,6 +5,7 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.api.capability.types.electrodynamic.ICapabilityElectrodynamic;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
@@ -25,7 +26,7 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, true);
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
 			thread.start();
 			world.playSound(null, position, BallistixSounds.SOUND_EMPEXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
 		}
@@ -63,6 +64,17 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 				break;
 			}
 			BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+
+			switch (griefPreventionMethod) {
+				case GRIEF_DEFENDER :
+					if(!GriefDefenderHandler.shouldHarmBlock(p)) {
+						continue;
+					}
+					break;
+				default:
+					break;
+			}
+
 			BlockEntity entity = world.getBlockEntity(p);
 			if (entity != null) {
 				for (Direction dir : Direction.values()) {

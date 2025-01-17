@@ -5,6 +5,7 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -60,8 +62,20 @@ public class BlastThermobaric extends Blast {
                         break;
                     }
                     BlockPos p = new BlockPos(cachedIterator.next());
-                    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-                    world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                    Block block = world.getBlockState(p).getBlock();
+                    switch (griefPreventionMethod) {
+                        case NONE :
+                            block.wasExploded(world, p, ex);
+                            world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+                            break;
+                        case GRIEF_DEFENDER:
+                            GriefDefenderHandler.destroyBlock(block, ex, p, world);
+                            break;
+                        case SABER_FACTIONS:
+
+
+                            break;
+                    }
                     if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
                         serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnSmokeParticle(p)));
                     }
