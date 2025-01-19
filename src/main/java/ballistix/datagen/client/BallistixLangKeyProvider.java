@@ -1,6 +1,7 @@
 package ballistix.datagen.client;
 
 import ballistix.References;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
@@ -46,8 +47,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Darkmatter Explosive");
                 addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), "Landmine");
 
-                addBlock(BallistixBlocks.BLOCK_MISSILESILO, "Missile Silo");
-                addBlock(BallistixBlocks.BLOCK_RADAR, "Radar");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), "Missile Silo");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), "Radar");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
 
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");

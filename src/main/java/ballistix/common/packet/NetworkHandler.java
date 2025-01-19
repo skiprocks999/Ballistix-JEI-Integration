@@ -1,5 +1,6 @@
 package ballistix.common.packet;
 
+import ballistix.Ballistix;
 import ballistix.References;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +20,6 @@ public class NetworkHandler {
 	}
 
 	public static ResourceLocation id(String name) {
-		return ResourceLocation.fromNamespaceAndPath(References.ID, name);
+		return Ballistix.rl(name);
 	}
 }

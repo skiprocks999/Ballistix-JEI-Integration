@@ -12,15 +12,15 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
 public class BallistixCapabilities {
 
-	@SubscribeEvent
-	public static void register(RegisterCapabilitiesEvent event) {
+    @SubscribeEvent
+    public static void register(RegisterCapabilitiesEvent event) {
 
-		BallistixTiles.BLOCK_ENTITY_TYPES.getEntries().forEach(entry -> {
-			event.registerBlockEntity(ElectrodynamicsCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getElectrodynamicCapability(context));
-			event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getFluidHandlerCapability(context));
-			event.registerBlockEntity(ElectrodynamicsCapabilities.CAPABILITY_GASHANDLER_BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getGasHandlerCapability(context));
-			event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getItemHandlerCapability(context));
-		});
-	}
+        BallistixTiles.BLOCK_ENTITY_TYPES.getEntries().forEach(entry -> {
+            event.registerBlockEntity(ElectrodynamicsCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getElectrodynamicCapability(context));
+            event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getFluidHandlerCapability(context));
+            event.registerBlockEntity(ElectrodynamicsCapabilities.CAPABILITY_GASHANDLER_BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getGasHandlerCapability(context));
+            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getItemHandlerCapability(context));
+        });
+    }
 
 }

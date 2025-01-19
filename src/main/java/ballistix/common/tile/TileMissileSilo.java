@@ -1,13 +1,14 @@
 package ballistix.common.tile;
 
+import ballistix.Ballistix;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.registers.BallistixDataComponentTypes;
-import electrodynamics.api.multiblock.subnodebased.Subnode;
+import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.phys.Vec3;
@@ -18,7 +19,6 @@ import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 import ballistix.References;
 import ballistix.common.block.BlockExplosive;
-import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemMissile;
@@ -119,7 +119,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
 
-        if(ordinal == 0) {
+        if (ordinal == 0) {
 
             missile = new EntityMissile.EntityMissileCloseRange(level);
 
@@ -229,14 +229,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     @Override
-    public Subnode[] getSubNodes() {
+    public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
 
-        return switch (getFacing()) {
-            case EAST -> BlockMissileSilo.SUBNODES_EAST;
-            case WEST -> BlockMissileSilo.SUBNODES_WEST;
-            case NORTH -> BlockMissileSilo.SUBNODES_NORTH;
-            default -> BlockMissileSilo.SUBNODES_SOUTH;
-        };
+        return SubtypeBallistixMachine.Subnodes.MISSILE_SILO;
 
     }
 
@@ -360,6 +355,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     @Override
+    public Direction getFacingDirection() {
+        return getFacing();
+    }
+
+    @Override
     public ItemInteractionResult onSubnodeUseWithItem(ItemStack used, Player player, InteractionHand hand, BlockHitResult hit, TileMultiSubnode subnode) {
         return useWithItem(used, player, hand, hit);
     }
@@ -385,7 +385,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
-        private static final TicketController TICKET_CONTROLLER = new TicketController(ResourceLocation.fromNamespaceAndPath(References.ID, "chunkloadercontroller"));
+        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("chunkloadercontroller"));
 
         @SubscribeEvent
         public static void register(RegisterTicketControllersEvent event) {

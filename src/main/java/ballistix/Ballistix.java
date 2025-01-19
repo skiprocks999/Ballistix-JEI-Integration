@@ -9,6 +9,7 @@ import ballistix.common.tags.BallistixTags;
 import ballistix.registers.UnifiedBallistixRegister;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
@@ -44,6 +45,10 @@ public class Ballistix {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent event) {
 		BallistixTags.init();
+	}
+
+	public static final ResourceLocation rl(String path) {
+		return ResourceLocation.fromNamespaceAndPath(References.ID, path);
 	}
 
 }

@@ -108,7 +108,7 @@ public abstract class EntityMissile extends Entity {
             target = entityData.get(TARGET);
             isItem = entityData.get(IS_ITEM);
 
-            if(blastOrdinal != -1 && firstTick) {
+            if (blastOrdinal != -1 && firstTick) {
                 SoundBarrierMethods.playMissileSound(isItem ? BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get() : BallistixSounds.SOUND_MISSILE_SILO.get(), this);
                 firstTick = false;
             }
@@ -142,7 +142,6 @@ public abstract class EntityMissile extends Entity {
         }
 
         if (isServerSide) {
-
 
 
             if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || getY() < target.getY() && getDeltaMovement().y() < 0 && tickCount > 20)) {

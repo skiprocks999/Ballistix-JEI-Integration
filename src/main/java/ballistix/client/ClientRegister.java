@@ -1,5 +1,6 @@
 package ballistix.client;
 
+import ballistix.Ballistix;
 import ballistix.References;
 import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.render.entity.RenderBlast;
@@ -13,6 +14,7 @@ import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.common.item.ItemTracker;
 import ballistix.registers.*;
+import electrodynamics.Electrodynamics;
 import electrodynamics.client.guidebook.ScreenGuidebook;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -35,22 +37,22 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
 public class ClientRegister {
 
-	public static final ResourceLocation ANGLE_PREDICATE = ResourceLocation.parse("angle");
+	public static final ResourceLocation ANGLE_PREDICATE = Electrodynamics.vanillarl("angle");
 
-	public static final ResourceLocation TEXTURE_SHRAPNEL = ResourceLocation.parse(References.ID + ":textures/model/shrapnel.png");
-	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = ResourceLocation.parse(References.ID + ":textures/model/missilecloserange.png");
-	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = ResourceLocation.parse(References.ID + ":textures/model/missilemediumrange.png");
-	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = ResourceLocation.parse(References.ID + ":textures/model/missilelongrange.png");
+	public static final ResourceLocation TEXTURE_SHRAPNEL = Ballistix.rl("textures/model/shrapnel.png");
+	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = Ballistix.rl("textures/model/missilecloserange.png");
+	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = Ballistix.rl("textures/model/missilemediumrange.png");
+	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = Ballistix.rl("textures/model/missilelongrange.png");
 	
-	public static final ModelResourceLocation MODEL_RADARDISH = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":block/dish"));
-	public static final ModelResourceLocation MODEL_MISSILECLOSERANGE = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/missilecloserange"));
-	public static final ModelResourceLocation MODEL_MISSILEMEDIUMRANGE = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/missilemediumrange"));
-	public static final ModelResourceLocation MODEL_MISSILELONGRANGE = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/missilelongrange"));
-	public static final ModelResourceLocation MODEL_DARKMATTERSPHERE = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/darkmattersphere"));
-	public static final ModelResourceLocation MODEL_DARKMATTERDISK = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/darkmatterdisk"));
-	public static final ModelResourceLocation MODEL_FIREBALL = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/explosionsphere"));
-	public static final ModelResourceLocation MODEL_EMP = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/emp"));
-	public static final ModelResourceLocation MODEL_BLACKHOLECUBE = ModelResourceLocation.standalone(ResourceLocation.parse(References.ID + ":entity/blackhole"));
+	public static final ModelResourceLocation MODEL_RADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/radardish"));
+	public static final ModelResourceLocation MODEL_MISSILECLOSERANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilecloserange"));
+	public static final ModelResourceLocation MODEL_MISSILEMEDIUMRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilemediumrange"));
+	public static final ModelResourceLocation MODEL_MISSILELONGRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilelongrange"));
+	public static final ModelResourceLocation MODEL_DARKMATTERSPHERE = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmattersphere"));
+	public static final ModelResourceLocation MODEL_DARKMATTERDISK = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmatterdisk"));
+	public static final ModelResourceLocation MODEL_FIREBALL = ModelResourceLocation.standalone(Ballistix.rl("entity/explosionsphere"));
+	public static final ModelResourceLocation MODEL_EMP = ModelResourceLocation.standalone(Ballistix.rl("entity/emp"));
+	public static final ModelResourceLocation MODEL_BLACKHOLECUBE = ModelResourceLocation.standalone(Ballistix.rl("entity/blackhole"));
 
 	public static void setup() {
 		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, (stack, level, entity, seed) -> {
