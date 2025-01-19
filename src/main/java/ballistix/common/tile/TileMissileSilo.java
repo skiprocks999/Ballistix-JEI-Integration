@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
@@ -115,10 +116,14 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         ItemStack mis = inv.getItem(MISSILE_SLOT);
 
         EntityMissile missile = new EntityMissile(level);
-        missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
-        missile.range = ((ItemMissile) mis.getItem()).missile.ordinal();
+        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 10.5, getBlockPos().getZ() + 0.5);
+        missile.missileType = ((ItemMissile) mis.getItem()).missile.ordinal();
         missile.target = target.get();
         missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();
+        missile.startX = (float) missile.getX();
+        missile.startZ = (float) missile.getZ();
+        missile.speed = 0;
+        missile.setDeltaMovement(new Vec3(0, 1, 0));
 
         inv.removeItem(MISSILE_SLOT, 1);
         inv.removeItem(EXPLOSIVE_SLOT, 1);
@@ -226,7 +231,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         handleExplosive(inv, index);
 
 
-
     }
 
     private void handleMissile(ComponentInventory inv, int index) {
@@ -279,21 +283,21 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     private void handleSync(ComponentInventory inv, int index) {
-        if(index == 2 || index == -1) {
+        if (index == 2 || index == -1) {
 
             ItemStack sync = inv.getItem(2);
 
-            if(sync.isEmpty()) {
+            if (sync.isEmpty()) {
                 return;
             }
 
-            if(sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
+            if (sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
 
                 sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.get());
 
             } else if (sync.is(BallistixItems.ITEM_RADARGUN)) {
 
-                if(sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+                if (sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
                     target.set(sync.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
                 }
 
