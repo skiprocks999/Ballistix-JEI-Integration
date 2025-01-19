@@ -67,6 +67,12 @@ public class Constants {
 	public static double MISSILESILO_USAGE = 10000;
 	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
 	public static double RADAR_USAGE = 10000;
+	@DoubleValue(def = 500)
+	public static int RADAR_RANGE = 500;
+	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
+	public static double FIRE_CONTROL_RADAR_USAGE = 10000;
+	@DoubleValue(def = 500)
+	public static int FIRE_CONTROL_RADAR_RANGE = 500;
 
 	@IntValue(def = 3000, comment = "Set to -1 for unlimited range")
 	public static int CLOSERANGE_MISSILE_RANGE = 3000;

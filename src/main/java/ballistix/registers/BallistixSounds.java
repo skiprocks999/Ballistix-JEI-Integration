@@ -16,6 +16,11 @@ public class BallistixSounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_DARKMATTER = sound("darkmatter", 100);
 	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_NUCLEAREXPLOSION = sound("nuclearexplosion", 90);
 	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_EMPEXPLOSION = sound("empexplosion", 100);
+	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_MISSILE_ROCKETLAUNCHER = sound("missile_launch_rocketlauncher", 32);
+	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_MISSILE_SILO = sound("missile_launch_silo", 64);
+	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_RADAR = sound("radar", 16);
+	public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_FIRECONTROLRADAR = sound("firecontrolradar", 32);
+
 
 
 	private static DeferredHolder<SoundEvent, SoundEvent> sound(String name, float range) {

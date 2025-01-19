@@ -122,6 +122,10 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_NUCLEAREXPLOSION, "Nuclear bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_EMPEXPLOSION, "EMP detonates");
+                addSubtitle(BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER, "Missile is fired from rocket lancher");
+                addSubtitle(BallistixSounds.SOUND_MISSILE_SILO, "Missile launches from silo");
+                addSubtitle(BallistixSounds.SOUND_RADAR, "Radar pulses");
+                addSubtitle(BallistixSounds.SOUND_FIRECONTROLRADAR, "Fire Control Radar tracks");
 
                 addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
                 addDimension(Level.NETHER.location().getPath(), "The Nether");

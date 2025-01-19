@@ -17,10 +17,34 @@
     ],
     "subtitle": "subtitles.ballistix.empexplosion"
   },
+  "firecontrolradar": {
+    "sounds": [
+      "ballistix:firecontrolradar"
+    ],
+    "subtitle": "subtitles.ballistix.firecontrolradar"
+  },
+  "missile_launch_rocketlauncher": {
+    "sounds": [
+      "ballistix:missile_launch_rocketlauncher"
+    ],
+    "subtitle": "subtitles.ballistix.missile_launch_rocketlauncher"
+  },
+  "missile_launch_silo": {
+    "sounds": [
+      "ballistix:missile_launch_silo"
+    ],
+    "subtitle": "subtitles.ballistix.missile_launch_silo"
+  },
   "nuclearexplosion": {
     "sounds": [
       "ballistix:nuclearexplosion"
     ],
     "subtitle": "subtitles.ballistix.nuclearexplosion"
+  },
+  "radar": {
+    "sounds": [
+      "ballistix:radar"
+    ],
+    "subtitle": "subtitles.ballistix.radar"
   }
 }

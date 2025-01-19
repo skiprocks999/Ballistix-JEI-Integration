@@ -1,5 +1,6 @@
 package ballistix.registers;
 
+import ballistix.References;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -7,13 +8,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import nuclearscience.References;
 
 @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
 public class BallistixCapabilities {
 
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent event) {
+
 		BallistixTiles.BLOCK_ENTITY_TYPES.getEntries().forEach(entry -> {
 			event.registerBlockEntity(ElectrodynamicsCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getElectrodynamicCapability(context));
 			event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, (BlockEntityType<? extends GenericTile>) entry.get(), (tile, context) -> tile.getFluidHandlerCapability(context));

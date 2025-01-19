@@ -109,7 +109,9 @@ public class ClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_GRENADE.get(), RenderGrenade::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_BLAST.get(), RenderBlast::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILECR.get(), RenderMissile::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILEMR.get(), RenderMissile::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILELR.get(), RenderMissile::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);

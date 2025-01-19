@@ -1,6 +1,10 @@
 package ballistix.common.entity;
 
+import ballistix.common.blast.Blast;
+import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.prefab.sound.SoundBarrierMethods;
 import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
@@ -10,6 +14,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,14 +23,18 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class EntityMissile extends Entity {
+public abstract class EntityMissile extends Entity {
+
+    public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<EntityMissile>> MISSILES = new ConcurrentHashMap<>();
 
     private static final EntityDataAccessor<Integer> EXPLOSIVE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
@@ -47,13 +56,11 @@ public class EntityMissile extends Entity {
     public float startX = 0;
     public float startZ = 0;
 
+    private boolean firstTick = true;
+
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
         blocksBuilding = true;
-    }
-
-    public EntityMissile(Level worldIn) {
-        this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
     }
 
     @Override
@@ -65,6 +72,7 @@ public class EntityMissile extends Entity {
         builder.define(START_Z, -1.0F);
         builder.define(SPEED, -1.0F);
         builder.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
+        builder.define(IS_ITEM, false);
     }
 
     @Override
@@ -83,6 +91,7 @@ public class EntityMissile extends Entity {
             entityData.set(START_Z, startZ);
             entityData.set(SPEED, speed);
             entityData.set(TARGET, target);
+            entityData.set(IS_ITEM, isItem);
 
         } else {
 
@@ -97,6 +106,12 @@ public class EntityMissile extends Entity {
             startZ = entityData.get(START_Z);
             speed = entityData.get(SPEED);
             target = entityData.get(TARGET);
+            isItem = entityData.get(IS_ITEM);
+
+            if(blastOrdinal != -1 && firstTick) {
+                SoundBarrierMethods.playMissileSound(isItem ? BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get() : BallistixSounds.SOUND_MISSILE_SILO.get(), this);
+                firstTick = false;
+            }
         }
 
         if ((!isItem && target.equals(BlockEntityUtils.OUT_OF_REACH)) || blastOrdinal == -1) {
@@ -128,7 +143,7 @@ public class EntityMissile extends Entity {
 
         if (isServerSide) {
 
-            /*
+
 
             if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || getY() < target.getY() && getDeltaMovement().y() < 0 && tickCount > 20)) {
 
@@ -154,9 +169,6 @@ public class EntityMissile extends Entity {
                 }
 
             }
-
-
-             */
 
             if (!isItem && getY() >= ARC_TURN_HEIGHT_MIN) {
 
@@ -233,16 +245,8 @@ public class EntityMissile extends Entity {
 
         }
 
-        if(missileType == 0) {
-            makeBoundingBox(0.25F, 3.25F);
-        } else if (missileType == 1) {
-            makeBoundingBox(0.5F, 6.75F);
-        } else {
-            makeBoundingBox(1.0F, 12.0F);
-        }
-
         if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
-            //speed += 0.02F;
+            speed += 0.02F;
         }
 
         if (isServerSide || speed >= 3.0F) {
@@ -253,35 +257,28 @@ public class EntityMissile extends Entity {
         //exhaust only when missile is accelerating
 
 
-        float width = getBbWidth();
-        float height = getBbHeight();
-        float widthOver2 = width / 2.0F;
-
-        //float offset = (1.0F - widthOver2) / 2.0F;
-
-
+        float widthOver2 = getDimensions(getPose()).width() / 2.0F;
 
         for (int i = 0; i < 1; i++) {
 
             float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
-            float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.25F) - (height / 2.0F));
+            float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));
             float z = (float) (getZ() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
 
             level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
 
         }
-        /*
+
         float motionX = (float) (-speed * getDeltaMovement().x);
         float motionY = (float) (-speed * getDeltaMovement().y);
         float motionZ = (float) (-speed * getDeltaMovement().z);
         for (int i = 0; i < 4; i++) {
-            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
-        }
-        for (int i = 0; i < 4; i++) {
-            level.addParticle(ParticleTypes.CLOUD, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
         }
 
-         */
+        for (int i = 0; i < 4; i++) {
+            level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+        }
 
 
     }
@@ -333,10 +330,69 @@ public class EntityMissile extends Entity {
         }
     }
 
-    private void makeBoundingBox(float width, float height) {
-        float halfWidth = width / 2.0F;
-        AABB box = new AABB(getX() - halfWidth, getY(), getZ() - halfWidth, getX() + halfWidth, getY() + height, getZ() + halfWidth);
-        setBoundingBox(box);
+    @Override
+    public boolean isPickable() {
+        return true;
+    }
+
+    @Override
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
+        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
+        set.add(this);
+        MISSILES.put(level().dimension(), set);
+    }
+
+    @Override
+    public void onRemovedFromLevel() {
+        super.onRemovedFromLevel();
+        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
+        set.remove(this);
+        //MISSILES.put(level().dimension(), set);
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
+        set.remove(this);
+    }
+
+    /**
+     * Had to do this because of the way mojank has the bounding boxes locked down
+     */
+
+    public static class EntityMissileCloseRange extends EntityMissile {
+
+        public EntityMissileCloseRange(EntityType<? extends EntityMissile> type, Level worldIn) {
+            super(type, worldIn);
+        }
+
+        public EntityMissileCloseRange(Level worldIn) {
+            this(BallistixEntities.ENTITY_MISSILECR.get(), worldIn);
+        }
+    }
+
+    public static class EntityMissileMediumRange extends EntityMissile {
+
+        public EntityMissileMediumRange(EntityType<? extends EntityMissile> type, Level worldIn) {
+            super(type, worldIn);
+        }
+
+        public EntityMissileMediumRange(Level worldIn) {
+            this(BallistixEntities.ENTITY_MISSILEMR.get(), worldIn);
+        }
+    }
+
+    public static class EntityMissileLongRange extends EntityMissile {
+
+        public EntityMissileLongRange(EntityType<? extends EntityMissile> type, Level worldIn) {
+            super(type, worldIn);
+        }
+
+        public EntityMissileLongRange(Level worldIn) {
+            this(BallistixEntities.ENTITY_MISSILELR.get(), worldIn);
+        }
     }
 
 }
