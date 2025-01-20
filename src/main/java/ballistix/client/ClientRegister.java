@@ -9,6 +9,7 @@ import ballistix.client.render.entity.RenderGrenade;
 import ballistix.client.render.entity.RenderMinecart;
 import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
+import ballistix.client.render.tile.RenderFireControlRadar;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.screen.ScreenMissileSilo;
@@ -45,6 +46,7 @@ public class ClientRegister {
 	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = Ballistix.rl("textures/model/missilelongrange.png");
 	
 	public static final ModelResourceLocation MODEL_RADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/radardish"));
+	public static final ModelResourceLocation MODEL_FIRECONTROLRADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/firecontrolradardish"));
 	public static final ModelResourceLocation MODEL_MISSILECLOSERANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilecloserange"));
 	public static final ModelResourceLocation MODEL_MISSILEMEDIUMRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilemediumrange"));
 	public static final ModelResourceLocation MODEL_MISSILELONGRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilelongrange"));
@@ -95,6 +97,7 @@ public class ClientRegister {
 	@SubscribeEvent
 	public static void onModelEvent(ModelEvent.RegisterAdditional event) {
 		event.register(MODEL_RADARDISH);
+		event.register(MODEL_FIRECONTROLRADARDISH);
 		event.register(MODEL_MISSILECLOSERANGE);
 		event.register(MODEL_MISSILEMEDIUMRANGE);
 		event.register(MODEL_MISSILELONGRANGE);
@@ -117,7 +120,7 @@ public class ClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
-
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
 	}
 
 }

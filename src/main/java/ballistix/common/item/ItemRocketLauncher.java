@@ -1,17 +1,18 @@
 package ballistix.common.item;
 
-import java.util.HashMap;
-
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.entity.EntityMissile;
+import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import electrodynamics.common.item.ItemElectrodynamics;
+import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -20,8 +21,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 public class ItemRocketLauncher extends ItemElectrodynamics {
-
-	private static HashMap<Player, Long> millisecondMap = new HashMap<>();
 
 	public ItemRocketLauncher() {
 		super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
@@ -41,7 +40,20 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
 		playerIn.startUsingItem(handIn);
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+		return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		super.inventoryTick(stack, level, entity, slotId, isSelected);
+		if(level.isClientSide) {
+			return;
+		}
+		int timeRemaining = stack.getOrDefault(ElectrodynamicsDataComponentTypes.TIMER, 0);
+		if(timeRemaining > 0) {
+			timeRemaining--;
+			stack.set(ElectrodynamicsDataComponentTypes.TIMER, timeRemaining);
+		}
 	}
 
 	@Override
@@ -51,15 +63,13 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 			return;
 		}
 
-		Player player = (Player) entityLiving;
-
-		long millisecond = System.currentTimeMillis();
-
-		if (millisecond - millisecondMap.getOrDefault(player, 0L) <= 3000) {
+		if(stack.getOrDefault(ElectrodynamicsDataComponentTypes.TIMER, 0) > 0) {
 			return;
 		}
 
-		millisecondMap.put(player, millisecond);
+		Player player = (Player) entityLiving;
+
+		stack.set(ElectrodynamicsDataComponentTypes.TIMER, Constants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
 
 		int blastOrdinal = 0;
 
