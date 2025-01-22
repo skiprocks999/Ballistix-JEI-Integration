@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -245,7 +246,7 @@ public abstract class EntityMissile extends Entity {
         }
 
         if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
-            speed += 0.02F;
+            //speed += 0.02F;
         }
 
         if (isServerSide || speed >= 3.0F) {
@@ -355,6 +356,10 @@ public abstract class EntityMissile extends Entity {
         super.remove(reason);
         HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
         set.remove(this);
+    }
+
+    public Vec3 getPosition() {
+        return new Vec3(getX(), getY(), getZ());
     }
 
     /**

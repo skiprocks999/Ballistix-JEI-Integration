@@ -50,6 +50,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), "Missile Silo");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), "Radar");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), "SAM Turret");
 
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");
@@ -91,6 +92,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addItem(BallistixItems.ITEM_DEFUSER, "Defuser");
 
                 addContainer("missilesilo", "Missile Silo");
+                addContainer("samturret", "SAM Turret");
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");

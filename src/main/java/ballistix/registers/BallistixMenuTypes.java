@@ -2,6 +2,7 @@ package ballistix.registers;
 
 import ballistix.References;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.inventory.container.ContainerSAMTurret;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -15,6 +16,7 @@ public class BallistixMenuTypes {
 	public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, References.ID);
 
 	public static final DeferredHolder<MenuType<?>,MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = register("missilesilo", ContainerMissileSilo::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerSAMTurret>> CONTAINER_SAMTURRET = register("samturret", ContainerSAMTurret::new);
 
 	private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> register(String id, MenuSupplier<T> supplier) {
 		return MENU_TYPES.register(id, () -> new MenuType<>(supplier, FeatureFlags.VANILLA_SET));

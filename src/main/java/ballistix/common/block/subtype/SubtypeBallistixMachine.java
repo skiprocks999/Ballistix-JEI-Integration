@@ -1,9 +1,10 @@
 package ballistix.common.block.subtype;
 
 import ballistix.common.block.BallistixVoxelShapes;
-import ballistix.common.tile.TileFireControlRadar;
+import ballistix.common.tile.antimissile.TileFireControlRadar;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.common.tile.TileRadar;
+import ballistix.common.tile.antimissile.turret.TileTurretSAM;
 import electrodynamics.api.ISubtype;
 import electrodynamics.api.multiblock.subnodebased.Subnode;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
@@ -25,7 +26,8 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 
     missilesilo(true,TileMissileSilo::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.MISSILE_SILO).setSubnodes(Subnodes.MISSILE_SILO)),
     radar(true, TileRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
-    firecontrolradar(true, TileFireControlRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.FIRE_CONTROL_RADAR))
+    firecontrolradar(true, TileFireControlRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.FIRE_CONTROL_RADAR)),
+    samturret(true, TileTurretSAM::new)
     ;
 
     private final BlockEntityType.BlockEntitySupplier<BlockEntity> blockEntitySupplier;

@@ -12,7 +12,9 @@ import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderFireControlRadar;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.render.tile.RenderRadar;
+import ballistix.client.render.tile.RenderSAMTurret;
 import ballistix.client.screen.ScreenMissileSilo;
+import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.common.item.ItemTracker;
 import ballistix.registers.*;
 import electrodynamics.Electrodynamics;
@@ -56,6 +58,11 @@ public class ClientRegister {
 	public static final ModelResourceLocation MODEL_EMP = ModelResourceLocation.standalone(Ballistix.rl("entity/emp"));
 	public static final ModelResourceLocation MODEL_BLACKHOLECUBE = ModelResourceLocation.standalone(Ballistix.rl("entity/blackhole"));
 
+	public static final ModelResourceLocation MODEL_AAMISSILE = ModelResourceLocation.standalone(Ballistix.rl("entity/aamissile"));
+	public static final ModelResourceLocation MODEL_SAMTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/samturretballjoint"));
+	public static final ModelResourceLocation MODEL_SAMTURRET_RAIL = ModelResourceLocation.standalone(Ballistix.rl("block/samturretrail"));
+
+
 	public static void setup() {
 		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, (stack, level, entity, seed) -> {
 			//
@@ -92,6 +99,7 @@ public class ClientRegister {
 	@SubscribeEvent
 	public static void registerMenus(RegisterMenuScreensEvent event) {
 		event.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+		event.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
 	}
 
 	@SubscribeEvent
@@ -106,6 +114,9 @@ public class ClientRegister {
 		event.register(MODEL_FIREBALL);
 		event.register(MODEL_EMP);
 		event.register(MODEL_BLACKHOLECUBE);
+		event.register(MODEL_AAMISSILE);
+		event.register(MODEL_SAMTURRET_BALLJOINT);
+		event.register(MODEL_SAMTURRET_RAIL);
 	}
 
 	@SubscribeEvent
@@ -121,6 +132,7 @@ public class ClientRegister {
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_SAMTURRET.get(), RenderSAMTurret::new);
 	}
 
 }

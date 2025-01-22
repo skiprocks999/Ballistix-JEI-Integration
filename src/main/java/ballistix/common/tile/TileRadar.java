@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
@@ -26,7 +27,7 @@ public class TileRadar extends GenericTile {
     public double savedTickRotation;
     public double rotationSpeed;
     public boolean hasPower = false;
-    private final AABB searchArea;
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.RADAR_RANGE);
     private final HashSet<EntityMissile> trackedMissiles = new HashSet<>();
     public boolean redstone = false;
 
@@ -35,14 +36,13 @@ public class TileRadar extends GenericTile {
         addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickCommon(this::tickCommon).tickClient(this::tickClient));
         addComponent(new ComponentPacketHandler(this));
         addComponent(new ComponentElectrodynamic(this, false, true).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(Constants.RADAR_USAGE * 20));
-        searchArea = new AABB(getBlockPos()).inflate(Constants.RADAR_RANGE);
     }
 
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        if (!hasPower) {
+        if (!hasPower || level.getBrightness(LightLayer.SKY, getBlockPos()) <= 0) {
             if (redstone) {
                 redstone = false;
                 level.updateNeighborsAt(worldPosition, getBlockState().getBlock());

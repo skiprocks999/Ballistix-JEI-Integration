@@ -83,6 +83,8 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
                 .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(75, 225, 0).translation(0, 2.5F, 0).scale(0.375F).end()
                 //
                 .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(0, 225, 0).translation(0, 0, 0).scale(0.40F).end();
+
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), existingBlock(blockLoc("samturretitem")));
     }
 
 }

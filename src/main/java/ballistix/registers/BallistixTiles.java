@@ -1,7 +1,8 @@
 package ballistix.registers;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.tile.TileFireControlRadar;
+import ballistix.common.tile.antimissile.TileFireControlRadar;
+import ballistix.common.tile.antimissile.turret.TileTurretSAM;
 import com.google.common.collect.Sets;
 
 import ballistix.References;
@@ -19,5 +20,6 @@ public class BallistixTiles {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileMissileSilo>> TILE_MISSILESILO = BLOCK_ENTITY_TYPES.register("missilesilo", () -> new BlockEntityType<>(TileMissileSilo::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileRadar>> TILE_RADAR = BLOCK_ENTITY_TYPES.register("radar", () -> new BlockEntityType<>(TileRadar::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileFireControlRadar>> TILE_FIRECONTROLRADAR = BLOCK_ENTITY_TYPES.register("firecontrolradar", () -> new BlockEntityType<>(TileFireControlRadar::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar)), null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileTurretSAM>> TILE_SAMTURRET = BLOCK_ENTITY_TYPES.register("samturret", () -> new BlockEntityType<>(TileTurretSAM::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret)), null));
 
 }
