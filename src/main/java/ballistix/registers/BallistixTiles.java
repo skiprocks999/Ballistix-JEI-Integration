@@ -1,8 +1,8 @@
 package ballistix.registers;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.tile.antimissile.TileFireControlRadar;
-import ballistix.common.tile.antimissile.turret.TileTurretSAM;
+import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import com.google.common.collect.Sets;
 
 import ballistix.References;

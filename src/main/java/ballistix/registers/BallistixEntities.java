@@ -1,12 +1,7 @@
 package ballistix.registers;
 
 import ballistix.References;
-import ballistix.common.entity.EntityBlast;
-import ballistix.common.entity.EntityExplosive;
-import ballistix.common.entity.EntityGrenade;
-import ballistix.common.entity.EntityMinecart;
-import ballistix.common.entity.EntityMissile;
-import ballistix.common.entity.EntityShrapnel;
+import ballistix.common.entity.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.entity.EntityType;
@@ -25,4 +20,5 @@ public class BallistixEntities {
 	public static final DeferredHolder<EntityType<?>, EntityType<EntityMissile.EntityMissileCloseRange>> ENTITY_MISSILECR = ENTITIES.register("missilecr", () -> EntityType.Builder.<EntityMissile.EntityMissileCloseRange>of(EntityMissile.EntityMissileCloseRange::new, MobCategory.MISC).fireImmune().sized(0.25F, 3.25F).attach(EntityAttachment.PASSENGER, 0.5F, 1.0F, 0).clientTrackingRange(10).build(References.ID + ".missilecr"));
 	public static final DeferredHolder<EntityType<?>, EntityType<EntityMissile.EntityMissileMediumRange>> ENTITY_MISSILEMR = ENTITIES.register("missilemr", () -> EntityType.Builder.<EntityMissile.EntityMissileMediumRange>of(EntityMissile.EntityMissileMediumRange::new, MobCategory.MISC).fireImmune().sized(0.5F, 6.75F).attach(EntityAttachment.PASSENGER, 0.75F, 1.0F, 0).clientTrackingRange(10).build(References.ID + ".missilemr"));
 	public static final DeferredHolder<EntityType<?>, EntityType<EntityMissile.EntityMissileLongRange>> ENTITY_MISSILELR = ENTITIES.register("missilelr", () -> EntityType.Builder.<EntityMissile.EntityMissileLongRange>of(EntityMissile.EntityMissileLongRange::new, MobCategory.MISC).fireImmune().sized(1.0F, 12.0F).attach(EntityAttachment.PASSENGER, 1.25F, 1.0F, 0).clientTrackingRange(10).build(References.ID + ".missilelr"));
+	public static final DeferredHolder<EntityType<?>, EntityType<EntitySAM>> ENTITY_SAM = ENTITIES.register("sam", () -> EntityType.Builder.<EntitySAM>of(EntitySAM::new, MobCategory.MISC).fireImmune().sized(0.5F, 2.0F).attach(EntityAttachment.PASSENGER, 0F, 0F, 0).clientTrackingRange(10).build(References.ID + ".sam"));
 }

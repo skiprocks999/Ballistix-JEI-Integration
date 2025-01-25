@@ -1,4 +1,4 @@
-package ballistix.common.tile.antimissile;
+package ballistix.common.tile.radar;
 
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.Constants;
@@ -91,7 +91,7 @@ public class TileFireControlRadar extends GenericTile {
         double deltaX = missilePos.x - pos.x;
         double deltaY = missilePos.y - pos.y;
         double deltaZ = missilePos.z - pos.z;
-        return Math.sqrt(deltaX * deltaY + deltaY * deltaY + deltaZ * deltaZ);
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
     //will return negative one if can't hit;

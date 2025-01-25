@@ -1,8 +1,10 @@
 package ballistix.common.inventory.container;
 
-import ballistix.common.tile.antimissile.turret.TileTurretSAM;
+import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import ballistix.registers.BallistixMenuTypes;
+import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
 import electrodynamics.prefab.inventory.container.types.GenericContainerBlockEntity;
+import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,6 +23,10 @@ public class ContainerSAMTurret extends GenericContainerBlockEntity<TileTurretSA
 
     @Override
     public void addInventorySlots(Container container, Inventory inventory) {
+
+        setPlayerInvOffset(10);
+
+        addSlot(new SlotGeneric(container, nextIndex(), 80, 20).setIOColor(new Color(0, 240, 255, 255)));
 
     }
 }

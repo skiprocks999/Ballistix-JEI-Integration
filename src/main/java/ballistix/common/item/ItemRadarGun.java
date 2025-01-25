@@ -3,7 +3,7 @@ package ballistix.common.item;
 import java.util.List;
 
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.common.tile.antimissile.turret.GenericTileAMTurret;
+import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.common.tile.TileMultiSubnode;
@@ -50,8 +50,12 @@ public class ItemRadarGun extends ItemElectric {
 
 			silo.target.set(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
 
-		} else if (tile instanceof GenericTileAMTurret turret) {
-			turret.bindFireControlRadar(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
+		} else if (tile instanceof TileTurretAntimissile turret) {
+			if(turret.bindFireControlRadar(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS))) {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
+			} else {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
+			}
 		}
 
 		return super.onItemUseFirst(stack, context);
@@ -83,7 +87,7 @@ public class ItemRadarGun extends ItemElectric {
 
 		//prevents using the radar gun on missile silo from overriding the stored coords
 
-		if(trace.getTile(playerIn.level()) instanceof TileMissileSilo || trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.get()) instanceof TileMissileSilo || trace.getTile(worldIn) instanceof GenericTileAMTurret) {
+		if(trace.getTile(playerIn.level()) instanceof TileMissileSilo || trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.get()) instanceof TileMissileSilo || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
 			return super.use(worldIn, playerIn, handIn);
 		}
 

@@ -1,33 +1,48 @@
-package ballistix.common.tile.antimissile.turret;
+package ballistix.common.tile.turret.antimissile;
 
+import ballistix.common.entity.EntitySAM;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.Constants;
+import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
+import electrodynamics.prefab.properties.Property;
+import electrodynamics.prefab.properties.PropertyTypes;
 import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
+import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
-public class TileTurretSAM extends GenericTileAMTurret {
+public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
-    private int cooldown = 0;
+    public final Property<Integer> cooldown = property(new Property<>(PropertyTypes.INTEGER, "cooldown", 0));
+    public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_RANGE, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS);
+        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_RANGE, 150, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS);
         addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((integer, stack, componentInventory) -> stack.is(BallistixItems.ITEM_AAMISSILE)));
         addComponent(new ComponentContainerProvider("container.samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
     }
 
     @Override
+    public void tickServerActive(ComponentTickable tickable) {
+        if(cooldown.get() > 0) {
+            cooldown.set(cooldown.get() - 1);
+        }
+    }
+
+    @Override
     public void fireTickServer() {
 
-        if(cooldown > 0) {
-            cooldown--;
+        if(cooldown.get() > 0) {
             return;
         }
 
@@ -36,12 +51,29 @@ public class TileTurretSAM extends GenericTileAMTurret {
         ItemStack missile = inv.getItem(0);
 
         if(missile.isEmpty()) {
+            outOfAmmo.set(true);
             return;
         }
 
-        // code here to fire missile
+        outOfAmmo.set(false);
 
+        EntitySAM sam = new EntitySAM(getLevel());
 
+        sam.speed = getProjectileSpeed();
+        Vec3 rotvec = desiredRotation.get();
+        sam.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
+
+        sam.setDeltaMovement(targetMovement.get());
+
+        sam.setPos(getProjectileLaunchPosition());
+
+        level.addFreshEntity(sam);
+
+        level.playSound(null, getBlockPos().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+
+        cooldown.set(Constants.SAM_TURRET_COOLDOWN);
+
+        inv.removeItem(0, 1);
 
     }
 
@@ -65,4 +97,5 @@ public class TileTurretSAM extends GenericTileAMTurret {
     public double getMaxElevation() {
         return 1;
     }
+
 }

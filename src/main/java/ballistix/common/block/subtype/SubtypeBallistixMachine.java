@@ -1,10 +1,10 @@
 package ballistix.common.block.subtype;
 
 import ballistix.common.block.BallistixVoxelShapes;
-import ballistix.common.tile.antimissile.TileFireControlRadar;
+import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.common.tile.TileRadar;
-import ballistix.common.tile.antimissile.turret.TileTurretSAM;
+import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import electrodynamics.api.ISubtype;
 import electrodynamics.api.multiblock.subnodebased.Subnode;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;

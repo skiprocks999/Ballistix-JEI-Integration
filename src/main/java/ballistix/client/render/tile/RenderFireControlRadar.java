@@ -1,7 +1,7 @@
 package ballistix.client.render.tile;
 
 import ballistix.client.ClientRegister;
-import ballistix.common.tile.antimissile.TileFireControlRadar;
+import ballistix.common.tile.radar.TileFireControlRadar;
 import com.mojang.blaze3d.vertex.PoseStack;
 import electrodynamics.client.render.tile.AbstractTileRenderer;
 import electrodynamics.prefab.utilities.math.MathUtils;

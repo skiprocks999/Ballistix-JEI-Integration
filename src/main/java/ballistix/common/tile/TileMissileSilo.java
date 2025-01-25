@@ -3,12 +3,16 @@ package ballistix.common.tile;
 import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.registers.BallistixDataComponentTypes;
+import ballistix.registers.BallistixSounds;
+import electrodynamics.api.capability.types.electrodynamic.ICapabilityElectrodynamic;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
+import electrodynamics.prefab.tile.components.type.*;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.phys.Vec3;
@@ -32,11 +36,7 @@ import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
-import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.registers.ElectrodynamicsBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -82,6 +82,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         super(BallistixTiles.TILE_MISSILESILO.get(), pos, state);
 
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(120).maxJoules(Constants.MISSILESILO_USAGE * 20).setInputDirections(BlockEntityUtils.MachineDirection.values()));
         addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
         addComponent(new ComponentPacketHandler(this));
         addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
@@ -94,7 +95,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
             target.set(getBlockPos());
         }
 
-        if (cooldown > 0) {
+        ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+
+        if (cooldown > 0 || electro.getJoulesStored() < Constants.MISSILESILO_USAGE) {
             cooldown--;
             return;
         }
@@ -133,7 +136,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         }
 
-        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 10.5, getBlockPos().getZ() + 0.5);
+        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 20.5, getBlockPos().getZ() + 0.5);
         missile.missileType = ordinal;
         missile.target = target.get();
         missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();
@@ -142,10 +145,14 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         missile.speed = 0;
         missile.setDeltaMovement(new Vec3(0, 1, 0));
 
+        electro.joules(electro.getJoulesStored() - Constants.MISSILESILO_USAGE);
+
         inv.removeItem(MISSILE_SLOT, 1);
         inv.removeItem(EXPLOSIVE_SLOT, 1);
 
         level.addFreshEntity(missile);
+
+        level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 
         cooldown = COOLDOWN;
 
@@ -242,6 +249,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         handleExplosive(inv, index);
 
+        handleSync(inv, index);
 
     }
 
@@ -372,6 +380,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     @Override
     public @Nullable IItemHandler getSubnodeItemHandlerCapability(TileMultiSubnode subnode, @Nullable Direction side) {
         return getItemHandlerCapability(side);
+    }
+
+    @Override
+    public @Nullable ICapabilityElectrodynamic getSubnodeElectrodynamicCapability(TileMultiSubnode subnode, @Nullable Direction side) {
+        return getElectrodynamicCapability(side);
     }
 
     public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {

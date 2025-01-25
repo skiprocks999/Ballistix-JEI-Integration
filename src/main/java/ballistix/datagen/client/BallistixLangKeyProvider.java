@@ -84,6 +84,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.mediumrange), "Medium-range Missile");
                 addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.longrange), "Long-range Missile");
 
+                addItem(BallistixItems.ITEM_AAMISSILE, "Ballistic Rocket");
+
                 addItem(BallistixItems.ITEM_ROCKETLAUNCHER, "Rocket Launcher");
                 addItem(BallistixItems.ITEM_RADARGUN, "Radar Gun");
                 addItem(BallistixItems.ITEM_LASERDESIGNATOR, "Laser Designator");
@@ -106,6 +108,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addDamageSource("shrapnel", "%s was hit by shrapnel!");
 
                 addChatMessage("radargun.text", "Coordinates: %s");
+                addChatMessage("radargun.turretsucess", "Bound");
+                addChatMessage("radargun.turrettoofar", "Turret too far away!");
                 addChatMessage("laserdesignator.launch", "Launching all missiles with frequency %s to targets: ");
                 addChatMessage("laserdesignator.launchsend", "-> %s");
                 addChatMessage("laserdesignator.setfrequency", "Set frequency to: %s");
@@ -121,6 +125,21 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("tracker.none", "NONE");
                 addTooltip("missile.range", "Range: %s Blocks");
                 addTooltip("missile.unlimited", "Unlimited");
+
+                addTooltip("turret.blockrange", "Block Range");
+                addTooltip("turret.maxrange", "Max: %s");
+                addTooltip("turret.minrange", "Min: %s");
+
+                addGuiLabel("turret.radar", "Radar: %s");
+                addGuiLabel("turret.radarnone", "None");
+                addGuiLabel("turret.status", "Status: %s");
+                addGuiLabel("turret.statusunlinked", "Unlinked");
+                addGuiLabel("turret.statusnopower", "No Power");
+                addGuiLabel("turret.statuscooldown", "Cooldown %s");
+                addGuiLabel("turret.statusnotarget", "No Target");
+                addGuiLabel("turret.statusoutofrange", "Out of Range");
+                addGuiLabel("turret.statusnoammo", "No Ammo");
+                addGuiLabel("turret.statusgood", "Good");
 
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");

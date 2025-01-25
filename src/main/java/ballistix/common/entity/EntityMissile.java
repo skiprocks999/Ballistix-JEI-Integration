@@ -2,9 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.prefab.sound.SoundBarrierMethods;
 import ballistix.registers.BallistixEntities;
-import ballistix.registers.BallistixSounds;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
@@ -57,8 +55,6 @@ public abstract class EntityMissile extends Entity {
     public float startX = 0;
     public float startZ = 0;
 
-    private boolean firstTick = true;
-
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
         blocksBuilding = true;
@@ -108,11 +104,6 @@ public abstract class EntityMissile extends Entity {
             speed = entityData.get(SPEED);
             target = entityData.get(TARGET);
             isItem = entityData.get(IS_ITEM);
-
-            if (blastOrdinal != -1 && firstTick) {
-                SoundBarrierMethods.playMissileSound(isItem ? BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get() : BallistixSounds.SOUND_MISSILE_SILO.get(), this);
-                firstTick = false;
-            }
         }
 
         if ((!isItem && target.equals(BlockEntityUtils.OUT_OF_REACH)) || blastOrdinal == -1) {
@@ -259,7 +250,7 @@ public abstract class EntityMissile extends Entity {
 
         float widthOver2 = getDimensions(getPose()).width() / 2.0F;
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 5; i++) {
 
             float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
             float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));

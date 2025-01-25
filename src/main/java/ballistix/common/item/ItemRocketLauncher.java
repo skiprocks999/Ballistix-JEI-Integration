@@ -6,9 +6,11 @@ import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import electrodynamics.common.item.ItemElectrodynamics;
 import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -109,6 +111,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 			miss.missileType = 0;
 			miss.isItem = true;
 			world.addFreshEntity(miss);
+			world.playSound(null, player.blockPosition().above(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 		}
 
 	}
