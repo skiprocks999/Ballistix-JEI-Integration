@@ -1,16 +1,22 @@
 package ballistix.common.tile.turret;
 
 import ballistix.api.turret.ITarget;
+import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
+import electrodynamics.common.item.ItemUpgrade;
+import electrodynamics.common.item.subtype.SubtypeItemUpgrade;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.IComponentType;
+import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
 import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
+import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -20,7 +26,7 @@ import javax.annotation.Nullable;
 
 public abstract class GenericTileTurret extends GenericTile {
 
-    public final double range;
+    public final double baseRange;
     public final double rotationSpeedRadians;
     public final double usage;
     public final double minimumRange;
@@ -31,15 +37,20 @@ public abstract class GenericTileTurret extends GenericTile {
     public final Property<Boolean> hasTarget = property(new Property<>(PropertyTypes.BOOLEAN, "hastarget", false));
     public final Property<Boolean> hasNoPower = property(new Property<>(PropertyTypes.BOOLEAN, "haspower", false));
     public final Property<Boolean> inRange = property(new Property<>(PropertyTypes.BOOLEAN, "isrange", false));
+    public final Property<Double> currentRange;
+    public final Property<Double> inaccuracyMultiplier = property(new Property<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
 
-    public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double range, double minimumRange, double usage, double rotationSpeedRadians) {
+    public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double baseRange, double minimumRange, double usage, double rotationSpeedRadians) {
         super(tileEntityTypeIn, worldPos, blockState);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
         addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
+        addComponent(getInventory().validUpgrades(SubtypeItemUpgrade.range));
+        addComponent(getContainer());
         this.usage = usage;
-        this.range = range;
+        this.baseRange = baseRange;
         this.minimumRange = minimumRange;
         this.rotationSpeedRadians = rotationSpeedRadians;
+        currentRange = property(new Property<>(PropertyTypes.DOUBLE, "currentrange", baseRange));
     }
 
 
@@ -58,8 +69,6 @@ public abstract class GenericTileTurret extends GenericTile {
         ITarget target = getTarget(tickable.getTicks());
 
         hasTarget.set(target != null);
-
-        boolean canFire = false;
 
         double distanceToTarget = 0;
 
@@ -97,7 +106,9 @@ public abstract class GenericTileTurret extends GenericTile {
             desiredRotation.set(getDefaultOrientation());
         }
 
-        inRange.set(distanceToTarget >= minimumRange && distanceToTarget <= range);
+        inRange.set(distanceToTarget >= minimumRange && distanceToTarget <= currentRange.get());
+
+        boolean canFire = false;
 
         if (turretRotation.get().equals(desiredRotation.get())) {
 
@@ -163,6 +174,9 @@ public abstract class GenericTileTurret extends GenericTile {
 
     }
 
+    public abstract ComponentInventory getInventory();
+    public abstract ComponentContainerProvider getContainer();
+
     public abstract void tickServerActive(ComponentTickable tickable);
     public abstract void fireTickServer();
 
@@ -182,8 +196,45 @@ public abstract class GenericTileTurret extends GenericTile {
 
     public abstract boolean isValidPlacement();
 
+    @Override
+    public void onInventoryChange(ComponentInventory inv, int slot) {
+
+        super.onInventoryChange(inv, slot);
+
+        if(slot >= inv.getUpgradeSlotStartIndex() || slot == -1) {
+
+            int rangeUpgrades = 0;
+
+            for(ItemStack stack : inv.getUpgradeContents()) {
+
+                if(stack.getItem() instanceof ItemUpgrade upgrade && upgrade.subtype == SubtypeItemUpgrade.range) {
+                    rangeUpgrades += stack.getCount();
+                }
+
+            }
+
+            double inaccuracyMulitplier = 1;
+            double range = baseRange;
+
+            for(int i = 0; i < rangeUpgrades; i++) {
+                inaccuracyMulitplier *= Constants.RANGE_INCREASE_INACCURACY_MULTIPLIER;
+                range += 5.55;
+            }
+
+            range = Math.min(range, Constants.FIRE_CONTROL_RADAR_RANGE);
+
+            currentRange.set(range);
+            inaccuracyMultiplier.set(inaccuracyMulitplier);
+
+
+        }
+
+    }
+
     public static double getXZAngleRadians(Vec3 vector) {
         return Math.atan2(vector.z, vector.x);
     }
+
+
 
 }

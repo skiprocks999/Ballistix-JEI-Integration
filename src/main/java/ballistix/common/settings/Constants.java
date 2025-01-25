@@ -80,13 +80,16 @@ public class Constants {
 	@DoubleValue(def = 1000)
 	public static double SAM_TURRET_USAGEPERTICK = 1000;
 	@DoubleValue(def = 500)
-	public static double SAM_TURRET_RANGE = 500;
+	public static double SAM_TURRET_BASE_RANGE = 300;
 	@DoubleValue(def = 0.2)
 	public static double SAM_TURRET_ROTATIONSPEEDRADIANS = 0.2;
 	@IntValue(def = 60)
 	public static int SAM_TURRET_COOLDOWN = 100;
 	@DoubleValue(def = 0.1)
 	public static double SAM_CHANCE_TO_MISS = 0.1;
+
+	@DoubleValue(def = 1.01, comment = "The amount of inaccuracy each range upgrade will add to the turret. Set to 1 to disable.")
+	public static double RANGE_INCREASE_INACCURACY_MULTIPLIER = 1.01;
 
 	@IntValue(def = 3000, comment = "Set to -1 for unlimited range")
 	public static int CLOSERANGE_MISSILE_RANGE = 3000;

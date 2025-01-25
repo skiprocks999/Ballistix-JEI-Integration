@@ -12,6 +12,7 @@ public class BallistixVoxelShapes {
     public static void init() {
 
     }
+
     public static final VoxelShapeProvider MISSILE_SILO = VoxelShapeProvider.createOmni(Block.box(0, 0, 0, 16, 1, 16));
 
     public static final VoxelShapeProvider RADAR = VoxelShapeProvider.createDirectional(
@@ -43,6 +44,12 @@ public class BallistixVoxelShapes {
                     Block.box(6, 10, 6, 10, 11, 10)
                     //
             ).reduce(Shapes::or).get()
+            //
+    );
+
+    public static final VoxelShapeProvider SAM_TURRET = VoxelShapeProvider.createOmni(
+            //
+            Shapes.or(Block.box(0, 0, 0, 16, 5, 16), Block.box(2.5, 5, 2.5, 13.5, 6, 13.5))
             //
     );
 

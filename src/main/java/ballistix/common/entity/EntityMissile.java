@@ -54,6 +54,7 @@ public abstract class EntityMissile extends Entity {
     public float speed;
     public float startX = 0;
     public float startZ = 0;
+    public int frequency = 0;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
@@ -288,6 +289,7 @@ public abstract class EntityMissile extends Entity {
         compound.putFloat("startx", startX);
         compound.putFloat("startz", startZ);
         compound.putFloat("speed", speed);
+        compound.putInt("freq", frequency);
     }
 
     @Override
@@ -301,6 +303,7 @@ public abstract class EntityMissile extends Entity {
         startX = compound.getFloat("startx");
         startZ = compound.getFloat("startz");
         speed = compound.getFloat("speed");
+        frequency = compound.getInt("freq");
     }
 
     @Override

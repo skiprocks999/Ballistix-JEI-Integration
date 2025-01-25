@@ -7,7 +7,9 @@ import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.utils.BallistixTextUtils;
+import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.prefab.screen.GenericScreen;
+import electrodynamics.prefab.screen.component.types.ScreenComponentCustomRender;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
@@ -15,6 +17,7 @@ import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -39,21 +42,53 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
 
             }
             text.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            text.add(BallistixTextUtils.tooltip("turret.maxrange", Component.literal("" + turret.range).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            text.add(BallistixTextUtils.tooltip("turret.minrange", Component.literal("" + turret.minimumRange).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             return text;
         }, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
         new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 75, 92, 8, 82);
 
-        addComponent(new ScreenComponentSimpleLabel(10, 50, 10, Color.WHITE, () -> {
+        addComponent(new ScreenComponentCustomRender(10, 50, graphics -> {
             TileTurretAntimissile turret = menu.getSafeHost();
             if(turret == null) {
-                return Component.empty();
+                return;
             }
             Component radar = turret.isNotLinked.get() ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.RED) : Component.literal(turret.boundFireControl.get().toShortString()).withStyle(ChatFormatting.DARK_GRAY);
 
-            return BallistixTextUtils.gui("turret.radar", radar).withStyle(ChatFormatting.BLACK);
+            int x = (int) (getGuiWidth() + 10);
+            int y = (int) (getGuiHeight() + 50);
+
+            Component label = BallistixTextUtils.gui("turret.radar").withStyle(ChatFormatting.BLACK);
+
+            int width = getFontRenderer().width(label);
+            int height = getFontRenderer().lineHeight;
+
+            graphics.drawString(getFontRenderer(), label, x, y, Color.WHITE.color(), false);
+
+            x+= width;
+
+            float scale = 1.0F;
+
+            width = font.width(radar);
+
+            if(width > 100) {
+                scale = 100.0F / (float) width;
+            }
+
+            float remHeight = (height - (float) height * scale) / 2.0F;
+
+            graphics.pose().pushPose();
+
+            graphics.pose().translate(x, y + remHeight, 0);
+
+            graphics.pose().scale(scale, scale, scale);
+
+            graphics.drawString(getFontRenderer(), radar, 0, 0, Color.WHITE.color(), false);
+
+            graphics.pose().popPose();
+
+
         }));
 
         addComponent(new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> {

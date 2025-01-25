@@ -143,6 +143,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         missile.startX = (float) missile.getX();
         missile.startZ = (float) missile.getZ();
         missile.speed = 0;
+        missile.frequency = frequency.get();
         missile.setDeltaMovement(new Vec3(0, 1, 0));
 
         electro.joules(electro.getJoulesStored() - Constants.MISSILESILO_USAGE);

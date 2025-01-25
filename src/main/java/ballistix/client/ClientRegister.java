@@ -8,6 +8,7 @@ import ballistix.client.render.tile.RenderFireControlRadar;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.render.tile.RenderSAMTurret;
+import ballistix.client.screen.ScreenFireControlRadar;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.common.item.ItemTracker;
@@ -95,6 +96,7 @@ public class ClientRegister {
 	public static void registerMenus(RegisterMenuScreensEvent event) {
 		event.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
 		event.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
+		event.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
 	}
 
 	@SubscribeEvent

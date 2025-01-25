@@ -28,10 +28,14 @@ public class EntitySAM extends Entity {
     private static final EntityDataAccessor<Float> DISTANCE_TRAVELED = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Vector3f> ROTATION = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Float> INACCURACY_MULTIPLIER = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> RANGE = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
 
     public float speed = 0F;
     private float distanceTraveled = 0;
     public Vector3f rotation = new Vector3f(0, 0, 0);
+    public float inaccruacy = 1.0F;
+    public float range = (float) Constants.SAM_TURRET_BASE_RANGE;
 
     public EntitySAM(Level level) {
         this(BallistixEntities.ENTITY_SAM.get(), level);
@@ -55,13 +59,17 @@ public class EntitySAM extends Entity {
             entityData.set(DISTANCE_TRAVELED, distanceTraveled);
             entityData.set(SPEED, speed);
             entityData.set(ROTATION, rotation);
+            entityData.set(INACCURACY_MULTIPLIER, inaccruacy);
+            entityData.set(RANGE, range);
         } else {
             distanceTraveled = entityData.get(DISTANCE_TRAVELED);
             speed = entityData.get(SPEED);
             rotation = entityData.get(ROTATION);
+            inaccruacy = entityData.get(INACCURACY_MULTIPLIER);
+            range = entityData.get(RANGE);
         }
 
-        if(distanceTraveled >= Constants.SAM_TURRET_RANGE + 5) {
+        if(distanceTraveled >= range + 5) {
             if(isServer) {
                 level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
                 removeAfterChangingDimensions();
@@ -130,7 +138,7 @@ public class EntitySAM extends Entity {
     // serverside only
     public void detonate(EntityMissile missile) {
 
-        if(level().random.nextDouble() < Constants.SAM_CHANCE_TO_MISS) {
+        if(level().random.nextDouble() < Constants.SAM_CHANCE_TO_MISS * inaccruacy) {
             return;
         }
 
@@ -147,6 +155,8 @@ public class EntitySAM extends Entity {
         builder.define(DISTANCE_TRAVELED, 0.0F);
         builder.define(SPEED, 0.0F);
         builder.define(ROTATION, new Vector3f(0, 0, 0));
+        builder.define(INACCURACY_MULTIPLIER, 1.0F);
+        builder.define(RANGE, (float) Constants.SAM_TURRET_BASE_RANGE);
     }
 
     @Override
@@ -156,6 +166,8 @@ public class EntitySAM extends Entity {
         compound.putFloat("xrot", rotation.x);
         compound.putFloat("yrot", rotation.y);
         compound.putFloat("zrot", rotation.z);
+        compound.putFloat("inaccuracy", inaccruacy);
+        compound.putFloat("range", range);
     }
 
     @Override
@@ -163,6 +175,8 @@ public class EntitySAM extends Entity {
         speed = compound.getFloat("speed");
         distanceTraveled = compound.getFloat("distance");
         rotation = new Vector3f(compound.getFloat("xrot"), compound.getFloat("yrot"), compound.getFloat("zrot"));
+        inaccruacy = compound.getFloat("inaccuracy");
+        range = compound.getFloat("range");
     }
 
     @Override

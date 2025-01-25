@@ -95,6 +95,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
                 addContainer("missilesilo", "Missile Silo");
                 addContainer("samturret", "SAM Turret");
+                addContainer("firecontrolradar", "Fire Control Radar");
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");
@@ -130,7 +131,14 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("turret.maxrange", "Max: %s");
                 addTooltip("turret.minrange", "Min: %s");
 
-                addGuiLabel("turret.radar", "Radar: %s");
+                addTooltip("radar.frequencymanager", "Frequency Manager");
+                addTooltip("radar.frequencymanager.delete", "Delete");
+
+                addTooltip("radar.redstone", "Redstone");
+                addTooltip("radar.redstone.enabled", "Enabled");
+                addTooltip("radar.redstone.disabled", "Disabled");
+
+                addGuiLabel("turret.radar", "Radar: ");
                 addGuiLabel("turret.radarnone", "None");
                 addGuiLabel("turret.status", "Status: %s");
                 addGuiLabel("turret.statusunlinked", "Unlinked");
@@ -140,6 +148,13 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addGuiLabel("turret.statusoutofrange", "Out of Range");
                 addGuiLabel("turret.statusnoammo", "No Ammo");
                 addGuiLabel("turret.statusgood", "Good");
+
+                addGuiLabel("radar.tracking", "Tracking: ");
+                addGuiLabel("radar.frequencywhitelist.mode", "Whitelist Mode");
+                addGuiLabel("radar.frequencywhitelist.enabled", "Enabled");
+                addGuiLabel("radar.frequencywhitelist.disabled", "Disabled");
+                addGuiLabel("radar.frequencywhitelist.list", "Whitelisted");
+                addGuiLabel("radar.frequencywhitelist.add", "Add");
 
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");

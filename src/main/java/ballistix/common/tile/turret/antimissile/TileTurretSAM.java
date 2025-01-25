@@ -7,6 +7,7 @@ import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjec
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
+import electrodynamics.common.item.ItemUpgrade;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
 import electrodynamics.prefab.tile.components.IComponentType;
@@ -27,9 +28,27 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_RANGE, 150, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS);
-        addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((integer, stack, componentInventory) -> stack.is(BallistixItems.ITEM_AAMISSILE)));
-        addComponent(new ComponentContainerProvider("container.samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 150, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS);
+    }
+
+    @Override
+    public ComponentInventory getInventory() {
+        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
+
+            if(index == 0) {
+                return stack.is(BallistixItems.ITEM_AAMISSILE);
+            } else if(index >= inv.getUpgradeSlotStartIndex()) {
+                return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
+            } else {
+                return false;
+            }
+
+        });
+    }
+
+    @Override
+    public ComponentContainerProvider getContainer() {
+        return new ComponentContainerProvider("container.samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
@@ -60,8 +79,13 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
         EntitySAM sam = new EntitySAM(getLevel());
 
         sam.speed = getProjectileSpeed();
+
         Vec3 rotvec = desiredRotation.get();
         sam.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
+
+        sam.inaccruacy = inaccuracyMultiplier.get().floatValue();
+
+        sam.range = currentRange.get().floatValue();
 
         sam.setDeltaMovement(targetMovement.get());
 

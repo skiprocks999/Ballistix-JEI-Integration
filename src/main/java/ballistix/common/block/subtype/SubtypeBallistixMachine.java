@@ -27,7 +27,7 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
     missilesilo(true,TileMissileSilo::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.MISSILE_SILO).setSubnodes(Subnodes.MISSILE_SILO)),
     radar(true, TileRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
     firecontrolradar(true, TileFireControlRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.FIRE_CONTROL_RADAR)),
-    samturret(true, TileTurretSAM::new)
+    samturret(true, TileTurretSAM::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.SAM_TURRET))
     ;
 
     private final BlockEntityType.BlockEntitySupplier<BlockEntity> blockEntitySupplier;
