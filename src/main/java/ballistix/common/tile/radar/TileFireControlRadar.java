@@ -18,8 +18,6 @@ import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
@@ -37,25 +35,25 @@ public class TileFireControlRadar extends GenericTile {
 
     public static final Vec3 OUT_OF_REACH = new Vec3(0, -1000, 0);
 
-    public double savedTickRotation;
-    public double rotationSpeed;
-    public boolean hasPower = false;
-    private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.FIRE_CONTROL_RADAR_RANGE);
-    @Nullable
-    public EntityMissile tracking;
-    public boolean redstone = false;
-
     public final Property<Vec3> trackingPos = property(new Property<>(PropertyTypes.VEC3, "trackingpos", OUT_OF_REACH));
     public final Property<Boolean> usingWhitelist = property(new Property<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
     public final Property<List<Integer>> whitelistedFrequencies = property(new Property<>(BallistixPropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
     public final Property<Integer> missileType = property(new Property<>(PropertyTypes.INTEGER, "trackingtype", -1));
     public final Property<Boolean> usingRedstone = property(new Property<>(PropertyTypes.BOOLEAN, "usingredstone", false));
+    public final Property<Boolean> redstone = property(new Property<>(PropertyTypes.BOOLEAN, "redstone", false));
+    public final Property<Boolean> running = property(new Property<>(PropertyTypes.BOOLEAN, "running", false));
 
     public final Vec3 searchPos;
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.FIRE_CONTROL_RADAR_RANGE);
+    @Nullable
+    public EntityMissile tracking;
+
+    public double clientRotation;
+    public double clientRotationSpeed;
 
     public TileFireControlRadar(BlockPos pos, BlockState state) {
         super(BallistixTiles.TILE_FIRECONTROLRADAR.get(), pos, state);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickCommon(this::tickCommon).tickClient(this::tickClient));
+        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
         addComponent(new ComponentPacketHandler(this));
         addComponent(new ComponentElectrodynamic(this, false, true).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(Constants.FIRE_CONTROL_RADAR_USAGE * 20));
         addComponent(new ComponentContainerProvider("container.firecontrolradar", this).createMenu((id, player) -> new ContainerFireControlRadar(id, player, new SimpleContainer(0), getCoordsArray())));
@@ -64,12 +62,15 @@ public class TileFireControlRadar extends GenericTile {
 
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
-        electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        if (!hasPower || level.getBrightness(LightLayer.SKY, getBlockPos()) <= 0 || (usingRedstone.get() && redstone)) {
+        running.set(electro.getJoulesStored() > Constants.RADAR_USAGE / 20.0 && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0 && (!usingRedstone.get() || (usingRedstone.get() && redstone.get())));
+
+        if (!running.get()) {
             tracking = null;
             return;
         }
+
+        electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
         if(tracking != null && tracking.isRemoved()) {
             tracking = null;
@@ -102,38 +103,19 @@ public class TileFireControlRadar extends GenericTile {
 
     }
 
-    protected void tickCommon(ComponentTickable tickable) {
-
-        savedTickRotation += rotationSpeed;
-
-        hasPower = this.<ComponentElectrodynamic>getComponent(IComponentType.Electrodynamic).getJoulesStored() > 0;
-
-        rotationSpeed = Mth.clamp(rotationSpeed + 0.25 * (hasPower ? 1 : -1), 0.0, 10.0);
-
-    }
-
     public void tickClient(ComponentTickable tickable) {
-        if (tickable.getTicks() % 50 == 0 && hasPower) {
+        clientRotation += clientRotationSpeed;
+
+        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.get() ? 1 : -1), 0.0, 10.0);
+        if (tickable.getTicks() % 50 == 0 && running.get()) {
             SoundAPI.playSound(BallistixSounds.SOUND_FIRECONTROLRADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
-        super.saveAdditional(compound, registries);
-        compound.putBoolean("redstone", redstone);
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
-        super.loadAdditional(compound, registries);
-        redstone = compound.getBoolean("redstone");
-    }
-
-    @Override
     public void onNeightborChanged(BlockPos neighbor, boolean blockStateTrigger) {
         super.onNeightborChanged(neighbor, blockStateTrigger);
-        redstone = level.getBestNeighborSignal(getBlockPos()) > 0;
+        redstone.set(level.getBestNeighborSignal(getBlockPos()) > 0);
     }
 
     public static double getDistanceToMissile(Vec3 pos, Vec3 missilePos) {

@@ -56,7 +56,7 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         TileFireControlRadar tile = ((ScreenFireControlRadar)gui).getMenu().getSafeHost();
 
-        if(tile == null || tile.trackingPos.equals(TileFireControlRadar.OUT_OF_REACH) || !tile.hasPower) {
+        if(tile == null || tile.trackingPos.equals(TileFireControlRadar.OUT_OF_REACH) || !tile.running.get()) {
             return;
         }
 

@@ -26,9 +26,9 @@ public class RenderFireControlRadar extends AbstractTileRenderer<TileFireControl
 
         BakedModel radardish = getModel(ClientRegister.MODEL_FIRECONTROLRADARDISH);
 
-        float partial = (float) (partialTicks * tileEntityIn.rotationSpeed);
+        float partial = (float) (partialTicks * tileEntityIn.clientRotationSpeed);
 
-        double yRot = tileEntityIn.savedTickRotation + partial;
+        double yRot = tileEntityIn.clientRotation + partial;
 
         Direction facing = tileEntityIn.getFacing();
 

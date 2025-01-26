@@ -25,9 +25,9 @@ public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
 
 		BakedModel radardish = getModel(ballistix.client.ClientRegister.MODEL_RADARDISH);
 
-		float partial = (float) (partialTicks * tileEntityIn.rotationSpeed);
+		float partial = (float) (partialTicks * tileEntityIn.clientRotationSpeed);
 
-		double yRot = tileEntityIn.savedTickRotation + partial;
+		double yRot = tileEntityIn.clientRotation + partial;
 
 		Direction facing = tileEntityIn.getFacing();
 

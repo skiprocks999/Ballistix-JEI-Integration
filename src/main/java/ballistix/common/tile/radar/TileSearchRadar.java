@@ -38,21 +38,22 @@ import java.util.List;
 
 public class TileSearchRadar extends GenericTile {
 
-    public double savedTickRotation;
-    public double rotationSpeed;
-    public boolean hasPower = false;
+    public final Property<Boolean> usingWhitelist = property(new Property<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final Property<List<Integer>> whitelistedFrequencies = property(new Property<>(BallistixPropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+    public final Property<Boolean> redstone = property(new Property<>(PropertyTypes.BOOLEAN, "redstone", false));
+    public final Property<Boolean> isRunning = property(new Property<>(PropertyTypes.BOOLEAN, "isrunning", false));
+
     private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.RADAR_RANGE);
     private final HashSet<EntityMissile> trackedMissiles = new HashSet<>();
     private final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
     public final HashSet<IDetected.Detected> detections = new HashSet<>();
-    public boolean redstone = false;
 
-    public final Property<Boolean> usingWhitelist = property(new Property<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final Property<List<Integer>> whitelistedFrequencies = property(new Property<>(BallistixPropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+    public double clientRotation;
+    public double clientRotationSpeed;
 
     public TileSearchRadar(BlockPos pos, BlockState state) {
         super(BallistixTiles.TILE_RADAR.get(), pos, state);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickCommon(this::tickCommon).tickClient(this::tickClient));
+        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
         addComponent(new ComponentPacketHandler(this));
         addComponent(new ComponentElectrodynamic(this, false, true).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(Constants.RADAR_USAGE * 20));
         addComponent(new ComponentContainerProvider("container.searchradar", this).createMenu((id, player) -> new ContainerSearchRadar(id, player, new SimpleContainer(0), getCoordsArray())));
@@ -60,22 +61,21 @@ public class TileSearchRadar extends GenericTile {
 
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
-        electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        if (!hasPower || level.getBrightness(LightLayer.SKY, getBlockPos()) <= 0) {
-            if (redstone) {
-                redstone = false;
+        isRunning.set(electro.getJoulesStored() > (Constants.RADAR_USAGE / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+
+        trackedMissiles.clear();
+        trackedEsmTowers.clear();
+
+        if (!isRunning.get()) {
+            if (redstone.get()) {
+                redstone.set(false);
                 level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
             }
             return;
         }
 
-        trackedMissiles.clear();
-        trackedEsmTowers.clear();
-
-        if (!hasPower) {
-            return;
-        }
+        electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
         for (EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
             if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency)))) {
@@ -89,44 +89,39 @@ public class TileSearchRadar extends GenericTile {
             }
         }
 
-        if ((trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty()) && redstone) {
-            redstone = false;
+        if ((trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty()) && redstone.get()) {
+            redstone.set(false);
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        } else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone) {
-            redstone = true;
+        } else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.get()) {
+            redstone.set(true);
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         }
 
         detections.clear();
 
-        for(EntityMissile missile : trackedMissiles) {
+        for (EntityMissile missile : trackedMissiles) {
             detections.add(new IDetected.Detected(missile.getPosition(), BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.missileType]), true));
         }
 
-        for(TileESMTower tile : trackedEsmTowers) {
+        for (TileESMTower tile : trackedEsmTowers) {
             detections.add(new IDetected.Detected(new Vec3(tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ()), BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), false));
         }
 
     }
 
-    protected void tickCommon(ComponentTickable tickable) {
-
-        savedTickRotation += rotationSpeed;
-
-        hasPower = this.<ComponentElectrodynamic>getComponent(IComponentType.Electrodynamic).getJoulesStored() > 0;
-
-        rotationSpeed = Mth.clamp(rotationSpeed + 0.25 * (hasPower ? 1 : -1), 0.0, 10.0);
-
-    }
-
     public void tickClient(ComponentTickable tickable) {
-        if (tickable.getTicks() % 50 == 0 && hasPower) {
+
+        clientRotation += clientRotationSpeed;
+
+        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (isRunning.get() ? 1 : -1), 0.0, 10.0);
+
+        if (tickable.getTicks() % 50 == 0 && isRunning.get()) {
             SoundAPI.playSound(BallistixSounds.SOUND_RADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
         }
     }
 
     @Override
     public int getSignal(Direction dir) {
-        return redstone ? 15 : 0;
+        return redstone.get() ? 15 : 0;
     }
 }
