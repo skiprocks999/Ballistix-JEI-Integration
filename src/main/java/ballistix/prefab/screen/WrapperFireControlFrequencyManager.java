@@ -53,7 +53,7 @@ public class WrapperFireControlFrequencyManager {
                 screen.slider.setVisible(true);
 
                 screen.trackingLabel.setVisible(false);
-                screen.trackingRender.setVisible(false);
+                screen.radarGrid.setVisible(false);
 
             } else {
 
@@ -61,7 +61,7 @@ public class WrapperFireControlFrequencyManager {
                 screen.slider.setVisible(false);
 
                 screen.trackingLabel.setVisible(true);
-                screen.trackingRender.setVisible(true);
+                screen.radarGrid.setVisible(true);
 
             }
 

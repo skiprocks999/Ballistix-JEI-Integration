@@ -157,7 +157,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addGuiLabel("radar.frequencywhitelist.list", "Whitelisted");
                 addGuiLabel("radar.frequencywhitelist.add", "Add");
                 addGuiLabel("radar.bearingunknown", "Bearing Unknown");
-                addGuiLabel("radar.bearing", "Bearing: %s" + '\u00B0');
+                addGuiLabel("radar.bearing", "Bearing: %1$s" + '\u00B0' + " - %2$s" + '\u00B0');
 
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");

@@ -46,7 +46,7 @@
   "gui.ballistix.missilesilo.x": "X",
   "gui.ballistix.missilesilo.y": "Y",
   "gui.ballistix.missilesilo.z": "Z",
-  "gui.ballistix.radar.bearing": "Bearing: %s°",
+  "gui.ballistix.radar.bearing": "Bearing: %1$s° - %2$s°",
   "gui.ballistix.radar.bearingunknown": "Bearing Unknown",
   "gui.ballistix.radar.frequencywhitelist.add": "Add",
   "gui.ballistix.radar.frequencywhitelist.disabled": "Disabled",

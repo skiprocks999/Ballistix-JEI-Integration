@@ -4,7 +4,6 @@ import ballistix.api.radar.IDetected;
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.api.screen.ITexture;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.ScreenComponentGeneric;
@@ -94,7 +93,10 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
             double theta = (angleRads / Math.PI * 180.0) + (angleRads > 0 ? 0.0 : 360.0);
 
-            text = BallistixTextUtils.gui("radar.bearing", ChatFormatter.formatDecimals(theta, 2).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.BLACK);
+            int thetaMin = (int) (Math.floor(theta) - 1);
+            int thetaMax = (int) (Math.floor(theta) + 1);
+
+            text = BallistixTextUtils.gui("radar.bearing", Component.literal("" + thetaMin).withStyle(ChatFormatting.WHITE), Component.literal("" + thetaMax).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.BLACK);
 
             scale = 1.0F;
 

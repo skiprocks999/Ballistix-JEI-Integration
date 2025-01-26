@@ -1,9 +1,9 @@
 {
   "values": [
-    "ballistix:missilesilo",
+    "ballistix:esmtower",
     "ballistix:radar",
     "ballistix:firecontrolradar",
-    "ballistix:esmtower",
-    "ballistix:samturret"
+    "ballistix:samturret",
+    "ballistix:missilesilo"
   ]
 }

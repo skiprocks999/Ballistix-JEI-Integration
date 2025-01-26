@@ -1,6 +1,5 @@
 package ballistix.client.screen;
 
-import ballistix.Ballistix;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
@@ -17,7 +16,6 @@ import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,7 +32,7 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
 
         addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.SAM_TURRET_USAGEPERTICK * 20));
 
-        addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET, () -> {
+        addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();
             TileTurretSAM turret = menu.getSafeHost();
             if(turret == null) {

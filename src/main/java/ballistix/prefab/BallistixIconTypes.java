@@ -10,7 +10,9 @@ public enum BallistixIconTypes implements ITexture {
     TARGET(0, 0, 11, 11, 11, 11, Ballistix.rl("textures/screen/component/icon/target.png")),
     FREQUENCY(0, 0, 9, 15, 9, 15, Ballistix.rl("textures/screen/component/icon/frequency.png")),
     DELETE(0, 0, 8, 8, 8, 8, Ballistix.rl("textures/screen/component/icon/delete.png")),
-    REDSTONE(0, 0, 16, 16, 16, 16, Ballistix.rl("textures/screen/component/icon/redstone.png"));
+    REDSTONE(0, 0, 16, 16, 16, 16, Ballistix.rl("textures/screen/component/icon/redstone.png")),
+    TARGET_ENTITY(0, 0, 15, 15, 15, 15, Ballistix.rl("textures/screen/component/icon/target_entity.png")),
+    TARGET_MISSILE(0, 0, 15, 15, 15, 15, Ballistix.rl("textures/screen/component/icon/target_missile.png"));
 
     private final int textU;
     private final int textV;

@@ -1,13 +1,12 @@
 package ballistix.client.screen;
 
-import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.prefab.BallistixIconTypes;
+import ballistix.prefab.screen.ScreenComponentRadarGrid;
 import ballistix.prefab.screen.WrapperFireControlFrequencyManager;
 import ballistix.prefab.utils.BallistixTextUtils;
-import ballistix.registers.BallistixItems;
 import com.mojang.blaze3d.platform.InputConstants;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.prefab.screen.GenericScreen;
@@ -18,13 +17,11 @@ import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlid
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
-import electrodynamics.prefab.utilities.RenderingUtils;
 import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
     public final ScreenComponentVerticalSlider slider;
     public final WrapperFireControlFrequencyManager frequencyWrapper;
     public final ScreenComponentCustomRender trackingLabel;
-    public final ScreenComponentCustomRender trackingRender;
+    public final ScreenComponentRadarGrid radarGrid;
 
     public ScreenFireControlRadar(ContainerFireControlRadar container, Inventory inv, Component title) {
         super(container, inv, title);
@@ -63,7 +60,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 
         slider.setVisible(false);
 
-        addComponent(trackingLabel = new ScreenComponentCustomRender(10, 30, graphics -> {
+        addComponent(trackingLabel = new ScreenComponentCustomRender(10, 20, graphics -> {
             TileFireControlRadar tile = menu.getSafeHost();
             if (tile == null) {
                 return;
@@ -71,7 +68,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
             Component radar = tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH) ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN) : Component.literal(tile.trackingPos.get().toString()).withStyle(ChatFormatting.DARK_GRAY);
 
             int x = (int) (getGuiWidth() + 10);
-            int y = (int) (getGuiHeight() + 30);
+            int y = (int) (getGuiHeight() + 20);
 
             Component label = BallistixTextUtils.gui("radar.tracking").withStyle(ChatFormatting.BLACK);
 
@@ -105,28 +102,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 
         }));
 
-        addComponent(trackingRender = new ScreenComponentCustomRender(10, 50, graphics -> {
-            TileFireControlRadar tile = menu.getSafeHost();
-            if (tile == null) {
-                return;
-            }
-
-            int missileType = tile.missileType.get();
-
-            if (missileType < 0) {
-                return;
-            }
-
-            int x = (int) (getGuiWidth() + 65);
-            int y = (int) (getGuiHeight() + 80);
-
-            SubtypeMissile missileEnum = SubtypeMissile.values()[missileType];
-
-            Item missile = BallistixItems.ITEMS_MISSILE.getValue(missileEnum);
-
-            RenderingUtils.renderItemScaled(graphics, missile, x, y, 5.0F);
-
-        }));
+        addComponent(radarGrid = new ScreenComponentRadarGrid(27, 33, 121, 121));
 
         addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 3 + 2)
                 //
