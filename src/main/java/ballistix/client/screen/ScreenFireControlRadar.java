@@ -2,11 +2,10 @@ package ballistix.client.screen;
 
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
-import ballistix.common.item.ItemMissile;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.prefab.BallistixIconTypes;
-import ballistix.prefab.screen.WrapperFrequencyManager;
+import ballistix.prefab.screen.WrapperFireControlFrequencyManager;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -33,7 +32,7 @@ import java.util.List;
 public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRadar> {
 
     public final ScreenComponentVerticalSlider slider;
-    public final WrapperFrequencyManager frequencyWrapper;
+    public final WrapperFireControlFrequencyManager frequencyWrapper;
     public final ScreenComponentCustomRender trackingLabel;
     public final ScreenComponentCustomRender trackingRender;
 
@@ -58,7 +57,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 
         }, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
-        frequencyWrapper = new WrapperFrequencyManager(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 0, 0);
+        frequencyWrapper = new WrapperFireControlFrequencyManager(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 0, 0);
 
         addComponent(slider = new ScreenComponentVerticalSlider(11, 80, 75).setClickConsumer(frequencyWrapper.getSliderClickedConsumer()).setDragConsumer(frequencyWrapper.getSliderDraggedConsumer()));
 

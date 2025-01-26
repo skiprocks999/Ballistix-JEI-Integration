@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class WrapperFrequencyManager {
+public class WrapperFireControlFrequencyManager {
 
     private final ScreenFireControlRadar screen;
 
@@ -40,7 +40,7 @@ public class WrapperFrequencyManager {
 
     private static final int BUTTON_COUNT = 5;
 
-    public WrapperFrequencyManager(ScreenFireControlRadar screen, int tabX, int tabY, int x, int y) {
+    public WrapperFireControlFrequencyManager(ScreenFireControlRadar screen, int tabX, int tabY, int x, int y) {
         this.screen = screen;
 
         screen.addComponent(button = (ScreenComponentButton<?>) new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {

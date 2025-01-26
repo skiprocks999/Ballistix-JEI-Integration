@@ -95,6 +95,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
                 addContainer("missilesilo", "Missile Silo");
                 addContainer("samturret", "SAM Turret");
+                addContainer("searchradar", "Search Radar");
                 addContainer("firecontrolradar", "Fire Control Radar");
 
                 addGuiLabel("missilesilo.missile", "Missile");
@@ -155,6 +156,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addGuiLabel("radar.frequencywhitelist.disabled", "Disabled");
                 addGuiLabel("radar.frequencywhitelist.list", "Whitelisted");
                 addGuiLabel("radar.frequencywhitelist.add", "Add");
+                addGuiLabel("radar.bearingunknown", "Bearing Unknown");
+                addGuiLabel("radar.bearing", "Bearing: %s" + '\u00B0');
 
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");

@@ -1,9 +1,10 @@
 package ballistix.common.block.subtype;
 
 import ballistix.common.block.BallistixVoxelShapes;
+import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.common.tile.TileRadar;
+import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import electrodynamics.api.ISubtype;
 import electrodynamics.api.multiblock.subnodebased.Subnode;
@@ -25,9 +26,10 @@ import java.util.function.Supplier;
 public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 
     missilesilo(true,TileMissileSilo::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.MISSILE_SILO).setSubnodes(Subnodes.MISSILE_SILO)),
-    radar(true, TileRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
+    radar(true, TileSearchRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
     firecontrolradar(true, TileFireControlRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.FIRE_CONTROL_RADAR)),
-    samturret(true, TileTurretSAM::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.SAM_TURRET))
+    esmtower(true, TileESMTower::new),
+    samturret(true, TileTurretSAM::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.SAM_TURRET)),
     ;
 
     private final BlockEntityType.BlockEntitySupplier<BlockEntity> blockEntitySupplier;

@@ -66,7 +66,7 @@ public class TileFireControlRadar extends GenericTile {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        if (!hasPower || level.getBrightness(LightLayer.SKY, getBlockPos()) <= 0) {
+        if (!hasPower || level.getBrightness(LightLayer.SKY, getBlockPos()) <= 0 || (usingRedstone.get() && redstone)) {
             tracking = null;
             return;
         }

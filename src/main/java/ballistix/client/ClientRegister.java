@@ -11,6 +11,7 @@ import ballistix.client.render.tile.RenderSAMTurret;
 import ballistix.client.screen.ScreenFireControlRadar;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.client.screen.ScreenSAMTurret;
+import ballistix.client.screen.ScreenSearchRadar;
 import ballistix.common.item.ItemTracker;
 import ballistix.registers.*;
 import electrodynamics.Electrodynamics;
@@ -97,6 +98,7 @@ public class ClientRegister {
 		event.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
 		event.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
+		event.register(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), ScreenSearchRadar::new);
 	}
 
 	@SubscribeEvent

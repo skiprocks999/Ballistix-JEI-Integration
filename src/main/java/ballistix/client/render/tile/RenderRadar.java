@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import ballistix.common.tile.TileRadar;
+import ballistix.common.tile.radar.TileSearchRadar;
 import electrodynamics.client.render.tile.AbstractTileRenderer;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
@@ -14,14 +14,14 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 
-public class RenderRadar extends AbstractTileRenderer<TileRadar> {
+public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
 
 	public RenderRadar(Context context) {
 		super(context);
 	}
 
 	@Override
-	public void render(TileRadar tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(TileSearchRadar tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
 		BakedModel radardish = getModel(ballistix.client.ClientRegister.MODEL_RADARDISH);
 

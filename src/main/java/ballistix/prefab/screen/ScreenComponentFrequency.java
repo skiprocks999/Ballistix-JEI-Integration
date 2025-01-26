@@ -1,9 +1,6 @@
 package ballistix.prefab.screen;
 
-import ballistix.common.inventory.container.ContainerFireControlRadar;
-import ballistix.common.tile.radar.TileFireControlRadar;
 import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.ScreenComponentGeneric;
 import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
 import electrodynamics.prefab.utilities.math.Color;
@@ -24,14 +21,6 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
             return;
         }
 
-        GenericScreen<ContainerFireControlRadar> screen = (GenericScreen<ContainerFireControlRadar>) gui;
-
-        TileFireControlRadar tile = screen.getMenu().getSafeHost();
-
-        if (tile == null) {
-            return;
-        }
-
         ITexture texture = RadarTextures.FREQUENCY;
 
         ScreenComponentEditBox.drawExpandedBox(graphics, texture.getLocation(), xLocation + guiWidth, yLocation + guiHeight, width, height);
@@ -40,7 +29,7 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
             return;
         }
 
-        graphics.drawString(screen.getFontRenderer(), Component.literal(frequency + ""), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color(), false);
+        graphics.drawString(gui.getFontRenderer(), Component.literal(frequency + ""), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color(), false);
 
     }
 
