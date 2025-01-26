@@ -33,6 +33,8 @@ import java.util.List;
 
 public class TileFireControlRadar extends GenericTile {
 
+    public static final long PULSE_TIME_TICKS = 50L;
+
     public static final Vec3 OUT_OF_REACH = new Vec3(0, -1000, 0);
 
     public final Property<Vec3> trackingPos = property(new Property<>(PropertyTypes.VEC3, "trackingpos", OUT_OF_REACH));
@@ -107,7 +109,7 @@ public class TileFireControlRadar extends GenericTile {
         clientRotation += clientRotationSpeed;
 
         clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.get() ? 1 : -1), 0.0, 10.0);
-        if (tickable.getTicks() % 50 == 0 && running.get()) {
+        if (tickable.getTicks() % PULSE_TIME_TICKS == 0 && running.get()) {
             SoundAPI.playSound(BallistixSounds.SOUND_FIRECONTROLRADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
         }
     }

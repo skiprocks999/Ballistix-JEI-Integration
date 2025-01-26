@@ -3,14 +3,17 @@ package ballistix.prefab.screen;
 import ballistix.client.screen.ScreenFireControlRadar;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import electrodynamics.prefab.screen.component.ScreenComponentGeneric;
+import electrodynamics.prefab.tile.components.IComponentType;
+import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.math.Color;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
     private static final Color RADAR_BLACK = new Color(0, 0, 0, 255);
-    private static final Color RADAR_GREEN = new Color(36, 170, 90, 255);
-    private static final Color RADAR_BLUE = new Color(13, 167, 255, 255);
+    private static final Color RADAR_GRID_GREEN = new Color(19, 125, 62, 255);
+    private static final Color RADAR_PULSE_GREEN = new Color(38, 253, 9, 255);
     private static final Color RADAR_YELLOW = new Color(255, 246, 4, 255);
     private static final Color RADAR_RED = new Color(255, 0, 0, 255);
 
@@ -24,19 +27,15 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
         int x = xLocation + guiWidth;
         int y = yLocation + guiHeight;
 
+        TileFireControlRadar tile = ((ScreenFireControlRadar)gui).getMenu().getSafeHost();
+
+        if(tile == null) {
+            return;
+        }
+
         //BG
 
         graphics.fill(x, y, x + width, y + height, RADAR_BLACK.color());
-
-        //OUTLINE
-
-        graphics.fill(x, y, x + 1, y + height, Color.TEXT_GRAY.color());
-
-        graphics.fill(x + width - 1, y, x + width, y + height, Color.TEXT_GRAY.color());
-
-        graphics.fill(x, y, x + width, y + 1, Color.TEXT_GRAY.color());
-
-        graphics.fill(x, y + height - 1, x + width, y + height, Color.TEXT_GRAY.color());
 
         // GRID
 
@@ -44,62 +43,101 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         for(int i = 1; i < 10; i++) {
 
-            graphics.fill(x + 1, y + gridWidth * i, x + this.width - 1, y + 1 + gridWidth * i, RADAR_GREEN.color());
+            graphics.fill(x + 1, y + gridWidth * i, x + this.width - 1, y + 1 + gridWidth * i, RADAR_GRID_GREEN.color());
 
         }
 
         for(int i = 1; i < 10; i++) {
 
-            graphics.fill(x + + gridWidth * i, y + 1, x + 1 + gridWidth * i, y + height - 1, RADAR_GREEN.color());
+            graphics.fill(x + + gridWidth * i, y + 1, x + 1 + gridWidth * i, y + height - 1, RADAR_GRID_GREEN.color());
 
         }
 
-        TileFireControlRadar tile = ((ScreenFireControlRadar)gui).getMenu().getSafeHost();
+        if(!tile.running.get()) {
 
-        if(tile == null || tile.trackingPos.equals(TileFireControlRadar.OUT_OF_REACH) || !tile.running.get()) {
+            //OUTLINE
+
+            graphics.fill(x - 3, y - 3, x + 1, y + height + 3, Color.TEXT_GRAY.color());
+
+            graphics.fill(x + width - 1, y - 3, x + width + 3, y + height + 3, Color.TEXT_GRAY.color());
+
+            graphics.fill(x, y - 3, x + width, y + 1, Color.TEXT_GRAY.color());
+
+            graphics.fill(x, y + height - 1, x + width, y + height + 3, Color.TEXT_GRAY.color());
+
             return;
+
         }
 
         float center = (width - 2) / 2.0F + 1.0F;
 
-        long time = System.currentTimeMillis() % 2500L;
+        float ratio = (float) (tile.<ComponentTickable>getComponent(IComponentType.Tickable).getTicks() % TileFireControlRadar.PULSE_TIME_TICKS) / (float) TileFireControlRadar.PULSE_TIME_TICKS;
 
-        float ratio = time / 2500.0F;
+        float theta = ratio * 360.0F;
 
-        float min = ratio * center - 1.0F;
+        // LINE
 
-        float max = ratio * center - 1.0F;
+        float quad = theta % 90.0F;
 
-        int xMin = (int) Math.floor(x + center - min);
-        int xMax = (int) Math.ceil(x + center + max);
-        int yMin = (int) Math.floor(y + center - min);
-        int yMax = (int) Math.ceil(y + center + max);
+        if(quad > 45.0F) {
+            quad = 90 - quad;
+        }
 
-        graphics.fill(xMin, yMin, xMin + 1, yMax, RADAR_BLUE.color());
+        float angleRad = (float) (quad / 180.0F * Math.PI);
 
-        graphics.fill(xMax - 1, yMin, xMax, yMax, RADAR_BLUE.color());
+        float leg = (float) Math.abs(Math.tan(angleRad)) * center;
 
-        graphics.fill(xMin, yMin, xMax, yMin + 1, RADAR_BLUE.color());
+        float hyp = (float) Math.sqrt(leg * leg + center * center);
 
-        graphics.fill(xMin, yMax - 1, xMax, yMax, RADAR_BLUE.color());
+        float extra = hyp - center;
 
-        graphics.fill((int) Math.floor(x + center - 1), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center + 1), (int) Math.ceil(y + center + 1), RADAR_YELLOW.color());
+        graphics.pose().pushPose();
+
+        graphics.pose().translate(x + center, y + center, 0);
+
+        graphics.pose().mulPose(MathUtils.rotQuaternionDeg(0, 0, theta));
+
+        graphics.pose().translate(-x -center, -y -center, 0);
+
+        graphics.fill((int) Math.floor(x + 1 - extra - 2), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center), (int) Math.ceil(y + center + 1), RADAR_PULSE_GREEN.color());
+
+        graphics.pose().popPose();
+
+        //OUTLINE
+
+        graphics.fill(x - 3, y - 3, x + 1, y + height + 3, Color.TEXT_GRAY.color());
+
+        graphics.fill(x + width - 1, y - 3, x + width + 3, y + height + 3, Color.TEXT_GRAY.color());
+
+        graphics.fill(x, y - 3, x + width, y + 1, Color.TEXT_GRAY.color());
+
+        graphics.fill(x, y + height - 1, x + width, y + height + 3, Color.TEXT_GRAY.color());
+
+        graphics.fill((int) Math.floor(x + center - 1), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center + 1), (int) Math.ceil(y + center + 1), Color.JEI_TEXT_GRAY.color());
+
+        //DOT
 
         float deltaX = (float) (tile.trackingPos.get().x - tile.getBlockPos().getX());
 
         float deltaZ = (float) (tile.trackingPos.get().z - tile.getBlockPos().getZ());
 
-        //float mag = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-
-        //deltaX = deltaX / mag;
-
-        //deltaZ = deltaZ / mag;
-
         float offsetX = deltaX % center;
 
         float offsetZ = deltaZ % center;
 
-        graphics.fill((int) Math.floor(x + center + offsetX - 1), (int) Math.floor(y + center + offsetZ - 1), (int) Math.ceil(x + center + offsetX + 1), (int) Math.ceil(y + center + offsetZ + 1), RADAR_RED.color());
+        float mag = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+
+        deltaX = deltaX / mag;
+
+        deltaZ = deltaZ / mag;
+
+        double angleRads = Math.atan2(deltaZ, deltaX);
+
+        float dotTheta = (float) (angleRads / Math.PI * 180.0) + 180.0F;
+
+        int alpha = (int) ((dotTheta + 360.0F - theta) / 360.0F * 255.0F);
+
+        graphics.fill((int) Math.floor(x + center + offsetX - 1), (int) Math.floor(y + center + offsetZ - 1), (int) Math.ceil(x + center + offsetX + 1), (int) Math.ceil(y + center + offsetZ + 1), new Color(255, 0, 0, alpha).color());
 
     }
 }

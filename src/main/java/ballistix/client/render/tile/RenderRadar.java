@@ -38,7 +38,7 @@ public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
 		}
 
 		matrixStackIn.translate(7.75 / 16.0, 11.0 / 16.0, 7.75 / 16.0);
-		matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) yRot, 0));
+		matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, 0));
 		// matrixStackIn.mulPose(new Quaternion(0,(float) ((tileEntityIn.savedTickRotation + partial)), 0, true));
 		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), radardish, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 	}
