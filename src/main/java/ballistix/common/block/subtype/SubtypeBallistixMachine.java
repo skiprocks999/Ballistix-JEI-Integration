@@ -25,10 +25,10 @@ import java.util.function.Supplier;
 
 public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 
-    missilesilo(true,TileMissileSilo::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.MISSILE_SILO).setSubnodes(Subnodes.MISSILE_SILO)),
+    missilesilo(true, TileMissileSilo::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.MISSILE_SILO).setSubnodes(Subnodes.MISSILE_SILO)),
     radar(true, TileSearchRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
     firecontrolradar(true, TileFireControlRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.FIRE_CONTROL_RADAR)),
-    esmtower(true, TileESMTower::new),
+    esmtower(true, TileESMTower::new, MachineProperties.builder().setRenderShape(RenderShape.INVISIBLE).setShapeProvider(BallistixVoxelShapes.ESM_TOWER).setSubnodes(Subnodes.ESM_TOWER)),
     samturret(true, TileTurretSAM::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.SAM_TURRET)),
     ;
 
@@ -111,6 +111,15 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 
 
     public static class Subnodes {
+
+        public static IMultiblockParentBlock.SubnodeWrapper ESM_TOWER = make(() -> {
+
+            Subnode middle = new Subnode(new BlockPos(0, 1, 0), Shapes.or(Block.box(6, 0, 6, 10, 13, 10), Block.box(5, 13, 5, 11, 16, 11)));
+            Subnode top = new Subnode(new BlockPos(0, 2, 0), Block.box(5, 0, 5, 11, 16, 11));
+
+            return IMultiblockParentBlock.SubnodeWrapper.createOmni(new Subnode[]{middle, top});
+
+        });
 
         public static final IMultiblockParentBlock.SubnodeWrapper MISSILE_SILO = make(() -> {
 
@@ -809,8 +818,6 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
             return IMultiblockParentBlock.SubnodeWrapper.createDirectional(subnodesNorth, subnodesEast, subnodesSouth, subnodesWest);
 
         });
-
-
 
 
         public static IMultiblockParentBlock.SubnodeWrapper make(Supplier<IMultiblockParentBlock.SubnodeWrapper> sup) {

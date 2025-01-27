@@ -72,8 +72,11 @@ public class TileSearchRadar extends GenericTile {
                 redstone.set(false);
                 level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
             }
+            TileESMTower.removeSearchRadar(this);
             return;
         }
+
+        TileESMTower.addSearchRadar(this);
 
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 

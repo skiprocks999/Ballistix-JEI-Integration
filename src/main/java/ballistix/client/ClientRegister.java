@@ -4,14 +4,8 @@ import ballistix.Ballistix;
 import ballistix.References;
 import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.render.entity.*;
-import ballistix.client.render.tile.RenderFireControlRadar;
-import ballistix.client.render.tile.RenderMissileSilo;
-import ballistix.client.render.tile.RenderRadar;
-import ballistix.client.render.tile.RenderSAMTurret;
-import ballistix.client.screen.ScreenFireControlRadar;
-import ballistix.client.screen.ScreenMissileSilo;
-import ballistix.client.screen.ScreenSAMTurret;
-import ballistix.client.screen.ScreenSearchRadar;
+import ballistix.client.render.tile.*;
+import ballistix.client.screen.*;
 import ballistix.common.item.ItemTracker;
 import ballistix.registers.*;
 import electrodynamics.Electrodynamics;
@@ -58,6 +52,7 @@ public class ClientRegister {
 	public static final ModelResourceLocation MODEL_AAMISSILE = ModelResourceLocation.standalone(Ballistix.rl("entity/aamissile"));
 	public static final ModelResourceLocation MODEL_SAMTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/samturretballjoint"));
 	public static final ModelResourceLocation MODEL_SAMTURRET_RAIL = ModelResourceLocation.standalone(Ballistix.rl("block/samturretrail"));
+	public static final ModelResourceLocation MODEL_ESMTOWER = ModelResourceLocation.standalone(Ballistix.rl("block/esmtower"));
 
 
 	public static void setup() {
@@ -99,6 +94,7 @@ public class ClientRegister {
 		event.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
 		event.register(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), ScreenSearchRadar::new);
+		event.register(BallistixMenuTypes.CONTAINER_ESMTOWER.get(), ScreenESMTower::new);
 	}
 
 	@SubscribeEvent
@@ -116,6 +112,7 @@ public class ClientRegister {
 		event.register(MODEL_AAMISSILE);
 		event.register(MODEL_SAMTURRET_BALLJOINT);
 		event.register(MODEL_SAMTURRET_RAIL);
+		event.register(MODEL_ESMTOWER);
 	}
 
 	@SubscribeEvent
@@ -133,6 +130,7 @@ public class ClientRegister {
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_SAMTURRET.get(), RenderSAMTurret::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_ESMTOWER.get(), RenderESMTower::new);
 	}
 
 }

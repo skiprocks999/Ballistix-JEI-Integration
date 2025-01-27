@@ -51,6 +51,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), "Radar");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), "SAM Turret");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), "ESM Tower");
 
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");
@@ -97,6 +98,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addContainer("samturret", "SAM Turret");
                 addContainer("searchradar", "Search Radar");
                 addContainer("firecontrolradar", "Fire Control Radar");
+                addContainer("esmtower", "ESM Tower");
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");
@@ -158,6 +160,10 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addGuiLabel("radar.frequencywhitelist.add", "Add");
                 addGuiLabel("radar.bearingunknown", "Bearing Unknown");
                 addGuiLabel("radar.bearing", "Bearing: %1$s" + '\u00B0' + " - %2$s" + '\u00B0');
+
+                addGuiLabel("esmtower.nosearchradars", "No Search Radars Detected");
+                addGuiLabel("esmtower.searchradardetected", "Search Radar Detected");
+                addGuiLabel("esmtower.detectedfirecontrolradars", "Fire Control Radars");
 
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");

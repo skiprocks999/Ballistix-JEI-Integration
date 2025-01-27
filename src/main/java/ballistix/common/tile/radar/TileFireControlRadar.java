@@ -3,6 +3,7 @@ package ballistix.common.tile.radar;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.settings.Constants;
+import ballistix.common.tile.TileESMTower;
 import ballistix.prefab.BallistixPropertyTypes;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
@@ -69,8 +70,11 @@ public class TileFireControlRadar extends GenericTile {
 
         if (!running.get()) {
             tracking = null;
+            TileESMTower.removeFireControlRadar(this);
             return;
         }
+
+        TileESMTower.addFireControlRadar(this);
 
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
@@ -108,7 +112,7 @@ public class TileFireControlRadar extends GenericTile {
     public void tickClient(ComponentTickable tickable) {
         clientRotation += clientRotationSpeed;
 
-        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.get() ? 1 : -1), 0.0, 10.0);
+        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.get() ? 1 : -1), 0.0, 20.0);
         if (tickable.getTicks() % PULSE_TIME_TICKS == 0 && running.get()) {
             SoundAPI.playSound(BallistixSounds.SOUND_FIRECONTROLRADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
         }

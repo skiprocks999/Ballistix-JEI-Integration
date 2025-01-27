@@ -62,6 +62,14 @@ public class Constants {
 	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 45.0;
 	@DoubleValue(def = 10000, comment = "Usage per launch in joules")
 	public static double MISSILESILO_USAGE = 10000;
+	@IntValue(def = 60)
+	public static int ROCKET_LAUNCHER_COOLDOWN_TICKS = 60;
+
+	@DoubleValue(def = 1000.0)
+	public static double ESM_TOWER_USAGE_PER_TICK = 1000.0;
+	@DoubleValue(def = 100)
+	public static double ESM_TOWER_SEARCH_RADIUS = 100.0;
+
 	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
 	public static double RADAR_USAGE = 10000;
 	@DoubleValue(def = 600)
@@ -73,9 +81,6 @@ public class Constants {
 	public static int FIRE_CONTROL_RADAR_RANGE = 550;
 	@DoubleValue(def = 32.0, comment = "How far a turret can be from a fire control radar")
 	public static double MAX_DISTANCE_FROM_RADAR = 32.0;
-
-	@IntValue(def = 60)
-	public static int ROCKET_LAUNCHER_COOLDOWN_TICKS = 60;
 
 	@DoubleValue(def = 1000)
 	public static double SAM_TURRET_USAGEPERTICK = 1000;

@@ -96,7 +96,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
             int thetaMin = (int) (Math.floor(theta) - 1);
             int thetaMax = (int) (Math.floor(theta) + 1);
 
-            text = BallistixTextUtils.gui("radar.bearing", Component.literal("" + thetaMin).withStyle(ChatFormatting.WHITE), Component.literal("" + thetaMax).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.BLACK);
+            text = BallistixTextUtils.gui("radar.bearing", Component.literal("" + thetaMin % 360).withStyle(ChatFormatting.WHITE), Component.literal("" + thetaMax % 360).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.BLACK);
 
             scale = 1.0F;
 
@@ -117,7 +117,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
 
         } else {
-            graphics.drawString(font, BallistixTextUtils.gui("radar.nobearing"), x, y, Color.WHITE.color(), false);
+            graphics.drawString(font, BallistixTextUtils.gui("radar.bearingunknown"), guiWidth + x, guiHeight + y, Color.BLACK.color(), false);
         }
 
     }
