@@ -61,6 +61,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
             if(level.getBlockEntity(boundFireControl.get()) instanceof TileFireControlRadar fire) {
                 radar = fire;
             } else {
+                radar = null;
                 boundFireControl.set(BlockEntityUtils.OUT_OF_REACH);
             }
         }

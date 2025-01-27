@@ -111,7 +111,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 			miss.missileType = 0;
 			miss.isItem = true;
 			world.addFreshEntity(miss);
-			world.playSound(null, player.blockPosition().above(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+			world.playSound(null, player.blockPosition().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 		}
 
 	}

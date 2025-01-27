@@ -34,7 +34,7 @@ import java.util.List;
 
 public class TileFireControlRadar extends GenericTile {
 
-    public static final long PULSE_TIME_TICKS = 50L;
+    public static final long PULSE_TIME_TICKS = 25L;
 
     public static final Vec3 OUT_OF_REACH = new Vec3(0, -1000, 0);
 
