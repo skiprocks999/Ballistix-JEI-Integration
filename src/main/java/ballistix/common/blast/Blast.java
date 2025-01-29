@@ -196,7 +196,7 @@ public abstract class Blast {
 				double damage = damageAmount;
 				int i = EnchantmentHelper.getEnchantmentLevel(world.registryAccess().holderOrThrow(Enchantments.BLAST_PROTECTION), le);
 				if (i > 0) {
-					damage *= Mth.clamp(1.0D - (double)i * 0.15D, 0.0D, 1.0D);
+					damage *= Mth.clamp(1.0D - i * 0.15D, 0.0D, 1.0D);
 				}
 
 				actualDamange = damage;

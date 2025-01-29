@@ -20,8 +20,6 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.awt.*;
-
 public class RenderMinecart extends EntityRenderer<EntityMinecart> {
     private static final ResourceLocation MINECART_LOCATION = ResourceLocation.parse("textures/entity/minecart.png");
     protected final EntityModel<EntityMinecart> model;

@@ -1,30 +1,20 @@
 package ballistix.common.tile;
 
-import ballistix.registers.BallistixDataComponentTypes;
-import electrodynamics.api.multiblock.subnodebased.Subnode;
-import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
-import net.neoforged.neoforge.common.world.chunk.TicketController;
+import org.jetbrains.annotations.Nullable;
 
 import ballistix.References;
+import ballistix.api.silo.SiloRegistry;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemMissile;
-import ballistix.api.silo.SiloRegistry;
 import ballistix.common.settings.Constants;
-import ballistix.registers.BallistixTiles;
+import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixTiles;
+import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock.SubnodeWrapper;
+import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
 import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.properties.Property;
@@ -36,19 +26,29 @@ import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsBlocks;
+import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.Nullable;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockParentTile {
 
@@ -207,14 +207,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     @Override
-    public Subnode[] getSubNodes() {
-
-        return switch (getFacing()) {
-            case EAST -> BlockMissileSilo.SUBNODES_EAST;
-            case WEST -> BlockMissileSilo.SUBNODES_WEST;
-            case NORTH -> BlockMissileSilo.SUBNODES_NORTH;
-            default -> BlockMissileSilo.SUBNODES_SOUTH;
-        };
+    public SubnodeWrapper getSubNodes() {
+        return SubnodeWrapper.createDirectional(BlockMissileSilo.SUBNODES_NORTH, BlockMissileSilo.SUBNODES_EAST, BlockMissileSilo.SUBNODES_SOUTH, BlockMissileSilo.SUBNODES_WEST);
 
     }
 
@@ -372,6 +366,12 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         }
 
 
+    }
+
+    @Override
+    public Direction getFacingDirection() {
+	// TODO Auto-generated method stub
+	return null;
     }
 
 }

@@ -3,14 +3,9 @@ package ballistix.common.block.subtype;
 import ballistix.common.blast.*;
 import electrodynamics.api.ISubtype;
 import electrodynamics.common.block.voxelshapes.VoxelShapeProvider;
-import electrodynamics.prefab.utilities.object.FunctionalInterfaces.QuadFunction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 public enum SubtypeBlast implements ISubtype {
 	obsidian(BlastObsidian::new, 120),
