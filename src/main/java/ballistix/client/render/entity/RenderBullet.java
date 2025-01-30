@@ -38,7 +38,7 @@ public class RenderBullet extends EntityRenderer<EntityBullet> {
 
         matrixStackIn.pushPose();
 
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -entity.getYRot() - 180, 90 - entity.getXRot()));
+        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (-entity.getYRot()) - 180, 90 - entity.getXRot()));
 
         RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), new AABB(0, 0, 0, 0.0625, 0.0625, 0.0625), COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
 

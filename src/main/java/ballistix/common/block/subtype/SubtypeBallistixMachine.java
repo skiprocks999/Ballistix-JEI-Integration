@@ -88,6 +88,7 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
         return false;
     }
 
+    @Override
     public boolean isPlayerStorable() {
         return false;
     }

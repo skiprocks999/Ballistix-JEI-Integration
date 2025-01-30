@@ -71,8 +71,8 @@ public class WrapperSearchRadarDetections {
                 int moveRoom = screen.detectionsSlider.height - 15 -2;
 
                 // int moveRoom = 102 - 2;
-                double moved = (double) topRowIndex / (double) (lastRowCount - (double) BUTTON_COUNT);
-                slider.setSliderYOffset((int) ((double) moveRoom * moved));
+                double moved = topRowIndex / (lastRowCount - (double) BUTTON_COUNT);
+                slider.setSliderYOffset((int) (moveRoom * moved));
             }
         } else {
             slider.updateActive(false);
@@ -116,8 +116,8 @@ public class WrapperSearchRadarDetections {
                     double heightRatio = (double) mouseHeight / (double) sliderHeight;
                     topRowIndex = (int) Math.round((lastRowCount - BUTTON_COUNT) * heightRatio);
                     int moveRoom = slider.height - 15 - 2;
-                    double moved = (double) topRowIndex / (double) (lastRowCount - (double)BUTTON_COUNT);
-                    slider.setSliderYOffset((int) ((double) moveRoom * moved));
+                    double moved = topRowIndex / (lastRowCount - (double)BUTTON_COUNT);
+                    slider.setSliderYOffset((int) (moveRoom * moved));
                 }
             }
         };

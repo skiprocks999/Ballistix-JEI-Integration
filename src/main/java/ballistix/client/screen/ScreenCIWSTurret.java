@@ -72,10 +72,10 @@ public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
             width = font.width(radar);
 
             if(width > 100) {
-                scale = 100.0F / (float) width;
+                scale = 100.0F / width;
             }
 
-            float remHeight = (height - (float) height * scale) / 2.0F;
+            float remHeight = (height - height * scale) / 2.0F;
 
             graphics.pose().pushPose();
 

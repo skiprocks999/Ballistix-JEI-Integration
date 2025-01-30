@@ -25,30 +25,37 @@ public enum RadarTextures implements ITexture {
         this.loc = loc;
     }
 
+    @Override
     public ResourceLocation getLocation() {
         return this.loc;
     }
 
+    @Override
     public int imageHeight() {
         return this.imageHeight;
     }
 
+    @Override
     public int imageWidth() {
         return this.imageWidth;
     }
 
+    @Override
     public int textureHeight() {
         return this.textureHeight;
     }
 
+    @Override
     public int textureU() {
         return this.textureU;
     }
 
+    @Override
     public int textureV() {
         return this.textureV;
     }
 
+    @Override
     public int textureWidth() {
         return this.textureWidth;
     }
