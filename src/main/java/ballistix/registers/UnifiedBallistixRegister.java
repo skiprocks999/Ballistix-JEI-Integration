@@ -1,6 +1,9 @@
 package ballistix.registers;
 
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.recipe.BallistixRecipeInit;
+import electrodynamics.common.blockitem.types.BlockItemDescriptable;
+import electrodynamics.prefab.utilities.ElectroTextUtils;
 import net.neoforged.bus.api.IEventBus;
 
 public class UnifiedBallistixRegister {
@@ -16,6 +19,18 @@ public class UnifiedBallistixRegister {
 		BallistixEntities.ENTITIES.register(bus);
 		BallistixSounds.SOUNDS.register(bus);
 		BallistixCreativeTabs.CREATIVE_TABS.register(bus);
+	}
+
+	static {
+
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.missilesilo), ElectroTextUtils.voltageTooltip(120));
+
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.radar), ElectroTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.firecontrolradar), ElectroTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.esmtower), ElectroTextUtils.voltageTooltip(480));
+
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.samturret), ElectroTextUtils.voltageTooltip(120));
+
 	}
 
 }

@@ -1,6 +1,7 @@
 package ballistix.datagen.client;
 
 import ballistix.References;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
@@ -46,8 +47,12 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Darkmatter Explosive");
                 addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), "Landmine");
 
-                addBlock(BallistixBlocks.BLOCK_MISSILESILO, "Missile Silo");
-                addBlock(BallistixBlocks.BLOCK_RADAR, "Radar");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), "Missile Silo");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), "Radar");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), "SAM Turret");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), "ESM Tower");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), "CIWS Turret");
 
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");
@@ -81,6 +86,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.mediumrange), "Medium-range Missile");
                 addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.longrange), "Long-range Missile");
 
+                addItem(BallistixItems.ITEM_AAMISSILE, "Ballistic Rocket");
+
                 addItem(BallistixItems.ITEM_ROCKETLAUNCHER, "Rocket Launcher");
                 addItem(BallistixItems.ITEM_RADARGUN, "Radar Gun");
                 addItem(BallistixItems.ITEM_LASERDESIGNATOR, "Laser Designator");
@@ -89,6 +96,11 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addItem(BallistixItems.ITEM_DEFUSER, "Defuser");
 
                 addContainer("missilesilo", "Missile Silo");
+                addContainer("samturret", "SAM Turret");
+                addContainer("searchradar", "Search Radar");
+                addContainer("firecontrolradar", "Fire Control Radar");
+                addContainer("esmtower", "ESM Tower");
+                addContainer("ciwsturret", "CIWS Turret");
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");
@@ -102,6 +114,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addDamageSource("shrapnel", "%s was hit by shrapnel!");
 
                 addChatMessage("radargun.text", "Coordinates: %s");
+                addChatMessage("radargun.turretsucess", "Bound");
+                addChatMessage("radargun.turrettoofar", "Turret too far away!");
                 addChatMessage("laserdesignator.launch", "Launching all missiles with frequency %s to targets: ");
                 addChatMessage("laserdesignator.launchsend", "-> %s");
                 addChatMessage("laserdesignator.setfrequency", "Set frequency to: %s");
@@ -118,10 +132,50 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("missile.range", "Range: %s Blocks");
                 addTooltip("missile.unlimited", "Unlimited");
 
+                addTooltip("turret.blockrange", "Block Range");
+                addTooltip("turret.maxrange", "Max: %s");
+                addTooltip("turret.minrange", "Min: %s");
+
+                addTooltip("radar.frequencymanager", "Frequency Manager");
+                addTooltip("radar.frequencymanager.delete", "Delete");
+
+                addTooltip("radar.redstone", "Redstone");
+                addTooltip("radar.redstone.enabled", "Enabled");
+                addTooltip("radar.redstone.disabled", "Disabled");
+
+                addGuiLabel("turret.radar", "Radar: ");
+                addGuiLabel("turret.radarnone", "None");
+                addGuiLabel("turret.status", "Status: %s");
+                addGuiLabel("turret.statusunlinked", "Unlinked");
+                addGuiLabel("turret.statusnopower", "No Power");
+                addGuiLabel("turret.statuscooldown", "Cooldown %s");
+                addGuiLabel("turret.statusnotarget", "No Target");
+                addGuiLabel("turret.statusoutofrange", "Out of Range");
+                addGuiLabel("turret.statusnoammo", "No Ammo");
+                addGuiLabel("turret.statusgood", "Good");
+
+                addGuiLabel("radar.tracking", "Tracking: ");
+                addGuiLabel("radar.frequencywhitelist.mode", "Whitelist Mode");
+                addGuiLabel("radar.frequencywhitelist.enabled", "Enabled");
+                addGuiLabel("radar.frequencywhitelist.disabled", "Disabled");
+                addGuiLabel("radar.frequencywhitelist.list", "Whitelisted");
+                addGuiLabel("radar.frequencywhitelist.add", "Add");
+                addGuiLabel("radar.bearingunknown", "Bearing Unknown");
+                addGuiLabel("radar.bearing", "Bearing: %1$s" + '\u00B0' + " - %2$s" + '\u00B0');
+
+                addGuiLabel("esmtower.nosearchradars", "No Search Radars Detected");
+                addGuiLabel("esmtower.searchradardetected", "Search Radar Detected");
+                addGuiLabel("esmtower.detectedfirecontrolradars", "Fire Control Radars");
+
                 addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_NUCLEAREXPLOSION, "Nuclear bomb detonates");
                 addSubtitle(BallistixSounds.SOUND_EMPEXPLOSION, "EMP detonates");
+                addSubtitle(BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER, "Missile is fired from rocket lancher");
+                addSubtitle(BallistixSounds.SOUND_MISSILE_SILO, "Missile launches from silo");
+                addSubtitle(BallistixSounds.SOUND_RADAR, "Radar pulses");
+                addSubtitle(BallistixSounds.SOUND_FIRECONTROLRADAR, "Fire Control Radar tracks");
+                addSubtitle(BallistixSounds.SOUND_CIWS_TURRETFIRING, "CIWS Turret Fires");
 
                 addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
                 addDimension(Level.NETHER.location().getPath(), "The Nether");

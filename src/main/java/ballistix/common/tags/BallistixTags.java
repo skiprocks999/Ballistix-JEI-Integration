@@ -1,6 +1,6 @@
 package ballistix.common.tags;
 
-import net.minecraft.resources.ResourceLocation;
+import electrodynamics.Electrodynamics;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -23,7 +23,7 @@ public class BallistixTags {
 		}
 
 		private static TagKey<Item> forgeTag(String name) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+			return ItemTags.create(Electrodynamics.commonrl(name));
 		}
 
 	}

@@ -1,11 +1,29 @@
 package ballistix.common.tile;
 
-import org.jetbrains.annotations.Nullable;
+import ballistix.Ballistix;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
+import ballistix.registers.BallistixDataComponentTypes;
+import ballistix.registers.BallistixSounds;
+import electrodynamics.api.capability.types.electrodynamic.ICapabilityElectrodynamic;
+import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
+import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
+import electrodynamics.prefab.tile.components.type.*;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
+import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 import ballistix.References;
 import ballistix.api.silo.SiloRegistry;
 import ballistix.common.block.BlockExplosive;
-import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemMissile;
@@ -21,8 +39,6 @@ import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
@@ -81,6 +97,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         super(BallistixTiles.TILE_MISSILESILO.get(), pos, state);
 
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(120).maxJoules(Constants.MISSILESILO_USAGE * 20).setInputDirections(BlockEntityUtils.MachineDirection.values()));
         addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
         addComponent(new ComponentPacketHandler(this));
         addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
@@ -93,7 +110,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
             target.set(getBlockPos());
         }
 
-        if (cooldown > 0) {
+        ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+
+        if (cooldown > 0 || electro.getJoulesStored() < Constants.MISSILESILO_USAGE) {
             cooldown--;
             return;
         }
@@ -114,16 +133,42 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
         ItemStack mis = inv.getItem(MISSILE_SLOT);
 
-        EntityMissile missile = new EntityMissile(level);
-        missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
-        missile.range = ((ItemMissile) mis.getItem()).missile.ordinal();
+        EntityMissile missile;
+
+        int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
+
+        if (ordinal == 0) {
+
+            missile = new EntityMissile.EntityMissileCloseRange(level);
+
+        } else if (ordinal == 1) {
+
+            missile = new EntityMissile.EntityMissileMediumRange(level);
+
+        } else {
+
+            missile = new EntityMissile.EntityMissileLongRange(level);
+
+        }
+
+        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 20.5, getBlockPos().getZ() + 0.5);
+        missile.missileType = ordinal;
         missile.target = target.get();
         missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();
+        missile.startX = (float) missile.getX();
+        missile.startZ = (float) missile.getZ();
+        missile.speed = 0;
+        missile.frequency = frequency.get();
+        missile.setDeltaMovement(new Vec3(0, 1, 0));
+
+        electro.joules(electro.getJoulesStored() - Constants.MISSILESILO_USAGE);
 
         inv.removeItem(MISSILE_SLOT, 1);
         inv.removeItem(EXPLOSIVE_SLOT, 1);
 
         level.addFreshEntity(missile);
+
+        level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 
         cooldown = COOLDOWN;
 
@@ -207,9 +252,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     @Override
-    public SubnodeWrapper getSubNodes() {
-        return SubnodeWrapper.createDirectional(BlockMissileSilo.SUBNODES_NORTH, BlockMissileSilo.SUBNODES_EAST, BlockMissileSilo.SUBNODES_SOUTH, BlockMissileSilo.SUBNODES_WEST);
+    public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
 
+        return SubtypeBallistixMachine.Subnodes.MISSILE_SILO;
     }
 
     @Override
@@ -219,7 +264,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         handleExplosive(inv, index);
 
-
+        handleSync(inv, index);
 
     }
 
@@ -273,21 +318,21 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     private void handleSync(ComponentInventory inv, int index) {
-        if(index == 2 || index == -1) {
+        if (index == 2 || index == -1) {
 
             ItemStack sync = inv.getItem(2);
 
-            if(sync.isEmpty()) {
+            if (sync.isEmpty()) {
                 return;
             }
 
-            if(sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
+            if (sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
 
                 sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.get());
 
             } else if (sync.is(BallistixItems.ITEM_RADARGUN)) {
 
-                if(sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+                if (sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
                     target.set(sync.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
                 }
 
@@ -333,6 +378,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     }
 
     @Override
+    public Direction getFacingDirection() {
+        return getFacing();
+    }
+
+    @Override
     public ItemInteractionResult onSubnodeUseWithItem(ItemStack used, Player player, InteractionHand hand, BlockHitResult hit, TileMultiSubnode subnode) {
         return useWithItem(used, player, hand, hit);
     }
@@ -347,6 +397,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         return getItemHandlerCapability(side);
     }
 
+    @Override
+    public @Nullable ICapabilityElectrodynamic getSubnodeElectrodynamicCapability(TileMultiSubnode subnode, @Nullable Direction side) {
+        return getElectrodynamicCapability(side);
+    }
+
     public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {
         double deltaX = fromPos.getX() - toPos.getX();
         double deltaY = fromPos.getY() - toPos.getY();
@@ -358,7 +413,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
     @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
-        private static final TicketController TICKET_CONTROLLER = new TicketController(ResourceLocation.fromNamespaceAndPath(References.ID, "chunkloadercontroller"));
+        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("chunkloadercontroller"));
 
         @SubscribeEvent
         public static void register(RegisterTicketControllersEvent event) {
@@ -366,12 +421,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         }
 
 
-    }
-
-    @Override
-    public Direction getFacingDirection() {
-	// TODO Auto-generated method stub
-	return null;
     }
 
 }

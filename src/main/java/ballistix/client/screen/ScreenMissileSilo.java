@@ -1,12 +1,14 @@
 package ballistix.client.screen;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
 import electrodynamics.prefab.screen.component.types.ScreenComponentFillArea;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import electrodynamics.prefab.utilities.math.Color;
@@ -31,6 +33,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		imageHeight += 20;
 		inventoryLabelY += 20;
 
+		addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
+
 		addEditBox(xCoordField = new ScreenComponentEditBox(10, 20, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(yCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(zCoordField = new ScreenComponentEditBox(10, 56, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
@@ -46,7 +50,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		addComponent(new ScreenComponentSimpleLabel(60, 76, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.freq")));
 		addComponent(new ScreenComponentSimpleLabel(110, 74, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.sync")));
 
-		new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1, 2, 75, 102, 8, 92).hideAdditional(show -> {
+		new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 75, 102, 8, 92).hideAdditional(show -> {
 
 		});
 	}

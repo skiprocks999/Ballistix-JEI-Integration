@@ -1,6 +1,7 @@
 package ballistix.datagen.server.recipe.vanilla;
 
 import ballistix.References;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
@@ -28,7 +29,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
     @Override
     public void addRecipes(RecipeOutput output) {
 
-        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_MISSILESILO.get(), 1)
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), 1)
                 //
                 .addPattern("P P")
                 //

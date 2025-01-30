@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import ballistix.References;
 import ballistix.registers.BallistixBlocks;
+import electrodynamics.common.block.BlockMachine;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
@@ -20,9 +21,9 @@ public class BallistixBlockTagsProvider extends BlockTagsProvider {
 	@Override
 	protected void addTags(Provider provider) {
 
-		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BallistixBlocks.BLOCK_MISSILESILO.get());
+		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getAllValuesArray(new BlockMachine[0]));
 
-		tag(BlockTags.NEEDS_STONE_TOOL).add(BallistixBlocks.BLOCK_MISSILESILO.get());
+		tag(BlockTags.NEEDS_STONE_TOOL).add(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getAllValuesArray(new BlockMachine[0]));
 
 	}
 

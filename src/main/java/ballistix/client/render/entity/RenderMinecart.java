@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import ballistix.common.entity.EntityMinecart;
 import ballistix.registers.BallistixBlocks;
+import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.math.Color;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.model.EntityModel;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class RenderMinecart extends EntityRenderer<EntityMinecart> {
-    private static final ResourceLocation MINECART_LOCATION = ResourceLocation.parse("textures/entity/minecart.png");
+    private static final ResourceLocation MINECART_LOCATION = Electrodynamics.vanillarl("textures/entity/minecart.png");
     protected final EntityModel<EntityMinecart> model;
 
     public RenderMinecart(EntityRendererProvider.Context context) {

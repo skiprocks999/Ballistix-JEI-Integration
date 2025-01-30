@@ -1,6 +1,7 @@
 package ballistix.client.guidebook.chapters;
 
-import ballistix.References;
+import ballistix.Ballistix;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import electrodynamics.client.guidebook.utils.components.Chapter;
@@ -9,11 +10,10 @@ import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObje
 import electrodynamics.client.guidebook.utils.pagedata.graphics.ItemWrapperObject;
 import electrodynamics.client.guidebook.utils.pagedata.text.TextWrapperObject;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 
 public class ChapterMissileSilo extends Chapter {
 
-	private static final ItemWrapperObject LOGO = new ItemWrapperObject(7, 10, 32, 32, 32, 2.0F, BallistixItems.ITEM_MISSILESILO.get());
+	private static final ItemWrapperObject LOGO = new ItemWrapperObject(7, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo));
 
 	public ChapterMissileSilo(Module module) {
 		super(module);
@@ -37,8 +37,8 @@ public class ChapterMissileSilo extends Chapter {
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.range", BallistixTextUtils.guidebook("chapter.missilesilo.long"), BallistixTextUtils.guidebook("chapter.missilesilo.unlimited"))).setIndentions(1).setSeparateStart());
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.l2")).setSeparateStart());
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.l3")).setIndentions(1).setSeparateStart());
-		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, ResourceLocation.fromNamespaceAndPath(References.ID, "textures/screen/guidebook/silo1.png")));
-		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, ResourceLocation.fromNamespaceAndPath(References.ID, "textures/screen/guidebook/silo2.png")));
+		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/silo1.png")));
+		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/silo2.png")));
 
 	}
 

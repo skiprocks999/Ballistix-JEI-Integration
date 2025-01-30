@@ -1,12 +1,18 @@
 package ballistix.prefab;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import electrodynamics.api.screen.ITexture;
 import net.minecraft.resources.ResourceLocation;
 
 public enum BallistixIconTypes implements ITexture {
-    MISSILE_DARK(0, 0, 14, 14, 14, 14, ResourceLocation.fromNamespaceAndPath(References.ID, "textures/screen/component/icon/missile_dark.png")),
-    EXPLOSIVE_DARK(0, 0, 16, 16, 16, 16, ResourceLocation.fromNamespaceAndPath(References.ID, "textures/screen/component/icon/explosive_dark.png"));
+    MISSILE_DARK(0, 0, 14, 14, 14, 14, Ballistix.rl("textures/screen/component/icon/missile_dark.png")),
+    EXPLOSIVE_DARK(0, 0, 16, 16, 16, 16, Ballistix.rl("textures/screen/component/icon/explosive_dark.png")),
+    TARGET(0, 0, 11, 11, 11, 11, Ballistix.rl("textures/screen/component/icon/target.png")),
+    FREQUENCY(0, 0, 9, 15, 9, 15, Ballistix.rl("textures/screen/component/icon/frequency.png")),
+    DELETE(0, 0, 8, 8, 8, 8, Ballistix.rl("textures/screen/component/icon/delete.png")),
+    REDSTONE(0, 0, 16, 16, 16, 16, Ballistix.rl("textures/screen/component/icon/redstone.png")),
+    TARGET_ENTITY(0, 0, 15, 15, 15, 15, Ballistix.rl("textures/screen/component/icon/target_entity.png")),
+    TARGET_MISSILE(0, 0, 15, 15, 15, 15, Ballistix.rl("textures/screen/component/icon/target_missile.png"));
 
     private final int textU;
     private final int textV;

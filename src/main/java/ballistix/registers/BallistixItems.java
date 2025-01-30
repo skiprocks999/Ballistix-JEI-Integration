@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.References;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemDefuser;
@@ -35,13 +36,13 @@ public class BallistixItems {
 
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, References.ID);
 
-	public static final DeferredHolder<Item, BlockItemDescriptable> ITEM_MISSILESILO = ITEMS.register("missilesilo", () -> new BlockItemDescriptable(BallistixBlocks.BLOCK_MISSILESILO.get(), new Item.Properties(), BallistixCreativeTabs.MAIN));
-	public static final DeferredHolder<Item, BlockItemDescriptable> ITEM_RADAR = ITEMS.register("radar", () -> new BlockItemDescriptable(BallistixBlocks.BLOCK_RADAR.get(), new Item.Properties(), BallistixCreativeTabs.MAIN));
+	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkDeferredHolder<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
 	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkDeferredHolder<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
 	public static final BulkDeferredHolder<Item, ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkDeferredHolder<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype)));
 	public static final BulkDeferredHolder<Item, ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkDeferredHolder<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype)));
 	public static final BulkDeferredHolder<Item, ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkDeferredHolder<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
+	public static final DeferredHolder<Item, ItemElectrodynamics> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemElectrodynamics(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemElectrodynamics> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemElectrodynamics(new Item.Properties(), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);
 	public static final DeferredHolder<Item, ItemRadarGun> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);

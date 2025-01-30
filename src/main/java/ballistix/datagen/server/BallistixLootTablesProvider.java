@@ -3,6 +3,7 @@ package ballistix.datagen.server;
 import java.util.List;
 
 import ballistix.References;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixTiles;
 import ballistix.registers.BallistixBlocks;
@@ -23,13 +24,18 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 			addSimpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(blast));
 		}
 
-		addMachineTable(BallistixBlocks.BLOCK_MISSILESILO.get(), BallistixTiles.TILE_MISSILESILO, true, false, false, false, false);
+		addMachineTable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), BallistixTiles.TILE_MISSILESILO, true, false, false, false, false);
+		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar));
+		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar));
+		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret));
+		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower));
+		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret));
 
 	}
 
 	@Override
 	public List<Block> getExcludedBlocks() {
-		return List.of(BallistixBlocks.BLOCK_RADAR.get());
+		return List.of();
 	}
 
 }

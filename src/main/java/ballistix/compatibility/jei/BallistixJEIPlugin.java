@@ -1,6 +1,6 @@
 package ballistix.compatibility.jei;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -14,9 +14,11 @@ import net.minecraft.world.item.ItemStack;
 @JeiPlugin
 public class BallistixJEIPlugin implements IModPlugin {
 
+	public static final ResourceLocation ID = Ballistix.rl("jei");
+
 	@Override
 	public ResourceLocation getPluginUid() {
-		return ResourceLocation.fromNamespaceAndPath(References.ID, "jei");
+		return ID;
 	}
 
 	@Override
