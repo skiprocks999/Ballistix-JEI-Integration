@@ -84,18 +84,29 @@ public class Constants {
 
 	@DoubleValue(def = 1000)
 	public static double SAM_TURRET_USAGEPERTICK = 1000;
-	@DoubleValue(def = 500)
+	@DoubleValue(def = 300)
 	public static double SAM_TURRET_BASE_RANGE = 300;
 	@DoubleValue(def = 0.2)
 	public static double SAM_TURRET_ROTATIONSPEEDRADIANS = 0.2;
-	@IntValue(def = 60)
+	@IntValue(def = 100)
 	public static int SAM_TURRET_COOLDOWN = 100;
-	@DoubleValue(def = 0.1)
-	public static double SAM_CHANCE_TO_MISS = 0.1;
+	@DoubleValue(def = 0.02)
+	public static double SAM_INNACCURACY = 0.02;
 
-	@DoubleValue(def = 1.01, comment = "The amount of inaccuracy each range upgrade will add to the turret. Set to 1 to disable.")
-	public static double RANGE_INCREASE_INACCURACY_MULTIPLIER = 1.01;
+	@DoubleValue(def = 1000)
+	public static double CIWS_TURRET_USAGEPERTICK = 1000;
+	@DoubleValue(def = 100)
+	public static double CIWS_TURRET_BASE_RANGE = 100;
+	@DoubleValue(def = 0.6)
+	public static double CIWS_TURRET_ROTATIONSPEEDRADIANS = 0.6;
+	@DoubleValue(def = 0.05)
+	public static double CIWS_INNACCURACY = 0.05;
 
+	@DoubleValue(def = 1.01, comment = "The amount of inaccuracy each range upgrade will add to the turret. Affects shots past the base range. Set to 1 to disable.")
+	public static double RANGE_INCREASE_INACCURACY_MULTIPLIER = 1.001;
+
+	@IntValue(def = 100)
+	public static int MISSILE_HEALTH = 100;
 	@IntValue(def = 3000, comment = "Set to -1 for unlimited range")
 	public static int CLOSERANGE_MISSILE_RANGE = 3000;
 	@IntValue(def = 10000, comment = "Set to -1 for unlimited range")

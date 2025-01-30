@@ -5,6 +5,12 @@
     ],
     "subtitle": "subtitles.ballistix.antimatterexplosion"
   },
+  "ciwsturretfiring": {
+    "sounds": [
+      "ballistix:ciwsturretfiring"
+    ],
+    "subtitle": "subtitles.ballistix.ciwsturretfiring"
+  },
   "darkmatter": {
     "sounds": [
       "ballistix:darkmatter"

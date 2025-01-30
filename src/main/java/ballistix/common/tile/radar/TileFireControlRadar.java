@@ -95,7 +95,6 @@ public class TileFireControlRadar extends GenericTile {
         }
 
         if(tracking == null) {
-
             tracking = temp;
         }
 

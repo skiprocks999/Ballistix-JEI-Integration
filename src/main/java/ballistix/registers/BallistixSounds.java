@@ -20,6 +20,7 @@ public class BallistixSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_MISSILE_SILO = sound("missile_launch_silo", 64);
     public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_RADAR = sound("radar", 16);
     public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_FIRECONTROLRADAR = sound("firecontrolradar", 32);
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUND_CIWS_TURRETFIRING = sound("ciwsturretfiring", 32);
 
 
     private static DeferredHolder<SoundEvent, SoundEvent> sound(String name, float range) {

@@ -2,6 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixEntities;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
@@ -13,6 +14,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -35,6 +38,7 @@ public abstract class EntityMissile extends Entity {
     private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
@@ -55,6 +59,7 @@ public abstract class EntityMissile extends Entity {
     public float startX = 0;
     public float startZ = 0;
     public int frequency = 0;
+    public int health = Constants.MISSILE_HEALTH;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
@@ -71,6 +76,7 @@ public abstract class EntityMissile extends Entity {
         builder.define(SPEED, -1.0F);
         builder.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
         builder.define(IS_ITEM, false);
+        builder.define(HEALTH, health);
     }
 
     @Override
@@ -105,6 +111,12 @@ public abstract class EntityMissile extends Entity {
             speed = entityData.get(SPEED);
             target = entityData.get(TARGET);
             isItem = entityData.get(IS_ITEM);
+        }
+
+        if(isServerSide && health <= 0) {
+            level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
+            removeAfterChangingDimensions();
+            return;
         }
 
         if ((!isItem && target.equals(BlockEntityUtils.OUT_OF_REACH)) || blastOrdinal == -1) {
@@ -290,6 +302,7 @@ public abstract class EntityMissile extends Entity {
         compound.putFloat("startz", startZ);
         compound.putFloat("speed", speed);
         compound.putInt("freq", frequency);
+        compound.putInt("health", health);
     }
 
     @Override
@@ -304,6 +317,7 @@ public abstract class EntityMissile extends Entity {
         startZ = compound.getFloat("startz");
         speed = compound.getFloat("speed");
         frequency = compound.getInt("freq");
+        health = compound.getInt("health");
     }
 
     @Override

@@ -7,6 +7,7 @@ import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjec
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
+import com.mojang.datafixers.util.Pair;
 import electrodynamics.common.item.ItemUpgrade;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
@@ -28,16 +29,16 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 150, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS);
+        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 100, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS, Constants.SAM_INNACCURACY);
     }
 
     @Override
     public ComponentInventory getInventory() {
         return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
-            if(index == 0) {
+            if (index == 0) {
                 return stack.is(BallistixItems.ITEM_AAMISSILE);
-            } else if(index >= inv.getUpgradeSlotStartIndex()) {
+            } else if (index >= inv.getUpgradeSlotStartIndex()) {
                 return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
             } else {
                 return false;
@@ -53,15 +54,15 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if(cooldown.get() > 0) {
+        if (cooldown.get() > 0) {
             cooldown.set(cooldown.get() - 1);
         }
     }
 
     @Override
-    public void fireTickServer() {
+    public void fireTickServer(long ticks) {
 
-        if(cooldown.get() > 0) {
+        if (cooldown.get() > 0) {
             return;
         }
 
@@ -69,7 +70,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
         ItemStack missile = inv.getItem(0);
 
-        if(missile.isEmpty()) {
+        if (missile.isEmpty()) {
             outOfAmmo.set(true);
             return;
         }
@@ -80,14 +81,14 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
         sam.speed = getProjectileSpeed();
 
-        Vec3 rotvec = desiredRotation.get();
-        sam.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
+        Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
-        sam.inaccruacy = inaccuracyMultiplier.get().floatValue();
+        Vec3 rotvec = projectileVals.getSecond();
+        sam.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
 
         sam.range = currentRange.get().floatValue();
 
-        sam.setDeltaMovement(targetMovement.get());
+        sam.setDeltaMovement(projectileVals.getFirst());
 
         sam.setPos(getProjectileLaunchPosition());
 

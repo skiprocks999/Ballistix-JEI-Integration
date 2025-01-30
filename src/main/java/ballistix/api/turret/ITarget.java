@@ -34,7 +34,7 @@ public interface ITarget {
 
         @Override
         public Vec3 getTargetLocation() {
-            return new Vec3(entity.getX(), entity.getY(), entity.getZ());
+            return new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() * 0.75, entity.getZ());
         }
 
         @Override

@@ -23,8 +23,8 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
     @Nullable
     private TileFireControlRadar radar;
 
-    public TileTurretAntimissile(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double range, double minRange, double usage, double rotationSpeedRadians) {
-        super(tileEntityTypeIn, worldPos, blockState, range, minRange, usage, rotationSpeedRadians);
+    public TileTurretAntimissile(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double range, double minRange, double usage, double rotationSpeedRadians, double inaccuracy) {
+        super(tileEntityTypeIn, worldPos, blockState, range, minRange, usage, rotationSpeedRadians, inaccuracy);
     }
 
     public boolean bindFireControlRadar(BlockPos pos) {
@@ -56,7 +56,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public ITarget.TargetMissile getTarget(long ticks) {
+    public ITarget getTarget(long ticks) {
         if(ticks % 10 == 0) {
             if(level.getBlockEntity(boundFireControl.get()) instanceof TileFireControlRadar fire) {
                 radar = fire;

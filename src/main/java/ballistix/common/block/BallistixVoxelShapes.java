@@ -79,4 +79,10 @@ public class BallistixVoxelShapes {
             //
     );
 
+    public static final VoxelShapeProvider CIWS_TURRET = VoxelShapeProvider.createOmni(
+            //
+            Shapes.or(Block.box(0, 0, 0, 16, 5, 16), Block.box(2.5, 5, 2.5, 13.5, 6, 13.5))
+            //
+    );
+
 }

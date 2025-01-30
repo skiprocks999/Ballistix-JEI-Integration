@@ -52,6 +52,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), "SAM Turret");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), "ESM Tower");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), "CIWS Turret");
 
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");
@@ -99,6 +100,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addContainer("searchradar", "Search Radar");
                 addContainer("firecontrolradar", "Fire Control Radar");
                 addContainer("esmtower", "ESM Tower");
+                addContainer("ciwsturret", "CIWS Turret");
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");
@@ -173,6 +175,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addSubtitle(BallistixSounds.SOUND_MISSILE_SILO, "Missile launches from silo");
                 addSubtitle(BallistixSounds.SOUND_RADAR, "Radar pulses");
                 addSubtitle(BallistixSounds.SOUND_FIRECONTROLRADAR, "Fire Control Radar tracks");
+                addSubtitle(BallistixSounds.SOUND_CIWS_TURRETFIRING, "CIWS Turret Fires");
 
                 addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
                 addDimension(Level.NETHER.location().getPath(), "The Nether");

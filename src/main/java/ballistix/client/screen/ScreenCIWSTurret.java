@@ -1,8 +1,8 @@
 package ballistix.client.screen;
 
-import ballistix.common.inventory.container.ContainerSAMTurret;
+import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.settings.Constants;
-import ballistix.common.tile.turret.antimissile.TileTurretSAM;
+import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -23,8 +23,9 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
-    public ScreenSAMTurret(ContainerSAMTurret container, Inventory inv, Component title) {
+public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
+
+    public ScreenCIWSTurret(ContainerCIWSTurret container, Inventory inv, Component title) {
         super(container, inv, title);
 
         inventoryLabelY += 10;
@@ -34,7 +35,7 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();
-            TileTurretSAM turret = menu.getSafeHost();
+            TileTurretCIWS turret = menu.getSafeHost();
             if(turret == null) {
                 return text;
 
@@ -90,30 +91,44 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
         }));
 
         addComponent(new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> {
-            TileTurretSAM turret = menu.getSafeHost();
+            TileTurretCIWS turret = menu.getSafeHost();
             if(turret == null) {
                 return Component.empty();
             }
-            Component status;
+            Component status = Component.empty();
 
             if(turret.hasNoPower.get()) {
                 status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
-            } else if (turret.isNotLinked.get()) {
-                status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
-            } else if (!turret.hasTarget.get()) {
-                status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
-            } else if (!turret.inRange.get()) {
-                status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
-            } else if (turret.outOfAmmo.get()) {
-                status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
-            } else if (turret.cooldown.get() > 0) {
-                status = BallistixTextUtils.gui("turret.statuscooldown", turret.cooldown.get()).withStyle(ChatFormatting.RED);
             } else {
-                status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
+
+                if(turret.targetingEntity.get()) {
+                    if (!turret.hasTarget.get()) {
+                        status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
+                    } else if (!turret.inRange.get()) {
+                        status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
+                    } else if (turret.outOfAmmo.get()) {
+                        status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
+                    } else {
+                        status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
+                    }
+                } else {
+                    if (turret.isNotLinked.get()) {
+                        status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
+                    } else if (!turret.hasTarget.get()) {
+                        status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
+                    } else if (!turret.inRange.get()) {
+                        status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
+                    } else if (turret.outOfAmmo.get()) {
+                        status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
+                    } else {
+                        status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
+                    }
+                }
             }
 
 
             return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
         }));
     }
+
 }

@@ -26,11 +26,6 @@ import javax.annotation.Nullable;
 
 public abstract class GenericTileTurret extends GenericTile {
 
-    public final double baseRange;
-    public final double rotationSpeedRadians;
-    public final double usage;
-    public final double minimumRange;
-
     public final Property<Vec3> turretRotation = property(new Property<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
     public final Property<Vec3> desiredRotation = property(new Property<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
     public final Property<Vec3> targetMovement = property(new Property<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
@@ -40,9 +35,16 @@ public abstract class GenericTileTurret extends GenericTile {
     public final Property<Double> currentRange;
     public final Property<Double> inaccuracyMultiplier = property(new Property<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
 
-    public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double baseRange, double minimumRange, double usage, double rotationSpeedRadians) {
+    public final double baseRange;
+    public final double rotationSpeedRadians;
+    public final double usage;
+    public final double minimumRange;
+    public final double inaccuracy;
+    public boolean canFire = false;
+
+    public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double baseRange, double minimumRange, double usage, double rotationSpeedRadians, double inaccuracy) {
         super(tileEntityTypeIn, worldPos, blockState);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer));
+        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
         addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
         addComponent(getInventory().validUpgrades(SubtypeItemUpgrade.range));
         addComponent(getContainer());
@@ -50,6 +52,7 @@ public abstract class GenericTileTurret extends GenericTile {
         this.baseRange = baseRange;
         this.minimumRange = minimumRange;
         this.rotationSpeedRadians = rotationSpeedRadians;
+        this.inaccuracy = inaccuracy;
         currentRange = property(new Property<>(PropertyTypes.DOUBLE, "currentrange", baseRange));
     }
 
@@ -60,13 +63,17 @@ public abstract class GenericTileTurret extends GenericTile {
 
         hasNoPower.set(electro.getJoulesStored() < usage);
 
-        if (hasNoPower.get() || !isValidPlacement()) {
+        if (hasNoPower.get()) {
             return;
         }
 
         tickServerActive(tickable);
 
         ITarget target = getTarget(tickable.getTicks());
+
+        if(!isValidPlacement()) {
+            return;
+        }
 
         hasTarget.set(target != null);
 
@@ -79,6 +86,8 @@ public abstract class GenericTileTurret extends GenericTile {
             if(interceptionPos != null) {
 
                 Vec3 launchPos = getProjectileLaunchPosition();
+
+                distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
 
                 double deltaX = interceptionPos.x - launchPos.x;
                 double deltaY = interceptionPos.y - launchPos.y;
@@ -98,8 +107,6 @@ public abstract class GenericTileTurret extends GenericTile {
 
                 desiredRotation.set(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
 
-                distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
-
             }
 
         } else {
@@ -107,8 +114,6 @@ public abstract class GenericTileTurret extends GenericTile {
         }
 
         inRange.set(distanceToTarget >= minimumRange && distanceToTarget <= currentRange.get());
-
-        boolean canFire = false;
 
         if (turretRotation.get().equals(desiredRotation.get())) {
 
@@ -169,8 +174,12 @@ public abstract class GenericTileTurret extends GenericTile {
         }
 
         if (canFire) {
-            fireTickServer();
+            fireTickServer(tickable.getTicks());
         }
+
+    }
+
+    public void tickClient(ComponentTickable tickable) {
 
     }
 
@@ -178,7 +187,7 @@ public abstract class GenericTileTurret extends GenericTile {
     public abstract ComponentContainerProvider getContainer();
 
     public abstract void tickServerActive(ComponentTickable tickable);
-    public abstract void fireTickServer();
+    public abstract void fireTickServer(long ticks);
 
     public abstract Vec3 getDefaultOrientation();
 

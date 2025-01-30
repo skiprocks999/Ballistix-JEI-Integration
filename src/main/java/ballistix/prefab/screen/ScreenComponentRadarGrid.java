@@ -14,8 +14,6 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
     private static final Color RADAR_BLACK = new Color(0, 0, 0, 255);
     private static final Color RADAR_GRID_GREEN = new Color(19, 125, 62, 255);
     private static final Color RADAR_PULSE_GREEN = new Color(38, 253, 9, 255);
-    private static final Color RADAR_YELLOW = new Color(255, 246, 4, 255);
-    private static final Color RADAR_RED = new Color(255, 0, 0, 255);
 
     public ScreenComponentRadarGrid(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -116,6 +114,10 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
         graphics.fill((int) Math.floor(x + center - 1), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center + 1), (int) Math.ceil(y + center + 1), Color.JEI_TEXT_GRAY.color());
 
         //DOT
+
+        if(tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
+            return;
+        }
 
         float deltaX = (float) (tile.trackingPos.get().x - tile.getBlockPos().getX());
 
