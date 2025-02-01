@@ -4,7 +4,7 @@ import ballistix.common.entity.EntityMissile;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-public interface ITarget {
+public interface ITarget<T> {
 
     Vec3 getTargetLocation();
 
@@ -12,7 +12,9 @@ public interface ITarget {
 
     Vec3 getTargetMovement();
 
-    public static record TargetMissile(EntityMissile missile) implements ITarget {
+    T getTarget();
+
+    public static record TargetMissile(EntityMissile missile) implements ITarget<EntityMissile> {
 
         @Override
         public Vec3 getTargetLocation() {
@@ -28,9 +30,14 @@ public interface ITarget {
         public Vec3 getTargetMovement() {
             return missile.getDeltaMovement();
         }
+
+        @Override
+        public EntityMissile getTarget() {
+            return missile;
+        }
     }
 
-    public static record TargetLivingEntity(LivingEntity entity) implements ITarget {
+    public static record TargetLivingEntity(LivingEntity entity) implements ITarget<LivingEntity> {
 
         @Override
         public Vec3 getTargetLocation() {
@@ -45,6 +52,11 @@ public interface ITarget {
         @Override
         public Vec3 getTargetMovement() {
             return entity.getDeltaMovement();
+        }
+
+        @Override
+        public LivingEntity getTarget() {
+            return entity;
         }
     }
 }

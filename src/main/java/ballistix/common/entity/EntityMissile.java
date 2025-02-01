@@ -38,7 +38,7 @@ public abstract class EntityMissile extends Entity {
     private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
@@ -59,7 +59,7 @@ public abstract class EntityMissile extends Entity {
     public float startX = 0;
     public float startZ = 0;
     public int frequency = 0;
-    public int health = Constants.MISSILE_HEALTH;
+    public float health = Constants.MISSILE_HEALTH;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
@@ -302,7 +302,7 @@ public abstract class EntityMissile extends Entity {
         compound.putFloat("startz", startZ);
         compound.putFloat("speed", speed);
         compound.putInt("freq", frequency);
-        compound.putInt("health", health);
+        compound.putFloat("health", health);
     }
 
     @Override
@@ -317,7 +317,7 @@ public abstract class EntityMissile extends Entity {
         startZ = compound.getFloat("startz");
         speed = compound.getFloat("speed");
         frequency = compound.getInt("freq");
-        health = compound.getInt("health");
+        health = compound.getFloat("health");
     }
 
     @Override

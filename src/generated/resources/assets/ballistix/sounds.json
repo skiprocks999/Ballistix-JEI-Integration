@@ -29,6 +29,12 @@
     ],
     "subtitle": "subtitles.ballistix.firecontrolradar"
   },
+  "laserturretfiring": {
+    "sounds": [
+      "ballistix:laserturretfiring"
+    ],
+    "subtitle": "subtitles.ballistix.laserturretfiring"
+  },
   "missile_launch_rocketlauncher": {
     "sounds": [
       "ballistix:missile_launch_rocketlauncher"

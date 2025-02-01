@@ -30,6 +30,8 @@ public class UnifiedBallistixRegister {
 		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.esmtower), ElectroTextUtils.voltageTooltip(480));
 
 		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.samturret), ElectroTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.ciwsturret), ElectroTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.laserturret), ElectroTextUtils.voltageTooltip(120));
 
 	}
 

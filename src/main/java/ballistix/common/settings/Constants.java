@@ -102,6 +102,20 @@ public class Constants {
 	@DoubleValue(def = 0.05)
 	public static double CIWS_INNACCURACY = 0.05;
 
+	@DoubleValue(def = 10000)
+	public static double LASER_TURRET_USAGEPERTICK = 10000;
+	@DoubleValue(def = 100)
+	public static double LASER_TURRET_BASE_RANGE = 300;
+	@DoubleValue(def = 0.2)
+	public static double LASER_TURRET_ROTATIONSPEEDRADIANS = 0.2;
+	@DoubleValue(def = 100)
+	public static double LASER_TURRET_MAXHEAT = 100;
+	@DoubleValue(def = 40)
+	public static double LASER_TURRET_COOLTHRESHHOLD = 40;
+	@DoubleValue(def = 1)
+	public static double LASER_TURRET_BASE_DAMAGE = 1;
+
+
 	@DoubleValue(def = 1.01, comment = "The amount of inaccuracy each range upgrade will add to the turret. Affects shots past the base range. Set to 1 to disable.")
 	public static double RANGE_INCREASE_INACCURACY_MULTIPLIER = 1.001;
 

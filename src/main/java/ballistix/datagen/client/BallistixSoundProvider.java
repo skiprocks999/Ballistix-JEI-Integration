@@ -26,6 +26,7 @@ public class BallistixSoundProvider extends SoundDefinitionsProvider {
 		add(BallistixSounds.SOUND_RADAR);
 		add(BallistixSounds.SOUND_FIRECONTROLRADAR);
 		add(BallistixSounds.SOUND_CIWS_TURRETFIRING);
+		add(BallistixSounds.SOUND_LASER_TURRETFIRING);
 	}
 
 	private void add(DeferredHolder<SoundEvent, SoundEvent> sound) {
