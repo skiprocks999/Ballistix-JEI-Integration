@@ -16,7 +16,9 @@ import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
+import electrodynamics.registers.ElectrodynamicsSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -106,6 +108,8 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
         level.addFreshEntity(bullet);
 
         inv.removeItem(0, 1);
+
+        level.playSound(null, getBlockPos(), ElectrodynamicsSounds.SOUND_RAILGUNKINETIC.get(), SoundSource.BLOCKS, 2.0F, 1.0F);
 
         cooldown.set(Constants.RAILGUN_TURRET_COOLDOWN);
 

@@ -30,7 +30,12 @@ public class ContainerRailgunTurret extends GenericContainerBlockEntity<TileTurr
 
         setPlayerInvOffset(10);
 
-        addSlot(new SlotGeneric(inv, nextIndex(), 80, 20).setIOColor(new Color(0, 240, 255, 255)));
+        addSlot(new SlotGeneric(inv, nextIndex(), 80, 20) {
+            @Override
+            public int getMaxStackSize() {
+                return 10;
+            }
+        }.setIOColor(new Color(0, 240, 255, 255)));
 
         this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 14, VALID_UPGRADES));
         this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 37, VALID_UPGRADES));
