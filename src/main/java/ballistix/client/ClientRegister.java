@@ -58,6 +58,8 @@ public class ClientRegister {
 	public static final ModelResourceLocation MODEL_CIWSTURRET_BARREL = ModelResourceLocation.standalone(Ballistix.rl("block/ciwsturretbarrel"));
 	public static final ModelResourceLocation MODEL_LASERTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/laserturretballjoint"));
 	public static final ModelResourceLocation MODEL_LASERTURRET_HEAD = ModelResourceLocation.standalone(Ballistix.rl("block/laserturrethead"));
+	public static final ModelResourceLocation MODEL_RAILGUNTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/railgunturretballjoint"));
+	public static final ModelResourceLocation MODEL_RAILGUNTURRET_HEAD = ModelResourceLocation.standalone(Ballistix.rl("block/railgunturretgun"));
 
 
 	public static void setup() {
@@ -102,6 +104,7 @@ public class ClientRegister {
 		event.register(BallistixMenuTypes.CONTAINER_ESMTOWER.get(), ScreenESMTower::new);
 		event.register(BallistixMenuTypes.CONTAINER_CIWSTURRET.get(), ScreenCIWSTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
+		event.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
 	}
 
 	@SubscribeEvent
@@ -125,6 +128,8 @@ public class ClientRegister {
 		event.register(MODEL_CIWSTURRET_BARREL);
 		event.register(MODEL_LASERTURRET_BALLJOINT);
 		event.register(MODEL_LASERTURRET_HEAD);
+		event.register(MODEL_RAILGUNTURRET_BALLJOINT);
+		event.register(MODEL_RAILGUNTURRET_HEAD);
 	}
 
 	@SubscribeEvent
@@ -146,6 +151,7 @@ public class ClientRegister {
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_ESMTOWER.get(), RenderESMTower::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_CIWSTURRET.get(), RenderCIWSTurret::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_LASERTURRET.get(), RenderLaserTurret::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_RAILGUNTURRET.get(), RenderRailgunTurret::new);
 	}
 
 }

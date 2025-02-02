@@ -21,7 +21,7 @@ public class BallistixDamageTagsProvider extends DamageTypeTagsProvider {
 		tag(DamageTypeTags.BYPASSES_ARMOR).add(BallistixDamageTypes.CHEMICAL_GAS);
 		tag(DamageTypeTags.BYPASSES_EFFECTS).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.SHRAPNEL, BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET); // bypasses magic
 		tag(DamageTypeTags.NO_KNOCKBACK).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.LASER_TURRET);
-		tag(DamageTypeTags.BYPASSES_COOLDOWN).add(BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET);
+		//tag(DamageTypeTags.BYPASSES_COOLDOWN).add(BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET);
 	}
 
 }

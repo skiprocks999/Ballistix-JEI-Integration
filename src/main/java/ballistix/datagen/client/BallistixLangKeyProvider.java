@@ -55,6 +55,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), "ESM Tower");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), "CIWS Turret");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), "Laser Turret");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), "Railgun Turret");
 
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
                 addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");
@@ -105,6 +106,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addContainer("esmtower", "ESM Tower");
                 addContainer("ciwsturret", "CIWS Turret");
                 addContainer("laserturret", "Laser Turret");
+                addContainer("railgunturret", "Railgun Turret");
 
                 addGuiLabel("missilesilo.missile", "Missile");
                 addGuiLabel("missilesilo.explosive", "Explosive");
@@ -116,6 +118,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
                 addDamageSource("chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
                 addDamageSource("shrapnel", "%s was hit by shrapnel!");
+                addDamageSource("laserturret", "%s found the green laser pointer!");
 
                 addChatMessage("radargun.text", "Coordinates: %s");
                 addChatMessage("radargun.turretsucess", "Bound");
