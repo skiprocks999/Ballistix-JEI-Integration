@@ -121,23 +121,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
         ItemStack mis = inv.getItem(MISSILE_SLOT);
 
-        EntityMissile missile;
+        EntityMissile missile = new EntityMissile(level);
 
         int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
-
-        if (ordinal == 0) {
-
-            missile = new EntityMissile.EntityMissileCloseRange(level);
-
-        } else if (ordinal == 1) {
-
-            missile = new EntityMissile.EntityMissileMediumRange(level);
-
-        } else {
-
-            missile = new EntityMissile.EntityMissileLongRange(level);
-
-        }
 
         missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 20.5, getBlockPos().getZ() + 0.5);
         missile.missileType = ordinal;

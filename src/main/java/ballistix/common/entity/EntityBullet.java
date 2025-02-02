@@ -102,7 +102,7 @@ public class EntityBullet extends Entity {
             for(EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
 
                 if(!missile.isRemoved() && missile.getBoundingBox().intersects(box)) {
-                    //missile.health = missile.health - damage;
+                    missile.health = missile.health - damage;
                     removeAfterChangingDimensions();
                     return;
                 }

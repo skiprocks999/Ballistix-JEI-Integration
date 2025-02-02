@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class EntityMissile extends Entity {
+public class EntityMissile extends Entity {
 
     public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<EntityMissile>> MISSILES = new ConcurrentHashMap<>();
 
@@ -64,6 +64,10 @@ public abstract class EntityMissile extends Entity {
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
         blocksBuilding = true;
+    }
+
+    public EntityMissile(Level worldIn) {
+        this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
     }
 
     @Override
@@ -368,43 +372,6 @@ public abstract class EntityMissile extends Entity {
 
     public Vec3 getPosition() {
         return new Vec3(getX(), getY(), getZ());
-    }
-
-    /**
-     * Had to do this because of the way mojank has the bounding boxes locked down
-     */
-
-    public static class EntityMissileCloseRange extends EntityMissile {
-
-        public EntityMissileCloseRange(EntityType<? extends EntityMissile> type, Level worldIn) {
-            super(type, worldIn);
-        }
-
-        public EntityMissileCloseRange(Level worldIn) {
-            this(BallistixEntities.ENTITY_MISSILECR.get(), worldIn);
-        }
-    }
-
-    public static class EntityMissileMediumRange extends EntityMissile {
-
-        public EntityMissileMediumRange(EntityType<? extends EntityMissile> type, Level worldIn) {
-            super(type, worldIn);
-        }
-
-        public EntityMissileMediumRange(Level worldIn) {
-            this(BallistixEntities.ENTITY_MISSILEMR.get(), worldIn);
-        }
-    }
-
-    public static class EntityMissileLongRange extends EntityMissile {
-
-        public EntityMissileLongRange(EntityType<? extends EntityMissile> type, Level worldIn) {
-            super(type, worldIn);
-        }
-
-        public EntityMissileLongRange(Level worldIn) {
-            this(BallistixEntities.ENTITY_MISSILELR.get(), worldIn);
-        }
     }
 
 }

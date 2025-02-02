@@ -1,10 +1,12 @@
 package ballistix.common.tile.turret.antimissile;
 
 import ballistix.api.turret.ITarget;
+import ballistix.common.entity.EntityRailgunRound;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixTiles;
+import com.mojang.datafixers.util.Pair;
 import electrodynamics.common.item.ItemUpgrade;
 import electrodynamics.common.tags.ElectrodynamicsTags;
 import electrodynamics.prefab.properties.Property;
@@ -22,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
@@ -69,6 +72,42 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     @Override
     public void fireTickServer(long ticks) {
+
+        if (cooldown.get() > 0) {
+            return;
+        }
+
+        ComponentInventory inv = getComponent(IComponentType.Inventory);
+
+        ItemStack missile = inv.getItem(0);
+
+        if (missile.isEmpty()) {
+            outOfAmmo.set(true);
+            return;
+        }
+
+        outOfAmmo.set(false);
+
+        EntityRailgunRound bullet = new EntityRailgunRound(getLevel());
+
+        bullet.speed = getProjectileSpeed();
+
+        Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+
+        Vec3 rotvec = projectileVals.getSecond();
+        bullet.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
+
+        bullet.range = currentRange.get().floatValue();
+
+        bullet.setDeltaMovement(projectileVals.getFirst());
+
+        bullet.setPos(getProjectileLaunchPosition());
+
+        level.addFreshEntity(bullet);
+
+        inv.removeItem(0, 1);
+
+        cooldown.set(Constants.RAILGUN_TURRET_COOLDOWN);
 
     }
 
