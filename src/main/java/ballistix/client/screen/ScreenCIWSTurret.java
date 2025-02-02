@@ -3,6 +3,7 @@ package ballistix.client.screen;
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.settings.Constants;
+import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
@@ -136,7 +137,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
                     }
                 } else {
-                    if (turret.isNotLinked.get()) {
+                    if (turret.boundFireControl.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
                         status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
                     } else if (!turret.hasTarget.get()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);

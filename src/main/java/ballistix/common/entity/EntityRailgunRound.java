@@ -135,7 +135,7 @@ public class EntityRailgunRound extends Entity {
             }
 
             if(selected != null) {
-                selected.hurt(selected.damageSources().source(BallistixDamageTypes.CIWS_BULLET), 10);
+                selected.hurt(selected.damageSources().source(BallistixDamageTypes.CIWS_BULLET), 20);
                 removeAfterChangingDimensions();
             }
 
