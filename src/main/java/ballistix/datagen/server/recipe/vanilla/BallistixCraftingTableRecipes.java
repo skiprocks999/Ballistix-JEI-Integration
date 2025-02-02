@@ -9,6 +9,7 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.recipe.recipeutils.ChargedItemIngredient;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
+import electrodynamics.common.block.subtype.SubtypeMachine;
 import electrodynamics.common.block.subtype.SubtypeWire;
 import electrodynamics.common.tags.ElectrodynamicsTags;
 import electrodynamics.datagen.utils.recipe.AbstractRecipeGenerator;
@@ -44,6 +45,144 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 .addKey('L', Items.LEVER)
                 //
                 .complete(References.ID, "missilesilo", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), 1)
+                //
+                .addPattern("WRW")
+                //
+                .addPattern(" M ")
+                //
+                .addPattern("PCP")
+                //
+                .addKey('W', ElectrodynamicsItems.ITEMS_WIRE.getValue(SubtypeWire.gold))
+                //
+                .addKey('R', BallistixItems.ITEM_RADARGUN.get())
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+                //
+                .complete(References.ID, "radar", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), 1)
+                //
+                .addPattern(" G ")
+                //
+                .addPattern("CRC")
+                //
+                .addPattern("PMP")
+                //
+                .addKey('G', BallistixItems.ITEM_RADARGUN.get())
+                //
+                .addKey('R', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar))
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ADVANCED)
+                //
+                .complete(References.ID, "fire_control_radar", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), 1)
+                //
+                .addPattern("AAA")
+                //
+                .addPattern("WRW")
+                //
+                .addPattern("PCP")
+                //
+                .addKey('A', ElectrodynamicsTags.Items.PLATE_ALUMINUM)
+                //
+                .addKey('R', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar))
+                //
+                .addKey('W', ElectrodynamicsItems.ITEMS_WIRE.getValue(SubtypeWire.gold))
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ELITE)
+                //
+                .complete(References.ID, "esm_tower", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), 1)
+                //
+                .addPattern(" S ")
+                //
+                .addPattern("PMP")
+                //
+                .addPattern("PCP")
+                //
+                .addKey('S', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo))
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+                //
+                .complete(References.ID, "turret_sam", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), 1)
+                //
+                .addPattern("PPC")
+                //
+                .addPattern(" M ")
+                //
+                .addPattern("PCP")
+                //
+                .addKey('C', Tags.Items.CHESTS)
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+                //
+                .complete(References.ID, "turret_ciws", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), 1)
+                //
+                .addPattern("GDG")
+                //
+                .addPattern(" M ")
+                //
+                .addPattern("PCP")
+                //
+                .addKey('G', Tags.Items.GLASS_BLOCKS)
+                //
+                .addKey('D', Tags.Items.GEMS_DIAMOND)
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+                //
+                .complete(References.ID, "turret_laser", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), 1)
+                //
+                .addPattern("OOH")
+                //
+                .addPattern(" MT")
+                //
+                .addPattern("PCP")
+                //
+                .addKey('O', ElectrodynamicsItems.ITEM_COIL.get())
+                //
+                .addKey('H', Tags.Items.CHESTS)
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('T', ElectrodynamicsItems.ITEMS_MACHINE.getValue(SubtypeMachine.upgradetransformer))
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ELITE)
+                //
+                .complete(References.ID, "turret_railgun", output);
 
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.closerange), 1)
                 //
@@ -98,6 +237,34 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 .addKey('M', BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.mediumrange))
                 //
                 .complete(References.ID, "missile_longrange", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_AAMISSILE.get(), 1)
+                //
+                .addPattern(" P ")
+                //
+                .addPattern("PGP")
+                //
+                .addPattern("PGP")
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+                //
+                .addKey('G', Tags.Items.GUNPOWDERS)
+                //
+                .complete(References.ID, "ballistic_rocket", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_BULLET.get(), 4)
+                //
+                .addPattern(" P ")
+                //
+                .addPattern("PGP")
+                //
+                .addPattern("PGP")
+                //
+                .addKey('P', ElectrodynamicsTags.Items.PLATE_BRONZE)
+                //
+                .addKey('G', Tags.Items.GUNPOWDERS)
+                //
+                .complete(References.ID, "bullet", output);
 
         addExplosives(output);
         addGear(output);
