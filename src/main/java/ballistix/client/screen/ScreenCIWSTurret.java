@@ -1,15 +1,20 @@
 package ballistix.client.screen;
 
+import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.settings.Constants;
+import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
+import ballistix.prefab.screen.WrapperPlayerWhitelist;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
+import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.types.ScreenComponentCustomRender;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
@@ -23,7 +28,11 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
+public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWSTurret> {
+
+    private final ScreenComponentCustomRender radarLabel;
+    private final ScreenComponentSimpleLabel statusLabel;
+    private final WrapperInventoryIO wrapperInventoryIO;
 
     public ScreenCIWSTurret(ContainerCIWSTurret container, Inventory inv, Component title) {
         super(container, inv, title);
@@ -31,9 +40,14 @@ public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
         inventoryLabelY += 10;
         imageHeight += 10;
 
+        whitelistWrapper = new WrapperPlayerWhitelist(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 0, 0);
+        addComponent(whitelistSlider = new ScreenComponentVerticalSlider(11, 80, 75).setClickConsumer(whitelistWrapper.getSliderClickedConsumer()).setDragConsumer(whitelistWrapper.getSliderDraggedConsumer()));
+
+        whitelistSlider.setVisible(false);
+
         addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.SAM_TURRET_USAGEPERTICK * 20));
 
-        addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET_MISSILE, () -> {
+        addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();
             TileTurretCIWS turret = menu.getSafeHost();
             if(turret == null) {
@@ -44,11 +58,22 @@ public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
             text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             return text;
-        }, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
+        }, 176, 2));
 
-        new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 75, 92, 8, 82);
+        addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, BallistixIconTypes.TARGET_ENTITY, () -> {
+            List<FormattedCharSequence> text = new ArrayList<>();
+            TileTurretCIWS turret = menu.getSafeHost();
+            if(turret == null) {
+                return text;
 
-        addComponent(new ScreenComponentCustomRender(10, 50, graphics -> {
+            }
+            text.add(BallistixTextUtils.tooltip("turret.entityrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get() / 4.0, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            return text;
+        }, 176, AbstractScreenComponentInfo.SIZE + 2));
+
+        addComponent(radarLabel = new ScreenComponentCustomRender(10, 50, graphics -> {
             TileTurretAntimissile turret = menu.getSafeHost();
             if(turret == null) {
                 return;
@@ -90,7 +115,7 @@ public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
 
         }));
 
-        addComponent(new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> {
+        addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> {
             TileTurretCIWS turret = menu.getSafeHost();
             if(turret == null) {
                 return Component.empty();
@@ -112,7 +137,7 @@ public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
                     }
                 } else {
-                    if (turret.isNotLinked.get()) {
+                    if (turret.boundFireControl.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
                         status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
                     } else if (!turret.hasTarget.get()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
@@ -129,6 +154,42 @@ public class ScreenCIWSTurret extends GenericScreen<ContainerCIWSTurret> {
 
             return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
         }));
+
+        wrapperInventoryIO = new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 75, 92, 8, 82).hideAdditional(show -> {
+            radarLabel.setVisible(show);
+            statusLabel.setVisible(show);
+            whitelistWrapper.updateVisibility(false);
+            whitelistWrapper.button.isPressed = false;
+            whitelistSlider.setVisible(false);
+            if(!show) {
+                for (int i = 0; i < menu.slots.size(); i++) {
+
+                    ((SlotGeneric) menu.slots.get(i)).setActive(true);
+
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void updateVisibility(boolean show) {
+        radarLabel.setVisible(show);
+        statusLabel.setVisible(show);
+        wrapperInventoryIO.resetSlots();
+        if(!show) {
+            wrapperInventoryIO.updateVisibility(false);
+        }
+        wrapperInventoryIO.button.isPressed = false;
+
+
+        for (int i = 0; i < menu.slots.size(); i++) {
+
+            ((SlotGeneric) menu.slots.get(i)).setActive(show);
+
+        }
+
+        playerInvLabel.setVisible(show);
     }
 
 }

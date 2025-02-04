@@ -45,9 +45,10 @@ public class BlastDarkmatter extends Blast {
         }
     }
 
-    private ThreadSimpleBlast thread;
+    public ThreadSimpleBlast thread;
     private int callAtStart = -1;
     private int pertick = -1;
+    public boolean canceled = false;
 
     private Iterator<BlockPos> cachedIterator;
 
@@ -58,7 +59,7 @@ public class BlastDarkmatter extends Blast {
         }
 
         hasStarted = true;
-        if (thread == null) {
+        if (thread == null || canceled) {
             return true;
         }
         Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);

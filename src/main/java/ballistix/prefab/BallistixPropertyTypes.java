@@ -52,4 +52,45 @@ public class BallistixPropertyTypes {
             //
     );
 
+    public static final PropertyType<List<String>, ByteBuf> STRING_LIST = new PropertyType<>(
+            //
+            (thisSet, otherSet) -> {
+                if (thisSet.size() != otherSet.size()) {
+                    return false;
+                }
+                String a, b;
+                for (int i = 0; i < thisSet.size(); i++) {
+                    a = thisSet.get(i);
+                    b = otherSet.get(i);
+                    if (a != b) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            //
+            ByteBufCodecs.fromCodec(Codec.STRING.listOf()),
+            //
+            writer -> {
+                List<String> list = writer.prop().get();
+                CompoundTag data = new CompoundTag();
+                data.putInt("size", list.size());
+                for (int i = 0; i < list.size(); i++) {
+                    data.putString("" + i, list.get(i));
+                }
+                writer.tag().put(writer.prop().getName(), data);
+            },
+            //
+            reader -> {
+                List<String> list = new ArrayList<>();
+                CompoundTag data = reader.tag().getCompound(reader.prop().getName());
+                int size = data.getInt("size");
+                for (int i = 0; i < size; i++) {
+                    list.add(data.getString("" + i));
+                }
+                return list;
+            }
+            //
+    );
+
 }

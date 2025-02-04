@@ -4,6 +4,8 @@ import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
+import ballistix.common.tile.turret.antimissile.TileTurretLaser;
+import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import com.google.common.collect.Sets;
 
@@ -25,5 +27,7 @@ public class BallistixTiles {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileESMTower>> TILE_ESMTOWER = BLOCK_ENTITY_TYPES.register("esmtower", () -> new BlockEntityType<>(TileESMTower::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileTurretSAM>> TILE_SAMTURRET = BLOCK_ENTITY_TYPES.register("samturret", () -> new BlockEntityType<>(TileTurretSAM::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileTurretCIWS>> TILE_CIWSTURRET = BLOCK_ENTITY_TYPES.register("ciwsturret", () -> new BlockEntityType<>(TileTurretCIWS::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret)), null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileTurretLaser>> TILE_LASERTURRET = BLOCK_ENTITY_TYPES.register("laserturret", () -> new BlockEntityType<>(TileTurretLaser::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret)), null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileTurretRailgun>> TILE_RAILGUNTURRET = BLOCK_ENTITY_TYPES.register("railgunturret", () -> new BlockEntityType<>(TileTurretRailgun::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)), null));
 
 }

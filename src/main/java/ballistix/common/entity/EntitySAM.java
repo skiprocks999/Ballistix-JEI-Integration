@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -55,7 +56,7 @@ public class EntitySAM extends Entity {
 
         boolean isServer = !isClient;
 
-        if(isServer) {
+        if (isServer) {
             entityData.set(DISTANCE_TRAVELED, distanceTraveled);
             entityData.set(SPEED, speed);
             entityData.set(ROTATION, rotation);
@@ -67,8 +68,8 @@ public class EntitySAM extends Entity {
             range = entityData.get(RANGE);
         }
 
-        if(distanceTraveled >= range + 5) {
-            if(isServer) {
+        if (distanceTraveled >= range + 5) {
+            if (isServer) {
                 level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
                 removeAfterChangingDimensions();
             }
@@ -77,35 +78,43 @@ public class EntitySAM extends Entity {
 
         Vec3 movement = getDeltaMovement();
 
-        setPos(getX() + movement.x * speed, getY() + movement.y * speed, getZ() + movement.z * speed);
-
         setYRot((float) Math.atan2(rotation.z, rotation.x) * RAD2DEG);
         setXRot((float) (Math.asin(rotation.y) * RAD2DEG));
 
-        BlockState state = level.getBlockState(blockPosition());
+        for (int i = 0; i < speed; i++) {
 
-        if(!state.getCollisionShape(level, blockPosition()).isEmpty() && tickCount > 5) {
-            if(isServer) {
-                level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
-                removeAfterChangingDimensions();
+            setPos(getX() + movement.x, getY() + movement.y, getZ() + movement.z);
+
+            BlockState state = level.getBlockState(blockPosition());
+
+            if (!state.getCollisionShape(level, blockPosition()).isEmpty() && tickCount > 5) {
+                if (isServer) {
+                    level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
+                    removeAfterChangingDimensions();
+                }
+                return;
             }
-            return;
+
+            if(isServer) {
+
+                AABB box = getBoundingBox().inflate(1);
+
+                for (EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
+
+                    if (!missile.isRemoved() && missile.getBoundingBox().intersects(box)) {
+                        detonate(missile);
+                        return;
+                    }
+
+                }
+            }
+
         }
+
 
         distanceTraveled += speed;
 
-        if(isServer) {
-
-            for(EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
-
-                if(!missile.isRemoved() && missile.getBoundingBox().intersects(getBoundingBox().inflate(speed))) {
-                    detonate(missile);
-                    return;
-                }
-
-            }
-
-        } else if(tickCount < 20) {
+        if (isClient && tickCount < 20) {
 
             float widthOver2 = getDimensions(getPose()).width() / 2.0F;
 

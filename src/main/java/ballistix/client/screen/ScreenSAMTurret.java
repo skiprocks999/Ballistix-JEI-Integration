@@ -2,6 +2,7 @@ package ballistix.client.screen;
 
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.Constants;
+import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
@@ -98,7 +99,7 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
 
             if(turret.hasNoPower.get()) {
                 status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
-            } else if (turret.isNotLinked.get()) {
+            } else if (turret.boundFireControl.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
                 status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
             } else if (!turret.hasTarget.get()) {
                 status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);

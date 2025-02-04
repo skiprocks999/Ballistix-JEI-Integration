@@ -5,7 +5,9 @@ import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.common.tile.radar.TileSearchRadar;
+import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
+import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import electrodynamics.api.ISubtype;
 import electrodynamics.api.multiblock.subnodebased.Subnode;
@@ -32,6 +34,8 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
     esmtower(true, TileESMTower::new, MachineProperties.builder().setRenderShape(RenderShape.INVISIBLE).setShapeProvider(BallistixVoxelShapes.ESM_TOWER).setSubnodes(Subnodes.ESM_TOWER)),
     samturret(true, TileTurretSAM::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.SAM_TURRET)),
     ciwsturret(true, TileTurretCIWS::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.CIWS_TURRET)),
+    laserturret(true, TileTurretLaser::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LASER_TURRET)),
+    railgunturret(true, TileTurretRailgun::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RAILGUN_TURRET)),
     ;
 
     private final BlockEntityType.BlockEntitySupplier<BlockEntity> blockEntitySupplier;

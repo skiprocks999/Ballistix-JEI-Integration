@@ -34,6 +34,7 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
         layeredItem(BallistixItems.ITEM_LASERDESIGNATOR, Parent.GENERATED, itemLoc(name(BallistixItems.ITEM_LASERDESIGNATOR)));
         layeredItem(BallistixItems.ITEM_RADARGUN, Parent.GENERATED, itemLoc(name(BallistixItems.ITEM_RADARGUN)));
         layeredItem(BallistixItems.ITEM_SCANNER, Parent.GENERATED, itemLoc(name(BallistixItems.ITEM_SCANNER)));
+        layeredItem(BallistixItems.ITEM_BULLET, Parent.GENERATED, itemLoc(name(BallistixItems.ITEM_BULLET)));
 
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo)).transforms()
                 //
@@ -87,6 +88,8 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), existingBlock(blockLoc("samturretitem")));
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), existingBlock(blockLoc("esmtower"))).transforms().transform(ItemDisplayContext.GUI).scale(0.3F).rotation(30.0F, 225.0F, 0.0F).end();
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), existingBlock(blockLoc("ciwsturretitem")));
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), existingBlock(blockLoc("laserturretitem")));
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), existingBlock(blockLoc("railgunturretitem")));
     }
 
 }

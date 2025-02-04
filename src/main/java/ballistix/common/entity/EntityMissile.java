@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class EntityMissile extends Entity {
+public class EntityMissile extends Entity {
 
     public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<EntityMissile>> MISSILES = new ConcurrentHashMap<>();
 
@@ -38,7 +38,7 @@ public abstract class EntityMissile extends Entity {
     private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
@@ -59,11 +59,15 @@ public abstract class EntityMissile extends Entity {
     public float startX = 0;
     public float startZ = 0;
     public int frequency = 0;
-    public int health = Constants.MISSILE_HEALTH;
+    public float health = Constants.MISSILE_HEALTH;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
         blocksBuilding = true;
+    }
+
+    public EntityMissile(Level worldIn) {
+        this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
     }
 
     @Override
@@ -302,7 +306,7 @@ public abstract class EntityMissile extends Entity {
         compound.putFloat("startz", startZ);
         compound.putFloat("speed", speed);
         compound.putInt("freq", frequency);
-        compound.putInt("health", health);
+        compound.putFloat("health", health);
     }
 
     @Override
@@ -317,7 +321,7 @@ public abstract class EntityMissile extends Entity {
         startZ = compound.getFloat("startz");
         speed = compound.getFloat("speed");
         frequency = compound.getInt("freq");
-        health = compound.getInt("health");
+        health = compound.getFloat("health");
     }
 
     @Override
@@ -368,43 +372,6 @@ public abstract class EntityMissile extends Entity {
 
     public Vec3 getPosition() {
         return new Vec3(getX(), getY(), getZ());
-    }
-
-    /**
-     * Had to do this because of the way mojank has the bounding boxes locked down
-     */
-
-    public static class EntityMissileCloseRange extends EntityMissile {
-
-        public EntityMissileCloseRange(EntityType<? extends EntityMissile> type, Level worldIn) {
-            super(type, worldIn);
-        }
-
-        public EntityMissileCloseRange(Level worldIn) {
-            this(BallistixEntities.ENTITY_MISSILECR.get(), worldIn);
-        }
-    }
-
-    public static class EntityMissileMediumRange extends EntityMissile {
-
-        public EntityMissileMediumRange(EntityType<? extends EntityMissile> type, Level worldIn) {
-            super(type, worldIn);
-        }
-
-        public EntityMissileMediumRange(Level worldIn) {
-            this(BallistixEntities.ENTITY_MISSILEMR.get(), worldIn);
-        }
-    }
-
-    public static class EntityMissileLongRange extends EntityMissile {
-
-        public EntityMissileLongRange(EntityType<? extends EntityMissile> type, Level worldIn) {
-            super(type, worldIn);
-        }
-
-        public EntityMissileLongRange(Level worldIn) {
-            this(BallistixEntities.ENTITY_MISSILELR.get(), worldIn);
-        }
     }
 
 }
