@@ -1,5 +1,7 @@
 package ballistix.common.tile.turret.antimissile.util;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.turret.ITarget;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
@@ -13,8 +15,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
 
 public abstract class TileTurretAntimissile extends GenericTileTurret {
 

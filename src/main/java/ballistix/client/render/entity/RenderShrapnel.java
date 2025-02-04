@@ -1,6 +1,5 @@
 package ballistix.client.render.entity;
 
-import electrodynamics.prefab.utilities.math.Color;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import ballistix.client.ClientRegister;
 import ballistix.common.entity.EntityShrapnel;
+import electrodynamics.prefab.utilities.math.Color;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

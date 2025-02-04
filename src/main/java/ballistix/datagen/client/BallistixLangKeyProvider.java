@@ -9,7 +9,6 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
-import ballistix.registers.BallistixTiles;
 import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.Level;

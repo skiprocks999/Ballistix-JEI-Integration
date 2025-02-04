@@ -1,12 +1,16 @@
 package ballistix.common.tile.turret.antimissile;
 
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
+import com.mojang.datafixers.util.Pair;
+
 import ballistix.api.turret.ITarget;
 import ballistix.common.entity.EntityRailgunRound;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixTiles;
-import com.mojang.datafixers.util.Pair;
 import electrodynamics.common.item.ItemUpgrade;
 import electrodynamics.common.tags.ElectrodynamicsTags;
 import electrodynamics.prefab.properties.Property;
@@ -25,8 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 

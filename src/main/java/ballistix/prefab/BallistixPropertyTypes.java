@@ -1,13 +1,14 @@
 package ballistix.prefab;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.serialization.Codec;
+
 import electrodynamics.prefab.properties.PropertyType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BallistixPropertyTypes {
 

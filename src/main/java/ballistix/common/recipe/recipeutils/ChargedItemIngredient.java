@@ -1,18 +1,19 @@
 package ballistix.common.recipe.recipeutils;
 
-import ballistix.common.recipe.BallistixRecipeInit;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import ballistix.common.recipe.BallistixRecipeInit;
 import electrodynamics.api.item.IItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
-
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class ChargedItemIngredient implements ICustomIngredient {
 

@@ -1,7 +1,15 @@
 package ballistix.registers;
 
 import ballistix.References;
-import ballistix.common.entity.*;
+import ballistix.common.entity.EntityBlast;
+import ballistix.common.entity.EntityBullet;
+import ballistix.common.entity.EntityExplosive;
+import ballistix.common.entity.EntityGrenade;
+import ballistix.common.entity.EntityMinecart;
+import ballistix.common.entity.EntityMissile;
+import ballistix.common.entity.EntityRailgunRound;
+import ballistix.common.entity.EntitySAM;
+import ballistix.common.entity.EntityShrapnel;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.entity.EntityType;

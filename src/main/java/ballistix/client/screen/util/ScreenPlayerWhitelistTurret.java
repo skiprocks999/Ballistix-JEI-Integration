@@ -1,8 +1,9 @@
 package ballistix.client.screen.util;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
-import com.mojang.blaze3d.platform.InputConstants;
 import electrodynamics.prefab.inventory.container.types.GenericContainerBlockEntity;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;

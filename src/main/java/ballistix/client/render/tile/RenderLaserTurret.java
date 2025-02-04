@@ -1,9 +1,14 @@
 package ballistix.client.render.tile;
 
+import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import ballistix.client.ClientRegister;
 import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
-import com.mojang.blaze3d.vertex.PoseStack;
 import electrodynamics.client.render.tile.AbstractTileRenderer;
 import electrodynamics.prefab.utilities.RenderingUtils;
 import electrodynamics.prefab.utilities.math.MathUtils;
@@ -15,10 +20,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.units.qual.A;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Random;
 
 public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
 

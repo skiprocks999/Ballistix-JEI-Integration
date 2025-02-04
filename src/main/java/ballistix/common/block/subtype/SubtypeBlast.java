@@ -1,6 +1,24 @@
 package ballistix.common.block.subtype;
 
-import ballistix.common.blast.*;
+import ballistix.common.blast.Blast;
+import ballistix.common.blast.BlastAntimatter;
+import ballistix.common.blast.BlastAttractive;
+import ballistix.common.blast.BlastBreaching;
+import ballistix.common.blast.BlastChemical;
+import ballistix.common.blast.BlastCondensive;
+import ballistix.common.blast.BlastContagious;
+import ballistix.common.blast.BlastDarkmatter;
+import ballistix.common.blast.BlastDebilitation;
+import ballistix.common.blast.BlastEMP;
+import ballistix.common.blast.BlastFragmentation;
+import ballistix.common.blast.BlastIncendiary;
+import ballistix.common.blast.BlastLandmine;
+import ballistix.common.blast.BlastLargeAntimatter;
+import ballistix.common.blast.BlastNuclear;
+import ballistix.common.blast.BlastObsidian;
+import ballistix.common.blast.BlastRepulsive;
+import ballistix.common.blast.BlastShrapnel;
+import ballistix.common.blast.BlastThermobaric;
 import electrodynamics.api.ISubtype;
 import electrodynamics.common.block.voxelshapes.VoxelShapeProvider;
 import net.minecraft.core.BlockPos;

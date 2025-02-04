@@ -1,7 +1,14 @@
 package ballistix.registers;
 
-import ballistix.References;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Dynamic;
+
+import ballistix.References;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -12,11 +19,6 @@ import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 public class BallistixAttachmentTypes {
 

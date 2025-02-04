@@ -2,15 +2,15 @@ package ballistix.common.blast;
 
 import java.util.List;
 
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import org.joml.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;

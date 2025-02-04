@@ -2,6 +2,7 @@ package ballistix.compatibility.griefdefender;
 
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.claim.Claim;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;

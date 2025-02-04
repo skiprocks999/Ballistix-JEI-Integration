@@ -1,5 +1,7 @@
 package ballistix.common.packet.type.client;
 
+import java.util.HashSet;
+
 import ballistix.api.radar.IDetected;
 import ballistix.common.packet.NetworkHandler;
 import io.netty.buffer.ByteBuf;
@@ -11,8 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.HashSet;
 
 public class PacketSetSearchRadarTrackedClient implements CustomPacketPayload {
 

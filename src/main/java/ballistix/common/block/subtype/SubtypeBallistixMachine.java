@@ -1,12 +1,14 @@
 package ballistix.common.block.subtype;
 
+import java.util.function.Supplier;
+
 import ballistix.common.block.BallistixVoxelShapes;
 import ballistix.common.tile.TileESMTower;
-import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
-import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
+import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import electrodynamics.api.ISubtype;
@@ -23,8 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.function.Supplier;
 
 public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 

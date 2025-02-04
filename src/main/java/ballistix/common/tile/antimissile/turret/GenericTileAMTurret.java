@@ -1,5 +1,7 @@
 package ballistix.common.tile.antimissile.turret;
 
+import javax.annotation.Nullable;
+
 import ballistix.common.tile.radar.TileFireControlRadar;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
@@ -18,8 +20,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
 
 public abstract class GenericTileAMTurret extends GenericTile {
 

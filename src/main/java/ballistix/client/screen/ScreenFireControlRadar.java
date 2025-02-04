@@ -1,5 +1,10 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.platform.InputConstants;
+
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
@@ -7,7 +12,6 @@ import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.ScreenComponentRadarGrid;
 import ballistix.prefab.screen.WrapperFireControlFrequencyManager;
 import ballistix.prefab.utils.BallistixTextUtils;
-import com.mojang.blaze3d.platform.InputConstants;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
@@ -22,9 +26,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRadar> {
 

@@ -1,5 +1,8 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.settings.Constants;
@@ -11,7 +14,6 @@ import ballistix.prefab.screen.WrapperPlayerWhitelist;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
-import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.types.ScreenComponentCustomRender;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
@@ -24,9 +26,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWSTurret> {
 

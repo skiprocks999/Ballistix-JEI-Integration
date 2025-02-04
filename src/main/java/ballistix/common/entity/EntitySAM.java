@@ -1,5 +1,9 @@
 package ballistix.common.entity;
 
+import java.util.HashSet;
+
+import org.joml.Vector3f;
+
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixEntities;
 import electrodynamics.Electrodynamics;
@@ -19,9 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
-
-import java.util.HashSet;
 
 //want to keep this separate from the missiles since this thing has one job and one job only :D
 public class EntitySAM extends Entity {

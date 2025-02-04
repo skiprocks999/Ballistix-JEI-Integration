@@ -1,5 +1,12 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.joml.Matrix4f;
+
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerLaserTurret;
 import ballistix.common.settings.Constants;
@@ -9,7 +16,6 @@ import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
 import ballistix.prefab.utils.BallistixTextUtils;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.api.electricity.formatting.DisplayUnit;
 import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
@@ -25,10 +31,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Matrix4f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLaserTurret> {
 

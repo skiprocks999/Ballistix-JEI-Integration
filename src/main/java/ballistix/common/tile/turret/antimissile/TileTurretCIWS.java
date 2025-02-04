@@ -1,5 +1,10 @@
 package ballistix.common.tile.turret.antimissile;
 
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
+import com.mojang.datafixers.util.Pair;
+
 import ballistix.api.turret.ITarget;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
@@ -8,7 +13,6 @@ import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjec
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import com.mojang.datafixers.util.Pair;
 import electrodynamics.common.item.ItemUpgrade;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
@@ -27,8 +31,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public class TileTurretCIWS extends TileTurretAntimissileProjectile implements ITickableSound {
 

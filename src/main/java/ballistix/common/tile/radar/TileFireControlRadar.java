@@ -1,5 +1,11 @@
 package ballistix.common.tile.radar;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.settings.Constants;
@@ -26,11 +32,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class TileFireControlRadar extends GenericTile {
 

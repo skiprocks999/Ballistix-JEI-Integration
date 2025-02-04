@@ -1,6 +1,10 @@
 package ballistix.client.guidebook.chapters;
 
-import ballistix.common.item.*;
+import ballistix.common.item.ItemDefuser;
+import ballistix.common.item.ItemLaserDesignator;
+import ballistix.common.item.ItemRadarGun;
+import ballistix.common.item.ItemScanner;
+import ballistix.common.item.ItemTracker;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import electrodynamics.api.electricity.formatting.ChatFormatter;

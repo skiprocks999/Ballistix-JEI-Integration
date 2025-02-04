@@ -1,8 +1,11 @@
 package ballistix.client.render.entity;
 
+import java.util.Random;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import ballistix.client.ClientRegister;
 import ballistix.common.entity.EntitySAM;
-import com.mojang.blaze3d.vertex.PoseStack;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,8 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-
-import java.util.Random;
 
 public class RenderSAM extends EntityRenderer<EntitySAM> {
 

@@ -1,16 +1,17 @@
 package ballistix.registers;
 
+import java.util.UUID;
+
+import com.mojang.serialization.Codec;
+
 import ballistix.References;
 import ballistix.common.item.ItemTracker;
-import com.mojang.serialization.Codec;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.UUID;
 
 public class BallistixDataComponentTypes {
 

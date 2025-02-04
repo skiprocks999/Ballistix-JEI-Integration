@@ -1,5 +1,7 @@
 package ballistix.common.item;
 
+import java.util.List;
+
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.settings.Constants;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -10,8 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-
-import java.util.List;
 
 public class ItemMissile extends ItemElectrodynamics {
 

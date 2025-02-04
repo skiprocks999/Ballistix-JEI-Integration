@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
 import com.google.common.collect.Sets;
 
+import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;

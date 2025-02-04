@@ -1,14 +1,16 @@
 package ballistix.common.tile.turret.antimissile.util;
 
+import org.jetbrains.annotations.Nullable;
+
+import com.mojang.datafixers.util.Pair;
+
 import ballistix.api.turret.ITarget;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import com.mojang.datafixers.util.Pair;
 import electrodynamics.Electrodynamics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class TileTurretAntimissileProjectile extends TileTurretAntimissile {
 

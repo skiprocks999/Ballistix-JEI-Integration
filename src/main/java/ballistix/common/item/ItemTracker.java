@@ -6,12 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import ballistix.References;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixDataComponentTypes;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;

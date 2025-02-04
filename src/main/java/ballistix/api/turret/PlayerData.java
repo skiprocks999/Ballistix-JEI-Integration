@@ -1,10 +1,11 @@
 package ballistix.api.turret;
 
+import java.util.UUID;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.UUIDUtil;
 
-import java.util.UUID;
+import net.minecraft.core.UUIDUtil;
 
 public record PlayerData(UUID id, String name) {
 

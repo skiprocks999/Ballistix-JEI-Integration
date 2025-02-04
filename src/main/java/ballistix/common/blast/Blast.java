@@ -6,17 +6,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import ballistix.References;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import com.google.common.collect.Maps;
+import com.mojang.authlib.GameProfile;
 
+import ballistix.References;
 import ballistix.api.event.BlastEvent;
 import ballistix.api.event.BlastEvent.ConstructBlastEvent;
 import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
-import com.mojang.authlib.GameProfile;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;

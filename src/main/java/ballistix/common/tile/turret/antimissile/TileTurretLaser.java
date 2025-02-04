@@ -1,5 +1,8 @@
 package ballistix.common.tile.turret.antimissile;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import ballistix.api.turret.ITarget;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerLaserTurret;
@@ -25,8 +28,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class TileTurretLaser extends TileTurretAntimissile implements ITickableSound {
 

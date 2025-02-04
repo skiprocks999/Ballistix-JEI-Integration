@@ -1,5 +1,9 @@
 package ballistix.common.tile.radar;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import ballistix.api.radar.IDetected;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeMissile;
@@ -31,10 +35,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class TileSearchRadar extends GenericTile {
 

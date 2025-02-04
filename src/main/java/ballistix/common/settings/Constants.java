@@ -1,6 +1,9 @@
 package ballistix.common.settings;
 
-import electrodynamics.api.configuration.*;
+import electrodynamics.api.configuration.BooleanValue;
+import electrodynamics.api.configuration.Configuration;
+import electrodynamics.api.configuration.DoubleValue;
+import electrodynamics.api.configuration.IntValue;
 
 @Configuration(name = "Ballistix")
 public class Constants {

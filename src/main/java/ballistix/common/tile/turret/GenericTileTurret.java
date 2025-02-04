@@ -1,7 +1,12 @@
 package ballistix.common.tile.turret;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ballistix.api.turret.ITarget;
-import ballistix.api.turret.PlayerData;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.prefab.BallistixPropertyTypes;
@@ -28,12 +33,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public abstract class GenericTileTurret extends GenericTile {
 

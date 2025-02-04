@@ -1,17 +1,17 @@
 package ballistix.registers;
 
+import com.google.common.collect.Sets;
+
+import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.tile.TileESMTower;
+import ballistix.common.tile.TileMissileSilo;
 import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
 import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
-import com.google.common.collect.Sets;
-
-import ballistix.References;
-import ballistix.common.tile.TileMissileSilo;
-import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;

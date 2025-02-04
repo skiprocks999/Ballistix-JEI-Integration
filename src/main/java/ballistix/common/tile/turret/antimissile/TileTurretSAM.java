@@ -1,5 +1,9 @@
 package ballistix.common.tile.turret.antimissile;
 
+import org.joml.Vector3f;
+
+import com.mojang.datafixers.util.Pair;
+
 import ballistix.common.entity.EntitySAM;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.Constants;
@@ -7,7 +11,6 @@ import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjec
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import com.mojang.datafixers.util.Pair;
 import electrodynamics.common.item.ItemUpgrade;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
@@ -21,7 +24,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public class TileTurretSAM extends TileTurretAntimissileProjectile {
 

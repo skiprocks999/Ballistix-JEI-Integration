@@ -1,5 +1,8 @@
 package ballistix.prefab.screen;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import ballistix.client.screen.ScreenESMTower;
 import ballistix.common.tile.TileESMTower;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -9,9 +12,6 @@ import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 public class WrapperESMTowerDetections {
 

@@ -1,5 +1,9 @@
 package ballistix.prefab.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixIconTypes;
@@ -15,10 +19,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class WrapperPlayerWhitelist {
 

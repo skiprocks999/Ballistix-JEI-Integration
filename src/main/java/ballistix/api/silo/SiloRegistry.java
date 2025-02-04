@@ -3,8 +3,8 @@ package ballistix.api.silo;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import ballistix.registers.BallistixAttachmentTypes;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.registers.BallistixAttachmentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;

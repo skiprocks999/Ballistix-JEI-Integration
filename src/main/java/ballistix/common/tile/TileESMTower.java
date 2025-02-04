@@ -1,5 +1,9 @@
 package ballistix.common.tile;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.settings.Constants;
@@ -30,10 +34,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 

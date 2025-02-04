@@ -1,12 +1,16 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.platform.InputConstants;
+
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.screen.WrapperSearchFrequencyManager;
 import ballistix.prefab.screen.WrapperSearchRadarDetections;
 import ballistix.prefab.utils.BallistixTextUtils;
-import com.mojang.blaze3d.platform.InputConstants;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSlot;
@@ -18,9 +22,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 

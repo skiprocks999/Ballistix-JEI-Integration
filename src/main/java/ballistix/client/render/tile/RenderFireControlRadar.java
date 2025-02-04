@@ -1,8 +1,13 @@
 package ballistix.client.render.tile;
 
+import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import ballistix.client.ClientRegister;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import com.mojang.blaze3d.vertex.PoseStack;
 import electrodynamics.client.render.tile.AbstractTileRenderer;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
@@ -11,9 +16,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Random;
 
 public class RenderFireControlRadar extends AbstractTileRenderer<TileFireControlRadar> {
 

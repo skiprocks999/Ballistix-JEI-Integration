@@ -1,7 +1,8 @@
 package ballistix.client.render.entity;
 
-import ballistix.common.entity.EntityBullet;
 import com.mojang.blaze3d.vertex.PoseStack;
+
+import ballistix.common.entity.EntityBullet;
 import electrodynamics.client.ClientRegister;
 import electrodynamics.prefab.utilities.RenderingUtils;
 import electrodynamics.prefab.utilities.math.Color;
