@@ -61,13 +61,12 @@ public class ThreadRaycastBlast extends ThreadBlast {
 
             if (!block.getFluidState().isEmpty()) {
                 return 0.25f;
-            } else {
-                float resistance = block.getExplosionResistance(world, position, explosion);
-                if (resistance > 200) {
-                    resistance = 0.75f * (float) Math.sqrt(resistance);
-                }
-                return resistance;
             }
+	    float resistance = block.getExplosionResistance(world, position, explosion);
+	    if (resistance > 200) {
+	        resistance = 0.75f * (float) Math.sqrt(resistance);
+	    }
+	    return resistance;
 
 
         }
