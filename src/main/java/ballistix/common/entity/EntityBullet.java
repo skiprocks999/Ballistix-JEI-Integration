@@ -49,7 +49,7 @@ public class EntityBullet extends Entity {
 
         boolean isServer = !isClient;
 
-        if(isServer) {
+        if (isServer) {
             entityData.set(DISTANCE_TRAVELED, distanceTraveled);
             entityData.set(SPEED, speed);
             entityData.set(ROTATION, rotation);
@@ -61,80 +61,84 @@ public class EntityBullet extends Entity {
             range = entityData.get(RANGE);
         }
 
-        if(tickCount > 30 && getDeltaMovement().length() <= 0) {
-            if(isServer) {
+        if (tickCount > 30 && getDeltaMovement().length() <= 0) {
+            if (isServer) {
                 removeAfterChangingDimensions();
             }
             return;
         }
 
 
-        if(distanceTraveled >= range + 5) {
-            if(isServer) {
+        if (distanceTraveled >= range + 5) {
+            if (isServer) {
                 removeAfterChangingDimensions();
             }
             return;
         }
-
-        Vec3 movement = getDeltaMovement();
-
-        setPos(getX() + movement.x * speed, getY() + movement.y * speed, getZ() + movement.z * speed);
 
         setYRot((float) Math.atan2(rotation.z, rotation.x) * RAD2DEG);
         setXRot((float) (Math.asin(rotation.y) * RAD2DEG));
 
-        BlockState state = level.getBlockState(blockPosition());
+        Vec3 movement = getDeltaMovement();
 
-        if(!state.getCollisionShape(level, blockPosition()).isEmpty() && tickCount > 5) {
-            if(isServer) {
-                level.destroyBlock(blockPosition(), false);
-                removeAfterChangingDimensions();
+        for (int i = 0; i < speed; i++) {
+
+            setPos(getX() + movement.x, getY() + movement.y, getZ() + movement.z);
+
+
+            BlockState state = level.getBlockState(blockPosition());
+
+            if (!state.getCollisionShape(level, blockPosition()).isEmpty() && tickCount > 5) {
+                if (isServer) {
+                    level.destroyBlock(blockPosition(), false);
+                    removeAfterChangingDimensions();
+                }
+                return;
             }
-            return;
+
+            if(isServer) {
+                AABB box = getBoundingBox().inflate(1);
+
+                for (EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
+
+                    if (!missile.isRemoved() && missile.getBoundingBox().intersects(box)) {
+                        missile.health = missile.health - damage;
+                        removeAfterChangingDimensions();
+                        return;
+                    }
+
+                }
+
+                LivingEntity selected = null;
+                double lastMag = 0;
+
+                for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, box)) {
+
+                    double deltaX = entity.getX() - getX();
+                    double deltaY = entity.getY() - getY();
+                    double deltaZ = entity.getZ() - getZ();
+
+                    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+
+                    if (selected == null) {
+                        selected = entity;
+                        lastMag = mag;
+                    } else if (mag < lastMag) {
+                        selected = entity;
+                    }
+
+                }
+
+                if (selected != null) {
+                    selected.hurt(selected.damageSources().source(BallistixDamageTypes.CIWS_BULLET), 10);
+                    removeAfterChangingDimensions();
+                }
+            }
+
         }
 
         distanceTraveled += speed;
 
-        if(isServer) {
-
-            AABB box = getBoundingBox().inflate(speed);
-
-            for(EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
-
-                if(!missile.isRemoved() && missile.getBoundingBox().intersects(box)) {
-                    missile.health = missile.health - damage;
-                    removeAfterChangingDimensions();
-                    return;
-                }
-
-            }
-
-            LivingEntity selected = null;
-            double lastMag = 0;
-
-            for(LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, box)) {
-
-                double deltaX = entity.getX() - getX();
-                double deltaY = entity.getY() - getY();
-                double deltaZ = entity.getZ() - getZ();
-
-                double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-                if(selected == null) {
-                    selected = entity;
-                    lastMag = mag;
-                } else if(mag < lastMag){
-                    selected = entity;
-                }
-
-            }
-
-            if(selected != null) {
-                selected.hurt(selected.damageSources().source(BallistixDamageTypes.CIWS_BULLET), 10);
-                removeAfterChangingDimensions();
-            }
-
-        }
     }
 
     @Override

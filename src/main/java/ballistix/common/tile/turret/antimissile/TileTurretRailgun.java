@@ -47,6 +47,11 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
             public int getMaxStackSize(ItemStack stack) {
                 return stack.is(ElectrodynamicsTags.Items.ROD_STEEL) ? 10 : super.getMaxStackSize();
             }
+
+            @Override
+            public int getMaxStackSize() {
+                return 12;
+            }
         }.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
             if (index == 0) {

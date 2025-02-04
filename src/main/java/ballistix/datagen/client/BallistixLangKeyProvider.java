@@ -119,6 +119,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addDamageSource("chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
                 addDamageSource("shrapnel", "%s was hit by shrapnel!");
                 addDamageSource("laserturret", "%s found the green laser pointer!");
+                addDamageSource("ciwsbullet", "%s saw the WIZ!");
+                addDamageSource("railgunround", "%s found that E really does equal MC^2!");
+
 
                 addChatMessage("radargun.text", "Coordinates: %s");
                 addChatMessage("radargun.turretsucess", "Bound");
