@@ -136,7 +136,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
             }
         }
         if (threadSimple.isComplete && rayDone) {
-            if (!ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
+            if (ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
                 attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
 
                 boolean add = switch(griefPreventionMethod) {
