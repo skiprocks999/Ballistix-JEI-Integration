@@ -123,7 +123,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
         InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && frequencyWrapper.addEditBox.isActive()) {
+        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && frequencyWrapper.addEditBox.isVisible() && frequencyWrapper.addEditBox.isFocused()) {
             return false;
         }
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
