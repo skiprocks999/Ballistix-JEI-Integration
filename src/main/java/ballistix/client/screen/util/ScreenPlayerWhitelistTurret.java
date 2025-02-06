@@ -74,7 +74,7 @@ public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBloc
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
         InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && whitelistWrapper.addEditBox.isActive()) {
+        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && whitelistWrapper.addEditBox.isVisible() && whitelistWrapper.addEditBox.isFocused()) {
             return false;
         }
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
