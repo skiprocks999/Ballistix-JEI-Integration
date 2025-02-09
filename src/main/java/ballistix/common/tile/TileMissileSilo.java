@@ -126,7 +126,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
         int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
 
-        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 20.5, getBlockPos().getZ() + 0.5);
+        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5);
         missile.missileType = ordinal;
         missile.target = target.get();
         missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();

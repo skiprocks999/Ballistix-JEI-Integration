@@ -254,7 +254,7 @@ public class EntityMissile extends Entity {
         }
 
         if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
-            //speed += 0.02F;
+            speed += 0.02F;
         }
 
         if (isServerSide || speed >= 3.0F) {
