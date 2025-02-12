@@ -6,7 +6,6 @@ import ballistix.common.blast.Blast;
 import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
-import electrodynamics.Electrodynamics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.world.chunk.ForcedChunkManager;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
 
@@ -96,8 +94,6 @@ public class EntityBlast extends Entity {
 		if(blast == null) {
 			blast = getBlastType().createBlast(level(), blockPosition());
 		}
-
-		Electrodynamics.LOGGER.info("ticking");
 
 		if (blast != null) {
 			if (callcount == 0) {
