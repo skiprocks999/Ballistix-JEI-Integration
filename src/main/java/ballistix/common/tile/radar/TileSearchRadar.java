@@ -14,7 +14,6 @@ import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileESMTower;
-import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixPropertyTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
