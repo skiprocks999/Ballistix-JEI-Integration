@@ -1,12 +1,14 @@
 package ballistix.common.tile.radar;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.entity.EntityMissile;
+import ballistix.Ballistix;
+import ballistix.References;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileESMTower;
@@ -25,13 +27,19 @@ import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public class TileFireControlRadar extends GenericTile {
 
@@ -50,7 +58,7 @@ public class TileFireControlRadar extends GenericTile {
     public final Vec3 searchPos;
     private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.FIRE_CONTROL_RADAR_RANGE);
     @Nullable
-    public EntityMissile tracking;
+    public VirtualMissile tracking;
 
     public double clientRotation;
     public double clientRotationSpeed;
@@ -79,17 +87,17 @@ public class TileFireControlRadar extends GenericTile {
 
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        if(tracking != null && tracking.isRemoved()) {
+        if(tracking != null && tracking.hasExploded()) {
             tracking = null;
         }
 
-        EntityMissile temp = null;
+        VirtualMissile temp = null;
 
-        for (EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
+        for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
             if (missile.getBoundingBox().intersects(searchArea)) {
                 if(temp == null && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) {
                     temp = missile;
-                } else if (temp != null && getDistanceToMissile(searchPos, missile.getPosition()) < getDistanceToMissile(searchPos, temp.getPosition()) && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) {
+                } else if (temp != null && getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos, temp.position) && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) {
                     temp = missile;
                 }
             }
@@ -100,7 +108,7 @@ public class TileFireControlRadar extends GenericTile {
         }
 
         if(tracking != null) {
-            trackingPos.set(tracking.getPosition());
+            trackingPos.set(tracking.position);
             missileType.set(tracking.missileType);
         } else {
             trackingPos.set(OUT_OF_REACH);
@@ -177,6 +185,40 @@ public class TileFireControlRadar extends GenericTile {
             }
 
         }
+    }
+
+    @Override
+    public void onBlockDestroyed() {
+        super.onBlockDestroyed();
+
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
+        }
+
+
+    }
+
+    @Override
+    public void onPlace(BlockState oldState, boolean isMoving) {
+        super.onPlace(oldState, isMoving);
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
+        }
+    }
+
+    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+    private static final class ChunkloaderManager {
+
+        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("firecontrolradarcontroller"));
+
+        @SubscribeEvent
+        public static void register(RegisterTicketControllersEvent event) {
+            event.register(TICKET_CONTROLLER);
+        }
+
+
     }
 
 }

@@ -58,7 +58,7 @@ public abstract class GenericTileAMTurret extends GenericTile {
                 radar = fire;
             }
         }
-        hasTarget = radar != null && radar.tracking != null && !radar.tracking.isRemoved();
+        hasTarget = radar != null && radar.tracking != null && !radar.tracking.hasExploded();
 
         canFire = false;
 
@@ -67,14 +67,14 @@ public abstract class GenericTileAMTurret extends GenericTile {
         if (hasTarget) {
 
             float trackingSpeed = 0F;//radar.tracking.speed;
-            Vec3 trackingVector = radar.tracking.getDeltaMovement();
+            Vec3 trackingVector = radar.tracking.deltaMovement;
 
 
-            double timeToIntercept = TileFireControlRadar.getTimeToIntercept(radar.tracking.getPosition(), trackingVector, trackingSpeed, getProjectileSpeed(), getProjectileLaunchPosition());
+            double timeToIntercept = TileFireControlRadar.getTimeToIntercept(radar.tracking.position, trackingVector, trackingSpeed, getProjectileSpeed(), getProjectileLaunchPosition());
 
             if (timeToIntercept >= 0) {
 
-                Vec3 interceptPos = radar.tracking.getPosition().add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
+                Vec3 interceptPos = radar.tracking.position.add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
 
                 Vec3 launchPos = getProjectileLaunchPosition();
 

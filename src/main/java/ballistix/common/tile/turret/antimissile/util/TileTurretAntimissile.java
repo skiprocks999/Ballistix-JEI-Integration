@@ -71,7 +71,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
             return null;
         }
 
-        if(radar.tracking == null  || radar.tracking.isRemoved()) {
+        if(radar.tracking == null  || radar.tracking.hasExploded()) {
             return null;
         }
         return new ITarget.TargetMissile(radar.tracking);

@@ -1,65 +1,40 @@
 package ballistix.common.entity;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
-import ballistix.common.blast.Blast;
-import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.registers.BallistixEntities;
 import electrodynamics.Electrodynamics;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public class EntityMissile extends Entity {
 
-    public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<EntityMissile>> MISSILES = new ConcurrentHashMap<>();
-
-    private static final EntityDataAccessor<Integer> EXPLOSIVE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Vector3f> POSITION = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3f> DELTAMOVE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<BlockPos> TARGET = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BLOCK_POS);
 
-    public static final int MAX_CRUISING_ALTITUDE = 500;
-    public static final int WORLD_BUILD_HEIGHT = 320;
-    public static final int ARC_TURN_HEIGHT_MIN = 400;
-
-
-    public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
-    public int blastOrdinal = -1;
     public int missileType = -1;
-    public boolean isItem = false;
-    private EntityBlast blastEntity = null;
-    public boolean isStuck = false;
-    public float speed;
-    public float startX = 0;
-    public float startZ = 0;
-    public int frequency = 0;
-    public float health = Constants.MISSILE_HEALTH;
+    public float speed = 0.0F;
+    @Nullable
+    public UUID id;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
         super(type, worldIn);
@@ -72,15 +47,10 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(EXPLOSIVE_TYPE, -1);
+        builder.define(POSITION, new Vector3f(0, 0, 0));
         builder.define(MISSILE_TYPE, -1);
-        builder.define(ISSTUCK, -1);
-        builder.define(START_X, -1.0F);
-        builder.define(START_Z, -1.0F);
-        builder.define(SPEED, -1.0F);
-        builder.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
-        builder.define(IS_ITEM, false);
-        builder.define(HEALTH, health);
+        builder.define(DELTAMOVE, new Vector3f(0, 0, 0));
+        builder.define(SPEED, 0.0F);
     }
 
     @Override
@@ -92,169 +62,50 @@ public class EntityMissile extends Entity {
 
         if (isServerSide) {
 
-            entityData.set(EXPLOSIVE_TYPE, blastOrdinal);
+            entityData.set(POSITION, new Vector3f((float) getX(), (float) getY(), (float) getZ()));
             entityData.set(MISSILE_TYPE, missileType);
-            entityData.set(ISSTUCK, isStuck ? 1 : -1);
-            entityData.set(START_X, startX);
-            entityData.set(START_Z, startZ);
+            entityData.set(DELTAMOVE, new Vector3f((float) getDeltaMovement().x, (float) getDeltaMovement().y, (float) getDeltaMovement().z));
             entityData.set(SPEED, speed);
-            entityData.set(TARGET, target);
-            entityData.set(IS_ITEM, isItem);
 
         } else {
 
-            blastOrdinal = entityData.get(EXPLOSIVE_TYPE);
+            Vector3f pos = entityData.get(POSITION);
+            setPos(pos.x, pos.y, pos.z);
             missileType = entityData.get(MISSILE_TYPE);
-            boolean old = isStuck;
-            isStuck = entityData.get(ISSTUCK) > 0;
-            if (isStuck != old) {
-                setPos(getX() - speed * getDeltaMovement().x * 1, getY() - speed * getDeltaMovement().y * 1, getZ() - speed * getDeltaMovement().z * 1);
-            }
-            startX = entityData.get(START_X);
-            startZ = entityData.get(START_Z);
+            Vector3f deltaMovement = entityData.get(DELTAMOVE);
+            setDeltaMovement(deltaMovement.x, deltaMovement.y, deltaMovement.z);
             speed = entityData.get(SPEED);
-            target = entityData.get(TARGET);
-            isItem = entityData.get(IS_ITEM);
         }
 
-        if(isServerSide && health <= 0) {
-            level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
-            removeAfterChangingDimensions();
-            return;
-        }
-
-        if ((!isItem && target.equals(BlockEntityUtils.OUT_OF_REACH)) || blastOrdinal == -1) {
-            if (isServerSide) {
+        if(isServerSide) {
+            if(id == null) {
                 removeAfterChangingDimensions();
+                return;
             }
-            return;
-        }
 
-        if (isStuck) {
-            if (isServerSide && blastEntity.getBlast().hasStarted) {
+            VirtualMissile missile = MissileManager.getMissile(level.dimension(), id);
+
+            if(missile == null) {
                 removeAfterChangingDimensions();
+                return;
             }
-            return;
+
+            if(missile.hasExploded()) {
+                removeAfterChangingDimensions();
+                return;
+            }
+
+            setPos(missile.position);
+            setDeltaMovement(missile.deltaMovement);
+            speed = missile.speed;
+
         }
 
-        BlockState state = level.getBlockState(blockPosition());
-
-        if (blastEntity != null) {
-            return;
-        }
-
-        if (getDeltaMovement().length() > 0 && !isStuck) {
+        if (getDeltaMovement().length() > 0) {
 
             setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI));
             setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 
-        }
-
-        if (isServerSide) {
-
-
-            if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || getY() < target.getY() && getDeltaMovement().y() < 0 && tickCount > 20)) {
-
-                SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-
-                setPos(getX() - speed * getDeltaMovement().x * 2, getY() - speed * getDeltaMovement().y * 2, getZ() - speed * getDeltaMovement().z * 2);
-
-                Blast b = explosive.createBlast(level, blockPosition());
-
-                if (b != null) {
-
-                    blastEntity = b.performExplosion();
-
-                    if (blastEntity == null) {
-
-                        removeAfterChangingDimensions();
-
-                    } else {
-
-                        isStuck = true;
-
-                    }
-                }
-
-            }
-
-            if (!isItem && getY() >= ARC_TURN_HEIGHT_MIN) {
-
-                float iDeltaX = target.getX() - startX;
-                float iDeltaZ = target.getZ() - startZ;
-
-                float iDistanceXZ = (float) Math.sqrt(iDeltaX * iDeltaX + iDeltaZ * iDeltaZ);
-                float halfwayXZ = iDistanceXZ / 2.0F;
-
-                double maxRadii = MAX_CRUISING_ALTITUDE - ARC_TURN_HEIGHT_MIN;
-
-                float turnRadius = (float) Mth.clamp(halfwayXZ, 0.001F, maxRadii);
-
-                float deltaX = (float) (target.getX() - getX());
-                float deltaZ = (float) (target.getZ() - getZ());
-
-                float distanceToTarget2D = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-                float distanceFromStart2D = iDistanceXZ - distanceToTarget2D;
-
-                float deltaY = (float) (getY() - ARC_TURN_HEIGHT_MIN);
-
-                float phi = 0;
-                float signY = 1;
-
-                if (halfwayXZ <= maxRadii) {
-
-                    phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 0.999));
-
-                    if (distanceFromStart2D > halfwayXZ) {
-
-                        signY = -1;
-
-                    }
-
-                    float x = (float) (iDeltaX / iDistanceXZ * Math.sin(phi));
-                    float z = (float) (iDeltaZ / iDistanceXZ * Math.sin(phi));
-
-                    setDeltaMovement(x, Math.cos(phi) * signY, z);
-
-                } else {
-
-                    if (distanceFromStart2D < halfwayXZ) {
-
-                        if (distanceFromStart2D <= turnRadius) {
-                            phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 0.999));
-                        } else {
-                            phi = (float) (Math.PI / 2.0);
-                        }
-
-                    } else if (distanceFromStart2D > halfwayXZ) {
-
-                        if (distanceToTarget2D <= iDistanceXZ - turnRadius) {
-                            phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 0.999));
-                            signY = -1;
-                        } else {
-                            phi = (float) (Math.PI / 2.0);
-                        }
-                    } else {
-                        phi = (float) (Math.PI / 2.0);
-                    }
-
-                    float x = (float) (iDeltaX / iDistanceXZ * Math.sin(phi));
-                    float z = (float) (iDeltaZ / iDistanceXZ * Math.sin(phi));
-
-                    setDeltaMovement(x, Math.cos(phi) * signY, z);
-
-                }
-            }
-        }
-
-        if (isServerSide || state.getCollisionShape(level, blockPosition()).isEmpty()) {
-
-            setPos(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z);
-
-        }
-
-        if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
-            speed += 0.02F;
         }
 
         if (isServerSide || speed >= 3.0F) {
@@ -298,30 +149,21 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        compound.putInt("type", blastOrdinal);
+        Vec3.CODEC.encode(new Vec3(getX(), getY(), getZ()), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("position", tag));
         compound.putInt("range", missileType);
-        compound.putBoolean("isItem", isItem);
-        compound.put("target", NbtUtils.writeBlockPos(target));
-        compound.putFloat("startx", startX);
-        compound.putFloat("startz", startZ);
-        compound.putFloat("speed", speed);
-        compound.putInt("freq", frequency);
-        compound.putFloat("health", health);
+        Vec3.CODEC.encode(getDeltaMovement(), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("movement", tag));
+        if(id != null) {
+            UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
+        }
+
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        blastOrdinal = compound.getInt("type");
+        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("position")).ifSuccess(pair -> setPos(pair.getFirst()));
         missileType = compound.getInt("range");
-        isItem = compound.getBoolean("isItem");
-        blastOrdinal = compound.getInt("type");
-        Optional<BlockPos> pos = NbtUtils.readBlockPos(compound, "target");
-        target = pos.orElse(BlockEntityUtils.OUT_OF_REACH);
-        startX = compound.getFloat("startx");
-        startZ = compound.getFloat("startz");
-        speed = compound.getFloat("speed");
-        frequency = compound.getInt("freq");
-        health = compound.getFloat("health");
+        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("movement")).ifSuccess(pair -> setDeltaMovement(pair.getFirst()));
+        UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
     }
 
     @Override
@@ -348,30 +190,12 @@ public class EntityMissile extends Entity {
     }
 
     @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
-        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
-        set.add(this);
-        MISSILES.put(level().dimension(), set);
-    }
-
-    @Override
-    public void onRemovedFromLevel() {
-        super.onRemovedFromLevel();
-        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
-        set.remove(this);
-        //MISSILES.put(level().dimension(), set);
-    }
-
-    @Override
     public void remove(RemovalReason reason) {
+        if(!level().isClientSide && (reason == RemovalReason.UNLOADED_TO_CHUNK || reason == RemovalReason.UNLOADED_WITH_PLAYER) && id != null) {
+            VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
+            missile.setSpawned(false);
+        }
         super.remove(reason);
-        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
-        set.remove(this);
-    }
-
-    public Vec3 getPosition() {
-        return new Vec3(getX(), getY(), getZ());
     }
 
 }

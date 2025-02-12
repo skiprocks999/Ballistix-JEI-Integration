@@ -6,6 +6,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ballistix.Ballistix;
+import ballistix.References;
 import ballistix.api.turret.ITarget;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
@@ -25,14 +27,20 @@ import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public abstract class GenericTileTurret extends GenericTile {
 
@@ -340,6 +348,40 @@ public abstract class GenericTileTurret extends GenericTile {
             whitelistedPlayers.get().add(pl.getName().getString());
             whitelistedPlayers.forceDirty();
         }
+    }
+
+    @Override
+    public void onBlockDestroyed() {
+        super.onBlockDestroyed();
+
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
+        }
+
+
+    }
+
+    @Override
+    public void onPlace(BlockState oldState, boolean isMoving) {
+        super.onPlace(oldState, isMoving);
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
+        }
+    }
+
+    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+    private static final class ChunkloaderManager {
+
+        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("turretcontroller"));
+
+        @SubscribeEvent
+        public static void register(RegisterTicketControllersEvent event) {
+            event.register(TICKET_CONTROLLER);
+        }
+
+
     }
 
 }
