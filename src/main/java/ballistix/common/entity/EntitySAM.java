@@ -146,13 +146,11 @@ public class EntitySAM extends Entity {
     public InteractionResult interact(Player player, InteractionHand hand) {
         if (player.isSecondaryUseActive()) {
             return InteractionResult.PASS;
-        } else {
-            if (!this.level().isClientSide) {
-                return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
-            } else {
-                return InteractionResult.SUCCESS;
-            }
         }
+	if (!this.level().isClientSide) {
+	    return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
+	}
+	return InteractionResult.SUCCESS;
     }
 
 }

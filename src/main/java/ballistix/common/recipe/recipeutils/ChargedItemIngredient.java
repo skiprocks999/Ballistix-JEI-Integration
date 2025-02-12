@@ -56,12 +56,8 @@ public class ChargedItemIngredient implements ICustomIngredient {
 
             return stored.equals(charge);
 
-        } else {
-
-            return stored.getVoltage() >= charge.getVoltage() && stored.getJoules() >= charge.getJoules();
-
-
         }
+	return stored.getVoltage() >= charge.getVoltage() && stored.getJoules() >= charge.getJoules();
 
     }
 

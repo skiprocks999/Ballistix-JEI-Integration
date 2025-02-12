@@ -106,7 +106,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	if (target.get() == null) {
 	    target.set(getBlockPos());
 	}
-	System.out.println(hasRedstoneSignal.get());
 
 	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 

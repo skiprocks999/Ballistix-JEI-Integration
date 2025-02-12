@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 public class RenderBullet extends EntityRenderer<EntityBullet> {
@@ -29,7 +28,6 @@ public class RenderBullet extends EntityRenderer<EntityBullet> {
     @Override
     public void render(EntityBullet entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
 
-        Level world = entity.level();
 
         if (entity.rotation.length() <= 0) {
             return;
