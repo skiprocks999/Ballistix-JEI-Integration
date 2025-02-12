@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import ballistix.Ballistix;
+import ballistix.References;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.radar.IDetected;
@@ -12,6 +14,7 @@ import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileESMTower;
+import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixPropertyTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
@@ -29,13 +32,19 @@ import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public class TileSearchRadar extends GenericTile {
 
@@ -127,5 +136,39 @@ public class TileSearchRadar extends GenericTile {
     @Override
     public int getSignal(Direction dir) {
         return redstone.get() ? 15 : 0;
+    }
+
+    @Override
+    public void onBlockDestroyed() {
+        super.onBlockDestroyed();
+
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
+        }
+
+
+    }
+
+    @Override
+    public void onPlace(BlockState oldState, boolean isMoving) {
+        super.onPlace(oldState, isMoving);
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
+        }
+    }
+
+    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+    private static final class ChunkloaderManager {
+
+        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("searchradarcontroller"));
+
+        @SubscribeEvent
+        public static void register(RegisterTicketControllersEvent event) {
+            event.register(TICKET_CONTROLLER);
+        }
+
+
     }
 }

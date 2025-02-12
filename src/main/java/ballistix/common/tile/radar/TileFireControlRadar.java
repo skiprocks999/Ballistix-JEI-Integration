@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import ballistix.Ballistix;
+import ballistix.References;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
@@ -25,13 +27,19 @@ import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public class TileFireControlRadar extends GenericTile {
 
@@ -177,6 +185,40 @@ public class TileFireControlRadar extends GenericTile {
             }
 
         }
+    }
+
+    @Override
+    public void onBlockDestroyed() {
+        super.onBlockDestroyed();
+
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
+        }
+
+
+    }
+
+    @Override
+    public void onPlace(BlockState oldState, boolean isMoving) {
+        super.onPlace(oldState, isMoving);
+        if(!level.isClientSide) {
+            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
+        }
+    }
+
+    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+    private static final class ChunkloaderManager {
+
+        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("firecontrolradarcontroller"));
+
+        @SubscribeEvent
+        public static void register(RegisterTicketControllersEvent event) {
+            event.register(TICKET_CONTROLLER);
+        }
+
+
     }
 
 }
