@@ -1,10 +1,10 @@
 package ballistix.common.tile.turret.antimissile;
 
+import ballistix.api.missile.virtual.VirtualMissile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.turret.ITarget;
-import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerLaserTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
@@ -86,7 +86,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
         if(livingTarget == null) {
 
-            EntityMissile missile = (EntityMissile) target.getTarget();
+            VirtualMissile missile = (VirtualMissile) target.getTarget();
 
             missile.health -= damage;
 

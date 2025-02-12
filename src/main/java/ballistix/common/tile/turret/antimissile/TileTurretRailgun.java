@@ -1,12 +1,13 @@
 package ballistix.common.tile.turret.antimissile;
 
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualProjectile;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import com.mojang.datafixers.util.Pair;
 
 import ballistix.api.turret.ITarget;
-import ballistix.common.entity.EntityRailgunRound;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
@@ -97,22 +98,13 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
         outOfAmmo.set(false);
 
-        EntityRailgunRound bullet = new EntityRailgunRound(getLevel());
-
-        bullet.speed = getProjectileSpeed();
-
         Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
         Vec3 rotvec = projectileVals.getSecond();
-        bullet.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
 
-        bullet.range = currentRange.get().floatValue();
+        VirtualProjectile.VirtualRailgunRound railgunround = new VirtualProjectile.VirtualRailgunRound(getProjectileSpeed(), getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z));
 
-        bullet.setDeltaMovement(projectileVals.getFirst());
-
-        bullet.setPos(getProjectileLaunchPosition());
-
-        level.addFreshEntity(bullet);
+        MissileManager.addRailgunRound(level.dimension(), railgunround);
 
         inv.removeItem(0, 1);
 

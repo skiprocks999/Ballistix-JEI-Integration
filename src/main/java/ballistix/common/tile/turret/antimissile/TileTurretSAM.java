@@ -1,10 +1,11 @@
 package ballistix.common.tile.turret.antimissile;
 
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualProjectile;
 import org.joml.Vector3f;
 
 import com.mojang.datafixers.util.Pair;
 
-import ballistix.common.entity.EntitySAM;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
@@ -79,22 +80,13 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
         outOfAmmo.set(false);
 
-        EntitySAM sam = new EntitySAM(getLevel());
-
-        sam.speed = getProjectileSpeed();
-
         Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
         Vec3 rotvec = projectileVals.getSecond();
-        sam.rotation = new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z);
 
-        sam.range = currentRange.get().floatValue();
+        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(getProjectileSpeed(), getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z));
 
-        sam.setDeltaMovement(projectileVals.getFirst());
-
-        sam.setPos(getProjectileLaunchPosition());
-
-        level.addFreshEntity(sam);
+        MissileManager.addSAM(level.dimension(), sam);
 
         level.playSound(null, getBlockPos().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 

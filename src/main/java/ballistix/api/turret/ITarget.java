@@ -1,6 +1,6 @@
 package ballistix.api.turret;
 
-import ballistix.common.entity.EntityMissile;
+import ballistix.api.missile.virtual.VirtualMissile;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -14,11 +14,11 @@ public interface ITarget<T> {
 
     T getTarget();
 
-    public static record TargetMissile(EntityMissile missile) implements ITarget<EntityMissile> {
+    public static record TargetMissile(VirtualMissile missile) implements ITarget<VirtualMissile> {
 
         @Override
         public Vec3 getTargetLocation() {
-            return missile.getPosition();
+            return missile.position;
         }
 
         @Override
@@ -28,11 +28,11 @@ public interface ITarget<T> {
 
         @Override
         public Vec3 getTargetMovement() {
-            return missile.getDeltaMovement();
+            return missile.deltaMovement;
         }
 
         @Override
-        public EntityMissile getTarget() {
+        public VirtualMissile getTarget() {
             return missile;
         }
     }

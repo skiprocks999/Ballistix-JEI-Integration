@@ -1,12 +1,12 @@
 package ballistix.common.tile.radar;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.entity.EntityMissile;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileESMTower;
@@ -50,7 +50,7 @@ public class TileFireControlRadar extends GenericTile {
     public final Vec3 searchPos;
     private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.FIRE_CONTROL_RADAR_RANGE);
     @Nullable
-    public EntityMissile tracking;
+    public VirtualMissile tracking;
 
     public double clientRotation;
     public double clientRotationSpeed;
@@ -79,17 +79,17 @@ public class TileFireControlRadar extends GenericTile {
 
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        if(tracking != null && tracking.isRemoved()) {
+        if(tracking != null && tracking.hasExploded()) {
             tracking = null;
         }
 
-        EntityMissile temp = null;
+        VirtualMissile temp = null;
 
-        for (EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
+        for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
             if (missile.getBoundingBox().intersects(searchArea)) {
                 if(temp == null && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) {
                     temp = missile;
-                } else if (temp != null && getDistanceToMissile(searchPos, missile.getPosition()) < getDistanceToMissile(searchPos, temp.getPosition()) && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) {
+                } else if (temp != null && getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos, temp.position) && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) {
                     temp = missile;
                 }
             }
@@ -100,7 +100,7 @@ public class TileFireControlRadar extends GenericTile {
         }
 
         if(tracking != null) {
-            trackingPos.set(tracking.getPosition());
+            trackingPos.set(tracking.position);
             missileType.set(tracking.missileType);
         } else {
             trackingPos.set(OUT_OF_REACH);

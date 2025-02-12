@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.radar.IDetected;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeMissile;
-import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileESMTower;
@@ -44,7 +45,7 @@ public class TileSearchRadar extends GenericTile {
     public final Property<Boolean> isRunning = property(new Property<>(PropertyTypes.BOOLEAN, "isrunning", false));
 
     private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.RADAR_RANGE);
-    private final HashSet<EntityMissile> trackedMissiles = new HashSet<>();
+    private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
     private final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
     public final HashSet<IDetected.Detected> detections = new HashSet<>();
 
@@ -80,7 +81,7 @@ public class TileSearchRadar extends GenericTile {
 
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
-        for (EntityMissile missile : EntityMissile.MISSILES.getOrDefault(level.dimension(), new HashSet<>())) {
+        for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
             if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency)))) {
                 trackedMissiles.add(missile);
             }
@@ -102,8 +103,8 @@ public class TileSearchRadar extends GenericTile {
 
         detections.clear();
 
-        for (EntityMissile missile : trackedMissiles) {
-            detections.add(new IDetected.Detected(missile.getPosition(), BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.missileType]), true));
+        for (VirtualMissile missile : trackedMissiles) {
+            detections.add(new IDetected.Detected(missile.position, BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.missileType]), true));
         }
 
         for (TileESMTower tile : trackedEsmTowers) {

@@ -1,16 +1,26 @@
 package ballistix.common.entity;
 
+import ballistix.Ballistix;
+import ballistix.References;
 import ballistix.common.blast.Blast;
 import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
+import electrodynamics.Electrodynamics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.world.chunk.ForcedChunkManager;
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
+import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public class EntityBlast extends Entity {
 	private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
@@ -87,6 +97,8 @@ public class EntityBlast extends Entity {
 			blast = getBlastType().createBlast(level(), blockPosition());
 		}
 
+		Electrodynamics.LOGGER.info("ticking");
+
 		if (blast != null) {
 			if (callcount == 0) {
 				blast.preExplode();
@@ -97,6 +109,24 @@ public class EntityBlast extends Entity {
 			}
 			callcount++;
 		}
+	}
+
+	@Override
+	public void onAddedToLevel() {
+		super.onAddedToLevel();
+		if(!level().isClientSide()) {
+			ChunkPos pos = level().getChunk(blockPosition()).getPos();
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, true, true);
+		}
+	}
+
+	@Override
+	public void remove(RemovalReason reason) {
+		if(!level().isClientSide && reason == RemovalReason.DISCARDED) {
+			ChunkPos pos = level().getChunk(blockPosition()).getPos();
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, false, true);
+		}
+		super.remove(reason);
 	}
 
 	@Override
@@ -116,6 +146,19 @@ public class EntityBlast extends Entity {
 
 	public Blast getBlast() {
 		return blast;
+	}
+
+	@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+	private static final class ChunkloaderManager {
+
+		private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("blastcontroller"));
+
+		@SubscribeEvent
+		public static void register(RegisterTicketControllersEvent event) {
+			event.register(TICKET_CONTROLLER);
+		}
+
+
 	}
 
 }

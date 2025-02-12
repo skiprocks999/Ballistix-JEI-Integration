@@ -4,10 +4,11 @@ import javax.annotation.Nullable;
 
 import ballistix.Ballistix;
 import ballistix.References;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.SiloRegistry;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemMissile;
 import ballistix.common.settings.Constants;
@@ -122,26 +123,40 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
         ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
         ItemStack mis = inv.getItem(MISSILE_SLOT);
 
-        EntityMissile missile = new EntityMissile(level);
-
         int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
 
-        missile.setPos(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5);
-        missile.missileType = ordinal;
-        missile.target = target.get();
-        missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();
-        missile.startX = (float) missile.getX();
-        missile.startZ = (float) missile.getZ();
-        missile.speed = 0;
-        missile.frequency = frequency.get();
-        missile.setDeltaMovement(new Vec3(0, 1, 0));
+        VirtualMissile missile = new VirtualMissile(
+                //
+                new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+                //
+                new Vec3(0, 1, 0),
+                //
+                0.0F,
+                //
+                false,
+                //
+                getBlockPos().getX() + 0.5F,
+                //
+                getBlockPos().getZ() + 0.5F,
+                //
+                target.get(),
+                //
+                ordinal,
+                //
+                ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
+                //
+                false,
+                //
+                frequency.get()
+                //
+        );
+
+        MissileManager.addMissile(level.dimension(), missile);
 
         electro.joules(electro.getJoulesStored() - Constants.MISSILESILO_USAGE);
 
         inv.removeItem(MISSILE_SLOT, 1);
         inv.removeItem(EXPLOSIVE_SLOT, 1);
-
-        level.addFreshEntity(missile);
 
         level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 
