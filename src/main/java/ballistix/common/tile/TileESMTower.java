@@ -59,7 +59,7 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        active.set(electro.getJoulesStored() > Constants.RADAR_USAGE / 20.0 && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+        active.set(electro.getJoulesStored() > Constants.ESM_TOWER_USAGE_PER_TICK && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
         if(!active.get()) {
             removeESMTower(this);
