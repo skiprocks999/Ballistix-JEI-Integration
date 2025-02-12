@@ -19,7 +19,7 @@ import java.util.*;
 public class MissileManager {
 
     @SubscribeEvent
-    public static void tick(ServerTickEvent.Pre event) {
+    public static void tick(ServerTickEvent.Post event) {
 
         ServerLevel overworld = getOverworld();
 
