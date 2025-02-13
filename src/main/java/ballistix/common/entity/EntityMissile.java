@@ -4,6 +4,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import electrodynamics.prefab.utilities.BlockEntityUtils;
+import electrodynamics.prefab.utilities.NBTUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 import ballistix.api.missile.MissileManager;
@@ -27,195 +31,291 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityMissile extends Entity {
 
-    private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class,
-	    EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Vector3f> POSITION = SynchedEntityData.defineId(EntityMissile.class,
-	    EntityDataSerializers.VECTOR3);
-    private static final EntityDataAccessor<Vector3f> DELTAMOVE = SynchedEntityData.defineId(EntityMissile.class,
-	    EntityDataSerializers.VECTOR3);
-    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class,
-	    EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<BlockPos> TARGET = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
+
 
     public int missileType = -1;
     public float speed = 0.0F;
     @Nullable
     public UUID id;
+    public boolean isItem = false;
+    public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
+    public float startX;
+    public float startZ;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
-	super(type, worldIn);
-	blocksBuilding = true;
+        super(type, worldIn);
+        blocksBuilding = true;
     }
 
     public EntityMissile(Level worldIn) {
-	this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
+        this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-	builder.define(POSITION, new Vector3f(0, 0, 0));
-	builder.define(MISSILE_TYPE, -1);
-	builder.define(DELTAMOVE, new Vector3f(0, 0, 0));
-	builder.define(SPEED, 0.0F);
+        builder.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
+        builder.define(MISSILE_TYPE, -1);
+        builder.define(START_X, 0.0F);
+        builder.define(START_Z, 0.0F);
+        builder.define(SPEED, 0.0F);
+        builder.define(IS_ITEM, false);
     }
 
     @Override
     public void tick() {
 
-	Level level = level();
-	boolean isClientSide = level.isClientSide;
-	boolean isServerSide = !isClientSide;
+        Level level = level();
+        boolean isClientSide = level.isClientSide;
+        boolean isServerSide = !isClientSide;
 
-	if (isServerSide) {
+        if (isServerSide) {
+            if (id == null) {
+                removeAfterChangingDimensions();
+                return;
+            }
 
-	    entityData.set(POSITION, new Vector3f((float) getX(), (float) getY(), (float) getZ()));
-	    entityData.set(MISSILE_TYPE, missileType);
-	    entityData.set(DELTAMOVE, new Vector3f((float) getDeltaMovement().x, (float) getDeltaMovement().y,
-		    (float) getDeltaMovement().z));
-	    entityData.set(SPEED, speed);
+            VirtualMissile missile = MissileManager.getMissile(level.dimension(), id);
 
-	} else {
+            if (missile == null) {
+                removeAfterChangingDimensions();
+                return;
+            }
 
-	    Vector3f pos = entityData.get(POSITION);
-	    setPos(pos.x, pos.y, pos.z);
-	    missileType = entityData.get(MISSILE_TYPE);
-	    Vector3f deltaMovement = entityData.get(DELTAMOVE);
-	    setDeltaMovement(deltaMovement.x, deltaMovement.y, deltaMovement.z);
-	    speed = entityData.get(SPEED);
-	}
+            if (missile.hasExploded()) {
+                removeAfterChangingDimensions();
+                return;
+            }
 
-	if (isServerSide) {
-	    if (id == null) {
-		removeAfterChangingDimensions();
-		return;
-	    }
+            if(!blockPosition().equals(missile.blockPosition())) {
+                setPos(missile.position);
+                setDeltaMovement(missile.deltaMovement);
+                speed = missile.speed;
+            }
 
-	    VirtualMissile missile = MissileManager.getMissile(level.dimension(), id);
+        }
 
-	    if (missile == null) {
-		removeAfterChangingDimensions();
-		return;
-	    }
+        if (isServerSide) {
 
-	    if (missile.hasExploded()) {
-		removeAfterChangingDimensions();
-		return;
-	    }
+            entityData.set(TARGET, target);
+            entityData.set(MISSILE_TYPE, missileType);
+            entityData.set(START_X, startX);
+            entityData.set(START_Z, startZ);
+            entityData.set(SPEED, speed);
+            entityData.set(IS_ITEM, isItem);
 
-	    setPos(missile.position);
-	    setDeltaMovement(missile.deltaMovement);
-	    speed = missile.speed;
+        } else {
 
-	}
+            target = entityData.get(TARGET);
+            missileType = entityData.get(MISSILE_TYPE);
+            startX = entityData.get(START_X);
+            startZ = entityData.get(START_Z);
+            speed = entityData.get(SPEED);
+            isItem = entityData.get(IS_ITEM);
 
-	if (getDeltaMovement().length() > 0) {
+        }
 
-	    setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(
-		    getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
-		    * 180.0D / Math.PI));
-	    setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
+        if (getDeltaMovement().length() > 0) {
 
-	}
+            setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI));
+            setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 
-	if (isServerSide || speed >= 3.0F) {
-	    return;
-	}
+        }
 
-	// exhaust only when missile is accelerating
+        if (!isItem) {
 
-	float widthOver2 = getDimensions(getPose()).width() / 2.0F;
+            float iDeltaX = target.getX() - startX;
+            float iDeltaZ = target.getZ() - startZ;
 
-	for (int i = 0; i < 5; i++) {
+            float initialDistance = (float) Math.sqrt(iDeltaX * iDeltaX + iDeltaZ * iDeltaZ);
+            float halfwayDistance = initialDistance / 2.0F;
 
-	    float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
-	    float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));
-	    float z = (float) (getZ() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
+            float deltaX = (float) (getX() - startX);
+            float deltaZ = (float) (getZ() - startZ);
 
-	    level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z,
-		    -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()),
-		    -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()),
-		    -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
+            float distanceTraveled = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
 
-	}
+            double maxRadii = VirtualMissile.MAX_CRUISING_ALTITUDE - VirtualMissile.ARC_TURN_HEIGHT_MIN;
 
-	float motionX = (float) (-speed * getDeltaMovement().x);
-	float motionY = (float) (-speed * getDeltaMovement().y);
-	float motionZ = (float) (-speed * getDeltaMovement().z);
-	for (int i = 0; i < 4; i++) {
-	    level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(),
-		    random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
-		    random.nextDouble() / 1.5 - 0.3333 + motionZ);
-	}
+            float turnRadius = (float) Mth.clamp(halfwayDistance, 0.001F, maxRadii);
 
-	for (int i = 0; i < 4; i++) {
-	    level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(),
-		    random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
-		    random.nextDouble() / 1.5 - 0.3333 + motionZ);
-	}
+            float deltaY = (float) (getY() - VirtualMissile.ARC_TURN_HEIGHT_MIN);
+
+            float phi = 0;
+            float signY = 1;
+
+            if (halfwayDistance <= maxRadii) {
+
+                if (getY() >= VirtualMissile.ARC_TURN_HEIGHT_MIN && distanceTraveled < halfwayDistance) {
+
+                    phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 1));
+
+                } else if (distanceTraveled >= halfwayDistance) {
+
+                    phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
+                    signY = -1;
+
+                } else if (distanceTraveled >= initialDistance) {
+
+                    signY = -1;
+
+                }
+
+                float x = (float) ((iDeltaX / initialDistance) * Math.sin(phi));
+                float z = (float) ((iDeltaZ / initialDistance) * Math.sin(phi));
+
+                setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
+
+            } else {
+
+
+                if (getY() >= VirtualMissile.ARC_TURN_HEIGHT_MIN && distanceTraveled < halfwayDistance) {
+
+                    if (distanceTraveled <= turnRadius) {
+
+                        phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 1));
+
+                    } else {
+
+                        phi = (float) (Math.PI / 2.0);
+
+                    }
+
+                } else if (distanceTraveled >= halfwayDistance) {
+
+                    if (distanceTraveled >= initialDistance - turnRadius) {
+
+                        phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
+                        signY = -1;
+
+                    } else {
+
+                        phi = (float) (Math.PI / 2.0);
+
+                    }
+
+                } else if (distanceTraveled >= initialDistance) {
+
+                    signY = -1;
+
+                }
+
+                float x = (float) (iDeltaX / initialDistance * Math.sin(phi));
+                float z = (float) (iDeltaZ / initialDistance * Math.sin(phi));
+
+                setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
+
+            }
+
+        }
+
+        setPos(new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z));
+
+        if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+            speed += 0.02F;
+        }
+
+        if (isServerSide || speed >= 3.0F) {
+            return;
+        }
+
+        // exhaust only when missile is accelerating
+
+        float widthOver2 = getDimensions(getPose()).width() / 2.0F;
+
+        for (int i = 0; i < 5; i++) {
+
+            float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
+            float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));
+            float z = (float) (getZ() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
+
+            level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
+
+        }
+
+        float motionX = (float) (-speed * getDeltaMovement().x);
+        float motionY = (float) (-speed * getDeltaMovement().y);
+        float motionZ = (float) (-speed * getDeltaMovement().z);
+        for (int i = 0; i < 4; i++) {
+            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+        }
 
     }
 
     @Override
     protected boolean canRide(Entity entityIn) {
-	return true;
+        return true;
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-	Vec3.CODEC.encode(new Vec3(getX(), getY(), getZ()), NbtOps.INSTANCE, new CompoundTag())
-		.ifSuccess(tag -> compound.put("position", tag));
-	compound.putInt("range", missileType);
-	Vec3.CODEC.encode(getDeltaMovement(), NbtOps.INSTANCE, new CompoundTag())
-		.ifSuccess(tag -> compound.put("movement", tag));
-	if (id != null) {
-	    UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
-	}
-
+        Vec3.CODEC.encode(new Vec3(getX(), getY(), getZ()), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("position", tag));
+        compound.putInt("range", missileType);
+        Vec3.CODEC.encode(getDeltaMovement(), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("movement", tag));
+        if (id != null) {
+            UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
+        }
+        BlockPos.CODEC.encode(target, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("target", tag));
+        compound.putFloat("startx", startX);
+        compound.putFloat("startz", startZ);
+        compound.putBoolean("isitem", isItem);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-	Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("position")).ifSuccess(pair -> setPos(pair.getFirst()));
-	missileType = compound.getInt("range");
-	Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("movement"))
-		.ifSuccess(pair -> setDeltaMovement(pair.getFirst()));
-	UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
+        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("position")).ifSuccess(pair -> setPos(pair.getFirst()));
+        missileType = compound.getInt("range");
+        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("movement")).ifSuccess(pair -> setDeltaMovement(pair.getFirst()));
+        UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
+        BlockPos.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("target")).ifSuccess(pair -> target = pair.getFirst());
+        startX = compound.getFloat("startx");
+        startZ = compound.getFloat("startz");
+        isItem = compound.getBoolean("isitem");
     }
 
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
-	if (player.isSecondaryUseActive()) {
-	    return InteractionResult.PASS;
-	}
-	if (!this.level().isClientSide) {
-	    return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
-	}
-	return InteractionResult.SUCCESS;
+        if (player.isSecondaryUseActive()) {
+            return InteractionResult.PASS;
+        }
+        if (!this.level().isClientSide) {
+            return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     public boolean isPickable() {
-	return true;
+        return true;
     }
 
     @Override
     public void onRemovedFromLevel() {
-	removeMissile();
+        removeMissile();
     }
 
     @Override
     public void remove(RemovalReason reason) {
-	if (!level().isClientSide
-		&& (reason == RemovalReason.UNLOADED_TO_CHUNK || reason == RemovalReason.UNLOADED_WITH_PLAYER)) {
-	    removeMissile();
-	}
-	super.remove(reason);
+        if (!level().isClientSide && (reason == RemovalReason.UNLOADED_TO_CHUNK || reason == RemovalReason.UNLOADED_WITH_PLAYER)) {
+            removeMissile();
+        }
+        super.remove(reason);
     }
 
     public void removeMissile() {
-	if (id != null) {
-	    VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
-	    if(missile != null) missile.setSpawned(false);
-	}
+        if (id != null) {
+            VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
+            if (missile != null) missile.setSpawned(false);
+        }
     }
 
 }

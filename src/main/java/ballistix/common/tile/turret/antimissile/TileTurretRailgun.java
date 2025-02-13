@@ -36,6 +36,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     public final Property<Integer> cooldown = property(new Property<>(PropertyTypes.INTEGER, "cooldown", 0));
     public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
     public final Property<Boolean> targetingEntity = property(new Property<>(PropertyTypes.BOOLEAN, "targetingentity", false));
+    public final Property<Boolean> onlyTargetPlayers = property(new Property<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private LivingEntity livingTarget = null;
 
@@ -157,7 +158,9 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
             LivingEntity selected = null;
             double lastMag = 0;
 
-            for(LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
+            Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? Player.class : LivingEntity.class;
+
+            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
                 if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();

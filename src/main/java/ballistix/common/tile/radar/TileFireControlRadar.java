@@ -213,6 +213,7 @@ public class TileFireControlRadar extends GenericTile {
 	super.onBlockDestroyed();
 
 	if (!level.isClientSide) {
+		TileESMTower.removeFireControlRadar(this);
 	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
 	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false,
 		    true);

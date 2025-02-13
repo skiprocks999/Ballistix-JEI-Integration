@@ -12,6 +12,8 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.HashSet;
+
 public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearchRadar> {
 
     public ContainerSearchRadar(int id, Inventory playerinv) {
@@ -36,7 +38,7 @@ public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearch
     public void broadcastChanges() {
         super.broadcastChanges();
         if(!getLevel().isClientSide() && getPlayer() != null && getSafeHost() != null) {
-            PacketSetSearchRadarTrackedClient packet = new PacketSetSearchRadarTrackedClient(getSafeHost().detections, getSafeHost().getBlockPos());
+            PacketSetSearchRadarTrackedClient packet = new PacketSetSearchRadarTrackedClient(new HashSet<>(getSafeHost().detections), getSafeHost().getBlockPos());
             PacketDistributor.sendToPlayer((ServerPlayer) getPlayer(), packet);
         }
     }

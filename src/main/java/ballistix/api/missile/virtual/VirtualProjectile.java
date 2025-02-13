@@ -73,11 +73,6 @@ public abstract class VirtualProjectile {
             return;
         }
 
-        if(!isSpawned && level.hasChunkAt(blockPosition())) {
-            spawnNewEntity(level);
-            setSpawned(true);
-        }
-
         Vec3 movement = deltaMovement;
 
         for (int i = 0; i < speed; i++) {
@@ -140,6 +135,11 @@ public abstract class VirtualProjectile {
         }
 
         distanceTraveled += speed;
+
+        if(!isSpawned && level.hasChunkAt(blockPosition())) {
+            spawnNewEntity(level);
+            setSpawned(true);
+        }
     }
 
     public abstract void onHitMissile(Level world, VirtualMissile missile);
@@ -150,7 +150,7 @@ public abstract class VirtualProjectile {
 
     public abstract AABB getBoundingBox();
 
-    protected BlockPos blockPosition() {
+    public BlockPos blockPosition() {
         return new BlockPos((int) Math.floor(position.x), (int) Math.floor(position.y), (int) Math.floor(position.z));
     }
 
@@ -208,6 +208,7 @@ public abstract class VirtualProjectile {
             bullet.setDeltaMovement(deltaMovement);
             bullet.rotation = rotation;
             bullet.id = id;
+            bullet.speed = speed;
             world.addFreshEntity(bullet);
         }
     }
@@ -256,6 +257,7 @@ public abstract class VirtualProjectile {
             railgunround.setDeltaMovement(deltaMovement);
             railgunround.rotation = rotation;
             railgunround.id = id;
+            railgunround.speed = speed;
             world.addFreshEntity(railgunround);
         }
     }
@@ -299,6 +301,7 @@ public abstract class VirtualProjectile {
             sam.setDeltaMovement(deltaMovement);
             sam.rotation = rotation;
             sam.id = id;
+            sam.speed = speed;
             world.addFreshEntity(sam);
         }
     }

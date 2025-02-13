@@ -117,20 +117,6 @@ public class VirtualMissile {
             return;
         }
 
-        if(!isSpawned && level.hasChunkAt(blockPosition())) {
-
-            EntityMissile missile = new EntityMissile(level);
-            missile.setPos(position);
-            missile.setDeltaMovement(deltaMovement);
-            missile.missileType = missileType;
-            missile.speed = speed;
-            missile.id = id;
-
-            level.addFreshEntity(missile);
-
-            setSpawned(true);
-        }
-
         BlockState state = level.getBlockState(blockPosition());
 
         if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || tickCount > 20)) {
@@ -245,9 +231,27 @@ public class VirtualMissile {
             speed += 0.02F;
         }
 
+        if(!isSpawned && level.hasChunkAt(blockPosition())) {
+
+            EntityMissile missile = new EntityMissile(level);
+            missile.setPos(position);
+            missile.setDeltaMovement(deltaMovement);
+            missile.missileType = missileType;
+            missile.speed = speed;
+            missile.id = id;
+            missile.isItem = isItem;
+            missile.target = target;
+            missile.startX = startX;
+            missile.startZ = startZ;
+
+            level.addFreshEntity(missile);
+
+            setSpawned(true);
+        }
+
     }
 
-    private BlockPos blockPosition() {
+    public BlockPos blockPosition() {
         return new BlockPos((int) Math.floor(position.x), (int) Math.floor(position.y), (int) Math.floor(position.z));
     }
 

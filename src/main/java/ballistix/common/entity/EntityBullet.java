@@ -24,21 +24,21 @@ public class EntityBullet extends Entity {
 
     private static final float RAD2DEG = (float) (180.0F / Math.PI);
 
-    private static final EntityDataAccessor<Vector3f> POSITION = SynchedEntityData.defineId(EntityBullet.class, EntityDataSerializers.VECTOR3);
-    private static final EntityDataAccessor<Vector3f> DELTAMOVE = SynchedEntityData.defineId(EntityBullet.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Vector3f> ROTATION = SynchedEntityData.defineId(EntityBullet.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityBullet.class, EntityDataSerializers.FLOAT);
 
 
     public Vector3f rotation = new Vector3f(0, 0, 0);
     @Nullable
     public UUID id;
+    public float speed = 0.0F;
 
     public EntityBullet(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
 
     public EntityBullet(Level level) {
-        this(BallistixEntities.ENTITY_BULLET.get(), level);
+        this(BallistixEntities.ENTITY_RAILGUNROUND.get(), level);
     }
 
     @Override
@@ -48,18 +48,6 @@ public class EntityBullet extends Entity {
         boolean isClient = level.isClientSide();
 
         boolean isServer = !isClient;
-
-        if (isServer) {
-            entityData.set(POSITION, new Vector3f((float) getX(), (float) getY(), (float) getZ()));
-            entityData.set(DELTAMOVE, new Vector3f((float) getDeltaMovement().x, (float) getDeltaMovement().y, (float) getDeltaMovement().z));
-            entityData.set(ROTATION, rotation);
-        } else {
-            Vector3f pos = entityData.get(POSITION);
-            setPos(pos.x, pos.y, pos.z);
-            Vector3f deltaMovement = entityData.get(DELTAMOVE);
-            setDeltaMovement(deltaMovement.x, deltaMovement.y, deltaMovement.z);
-            rotation = entityData.get(ROTATION);
-        }
 
         if (tickCount > 30 && getDeltaMovement().length() <= 0) {
             if (isServer) {
@@ -86,8 +74,25 @@ public class EntityBullet extends Entity {
                 return;
             }
 
-            setPos(bullet.position);
-            setDeltaMovement(bullet.deltaMovement);
+            if(blockPosition().equals(bullet.blockPosition())) {
+                setPos(bullet.position);
+                setDeltaMovement(bullet.deltaMovement);
+                speed = bullet.speed;
+            }
+
+        }
+
+        if (isServer) {
+            entityData.set(SPEED, speed);
+            entityData.set(ROTATION, rotation);
+        } else {
+            speed = entityData.get(SPEED);
+            rotation = entityData.get(ROTATION);
+        }
+
+        for (int i = 0; i < speed; i++) {
+
+            setPos(new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z));
 
         }
 
@@ -99,8 +104,7 @@ public class EntityBullet extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(POSITION, new Vector3f(0, 0, 0));
-        builder.define(DELTAMOVE, new Vector3f(0, 0, 0));
+        builder.define(SPEED, 0.0F);
         builder.define(ROTATION, new Vector3f(0, 0, 0));
     }
 
@@ -110,16 +114,20 @@ public class EntityBullet extends Entity {
         Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("movement")).ifSuccess(pair -> setDeltaMovement(pair.getFirst()));
         UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
         rotation = new Vector3f(compound.getFloat("xrot"), compound.getFloat("yrot"), compound.getFloat("zrot"));
+        compound.putFloat("speed", speed);
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
         Vec3.CODEC.encode(new Vec3(getX(), getY(), getZ()), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("position", tag));
         Vec3.CODEC.encode(getDeltaMovement(), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("movement", tag));
-        UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
+        if(id != null) {
+            UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
+        }
         compound.putFloat("xrot", rotation.x);
         compound.putFloat("yrot", rotation.y);
         compound.putFloat("zrot", rotation.z);
+        speed = compound.getFloat("speed");
     }
 
 }
