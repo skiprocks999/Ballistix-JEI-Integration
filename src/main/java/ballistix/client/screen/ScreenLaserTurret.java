@@ -3,6 +3,8 @@ package ballistix.client.screen;
 import java.util.ArrayList;
 import java.util.List;
 
+import ballistix.common.tile.turret.antimissile.TileTurretLaser;
+import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -11,7 +13,6 @@ import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerLaserTurret;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
@@ -208,6 +209,30 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
 
 
         }));
+
+        addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, 176, AbstractScreenComponentInfo.SIZE + 2).setOnPress(button -> {
+            TileTurretLaser turret = menu.getSafeHost();
+            if(turret == null) {
+                return;
+            }
+            turret.onlyTargetPlayers.set(!turret.onlyTargetPlayers.get());
+        }).onTooltip((graphics, but, xAxis, yAxis) -> {
+            //
+            TileTurretLaser turret = menu.getSafeHost();
+            if(turret == null) {
+                return;
+            }
+            List<Component> tooltips = new ArrayList<>();
+            tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
+            if (turret.onlyTargetPlayers.get()) {
+                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            } else {
+                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            }
+
+            graphics.renderComponentTooltip(getFontRenderer(), tooltips, xAxis, yAxis);
+
+        }).setIcon(BallistixIconTypes.TARGET_ONLY_PLAYERS));
 
     }
 

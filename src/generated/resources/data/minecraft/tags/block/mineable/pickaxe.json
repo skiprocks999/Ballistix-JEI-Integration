@@ -1,12 +1,12 @@
 {
   "values": [
-    "ballistix:ciwsturret",
-    "ballistix:missilesilo",
-    "ballistix:laserturret",
-    "ballistix:firecontrolradar",
     "ballistix:esmtower",
     "ballistix:radar",
+    "ballistix:railgunturret",
+    "ballistix:missilesilo",
     "ballistix:samturret",
-    "ballistix:railgunturret"
+    "ballistix:laserturret",
+    "ballistix:ciwsturret",
+    "ballistix:firecontrolradar"
   ]
 }

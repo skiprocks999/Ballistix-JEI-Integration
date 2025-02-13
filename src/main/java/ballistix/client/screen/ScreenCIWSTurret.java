@@ -14,6 +14,7 @@ import ballistix.prefab.screen.WrapperPlayerWhitelist;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
+import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
 import electrodynamics.prefab.screen.component.types.ScreenComponentCustomRender;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
@@ -168,6 +169,30 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
                 }
             }
         });
+
+        addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, 176, AbstractScreenComponentInfo.SIZE * 2 + 2).setOnPress(button -> {
+            TileTurretCIWS turret = menu.getSafeHost();
+            if(turret == null) {
+                return;
+            }
+            turret.onlyTargetPlayers.set(!turret.onlyTargetPlayers.get());
+        }).onTooltip((graphics, but, xAxis, yAxis) -> {
+            //
+            TileTurretCIWS turret = menu.getSafeHost();
+            if(turret == null) {
+                return;
+            }
+            List<Component> tooltips = new ArrayList<>();
+            tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
+            if (turret.onlyTargetPlayers.get()) {
+                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            } else {
+                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            }
+
+            graphics.renderComponentTooltip(getFontRenderer(), tooltips, xAxis, yAxis);
+
+        }).setIcon(BallistixIconTypes.TARGET_ONLY_PLAYERS));
 
     }
 

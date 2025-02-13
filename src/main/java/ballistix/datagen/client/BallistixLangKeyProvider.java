@@ -145,6 +145,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("turret.entityrange", "Entity Range");
                 addTooltip("turret.maxrange", "Max: %s");
                 addTooltip("turret.minrange", "Min: %s");
+                addTooltip("turret.targetmode", "Target Mode");
+                addTooltip("turret.targetmodeplayers", "Only Players");
+                addTooltip("turret.targetmodeliving", "All Living");
 
                 addTooltip("radar.frequencymanager", "Frequency Manager");
                 addTooltip("radar.frequencymanager.delete", "Delete");
@@ -241,7 +244,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                         "Radar does not discriminate between the missiles it detects, meaning it can detect the missiles you launch as well! To prevent this, you can whitelist certain launch frequencies to exclude them from detection. To add frequencies, select the Frequency Manager tab inside the radar's GUI:");
                 addGuidebook("chapter.missiledefense.searchradar2", "Note the whitelist mode must be enabled for the frequencies to actually be ignored. Disabling whitelist mode won't wipe any stored frequencies! The radar must also be placed above-ground in order to work.");
 
-                addGuidebook("chapter.missiledefense.firecontrolradar1","The Fire Control radar is an upgraded and more powerful variant of the Search Radar. The radar is able to lock onto an incoming missile and relay the target information to linked turrets. To link a turret, right-click the radar with a %1$s. Then, right-click the Radar Gun on the turret of choice. There is no limit " +
+                addGuidebook("chapter.missiledefense.firecontrolradar1","The Fire Control Radar is an upgraded and more powerful variant of the Search Radar. The radar is able to lock onto an incoming missile and relay the target information to linked turrets. To link a turret, shift+right-click the radar with a %1$s. Then, shift+right-click the Radar Gun on the turret of choice. There is no limit " +
                         "to the number of turrets that can be bound to a single Fire Control Radar, however the turret can be no more than %2$s blocks away. Note that all turrets bound to a radar will fire at the same target the radar is tracking! A turret will not be able to lock onto a missile if it is not bound to a radar.");
                 addGuidebook("chapter.missiledefense.firecontrolradar2","Similarly to the Search Radar, the Fire Control Radar must be placed above-ground in order to work. Unlike the Search variant, it has a more limited range of %s blocks. A useful feature to note is the radar can be controlled via redstone.");
 
@@ -257,6 +260,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addGuidebook("chapter.missiledefense.ciwsturret2", "The CIWS can also be used against players and other mobs, and does not need to be bound to a radar to do so. Note it still will be able to engage mobs if bound to a radar, but will prioritize any detected missiles. The detection range is one quarter the turret's current missile engagement range, and the turret must " +
                         "have a clear line of site to engage. While it will target all mobs, you are able to whitelist certain players. To do so, select the Whitelist Manager tab:");
                 addGuidebook("chapter.missiledefense.ciwsturret3", "There, you can enter the name of the players you wish to whitelist to the turret. Note the name of the player who places the turret is added automatically. Bullets deal 10 damage upon impact!");
+                addGuidebook("chapter.missiledefense.ciwsturret4", "While you may not be able to whitelist certain mobs, the turret can have its firing mode programmed to include or exclude mobs when searching for a target. This can be selected via the \"Targeting Mode\" tab:");
 
                 addGuidebook("chapter.missiledefense.laserturret1","The Laser Turret offers an alternative to the CIWS and SAM turrets, as it does not utilize ammunition. However this comes at the cost of being incredibly power hungry. The turret deals 1 damage/tick, however this is dependent on range. The further a target is from the turret, the less damage it will deal. The turret " +
                         "has a range of %s blocks, however this cannot be upgraded. It has no minimum engagement range. The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees.");

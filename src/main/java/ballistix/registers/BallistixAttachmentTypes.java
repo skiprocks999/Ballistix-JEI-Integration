@@ -104,6 +104,10 @@ public class BallistixAttachmentTypes {
 
                 CompoundTag stored = tag.getCompound("" + i);
 
+                if(!stored.contains("key")) {
+                    continue;
+                }
+
                 ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow().getFirst();
 
                 HashMap<UUID, VirtualMissile> active = new HashMap<>();
@@ -134,6 +138,10 @@ public class BallistixAttachmentTypes {
             int i = 0;
 
             for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : attachment.entrySet()) {
+
+                if(entry.getValue().size() <= 0) {
+                    continue;
+                }
 
                 CompoundTag stored = new CompoundTag();
 
@@ -180,6 +188,10 @@ public class BallistixAttachmentTypes {
 
                 CompoundTag stored = tag.getCompound("" + i);
 
+                if(!stored.contains("key")) {
+                    continue;
+                }
+
                 ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow().getFirst();
 
                 HashMap<UUID, VirtualProjectile.VirtualBullet> active = new HashMap<>();
@@ -211,7 +223,15 @@ public class BallistixAttachmentTypes {
 
             for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> entry : attachment.entrySet()) {
 
+                if(entry.getValue().size() <= 0) {
+                    continue;
+                }
+
                 CompoundTag stored = new CompoundTag();
+
+                if(!stored.contains("key")) {
+                    continue;
+                }
 
                 CODEC.encode(entry.getKey(), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> stored.put("key", tag));
 
@@ -256,6 +276,10 @@ public class BallistixAttachmentTypes {
 
                 CompoundTag stored = tag.getCompound("" + i);
 
+                if(!stored.contains("key")) {
+                    continue;
+                }
+
                 ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow().getFirst();
 
                 HashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new HashMap<>();
@@ -286,6 +310,10 @@ public class BallistixAttachmentTypes {
             int i = 0;
 
             for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : attachment.entrySet()) {
+
+                if(entry.getValue().size() <= 0) {
+                    continue;
+                }
 
                 CompoundTag stored = new CompoundTag();
 
@@ -332,6 +360,10 @@ public class BallistixAttachmentTypes {
 
                 CompoundTag stored = tag.getCompound("" + i);
 
+                if(!stored.contains("key")) {
+                    continue;
+                }
+
                 ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow().getFirst();
 
                 HashMap<UUID, VirtualProjectile.VirtualSAM> active = new HashMap<>();
@@ -362,6 +394,10 @@ public class BallistixAttachmentTypes {
             int i = 0;
 
             for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> entry : attachment.entrySet()) {
+
+                if(entry.getValue().size() <= 0) {
+                    continue;
+                }
 
                 CompoundTag stored = new CompoundTag();
 

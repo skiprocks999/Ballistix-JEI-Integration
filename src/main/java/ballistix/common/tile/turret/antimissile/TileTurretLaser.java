@@ -36,6 +36,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     public final Property<Double> heat = property(new Property<>(PropertyTypes.DOUBLE, "heat", 0.0));
     public final Property<Boolean> overheated = property(new Property<>(PropertyTypes.BOOLEAN, "overheated", false));
     public final Property<Boolean> firing = property(new Property<>(PropertyTypes.BOOLEAN, "isfiring", false));
+    public final Property<Boolean> onlyTargetPlayers = property(new Property<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private LivingEntity livingTarget = null;
     private boolean isPlaying = false;
@@ -160,7 +161,9 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
             LivingEntity selected = null;
             double lastMag = 0;
 
-            for(LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
+            Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? Player.class : LivingEntity.class;
+
+            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
                 if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();

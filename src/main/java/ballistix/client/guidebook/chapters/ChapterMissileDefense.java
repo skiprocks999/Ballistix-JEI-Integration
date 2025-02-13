@@ -72,6 +72,8 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/ciwsturret1.png")));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 150, 150, 150, Ballistix.rl("textures/screen/guidebook/ciwsturret2.png")));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.ciwsturret3")).setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.ciwsturret4")).setSeparateStart());
+        pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/ciwsturret3.png")));
 
         // Laser Turret
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
