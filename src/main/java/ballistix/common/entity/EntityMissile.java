@@ -4,16 +4,12 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.prefab.utilities.NBTUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import org.joml.Vector3f;
-
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.registers.BallistixEntities;
 import electrodynamics.Electrodynamics;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +17,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
