@@ -6,6 +6,7 @@ import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.Constants;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -39,7 +40,8 @@ public class VirtualMissile {
             Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
             UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
             Codec.BOOL.fieldOf("isspawned").forGetter(instance0 -> instance0.isSpawned),
-            Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency)
+            Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency),
+            Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
     ).apply(instance, VirtualMissile::new));
 
     public Vec3 position = Vec3.ZERO;
@@ -58,8 +60,9 @@ public class VirtualMissile {
     private final UUID id;
     private int tickCount = 0;
     public final int frequency;
+    private int entityId = -1;
 
-    private VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, float initialHealth, int missileType, int blastOrdinal, boolean hasExploded, UUID id, boolean isSpawned, int frequency) {
+    private VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, float initialHealth, int missileType, int blastOrdinal, boolean hasExploded, UUID id, boolean isSpawned, int frequency, int entityId) {
 
         position = startPos;
         deltaMovement = initialMovement;
@@ -76,6 +79,7 @@ public class VirtualMissile {
         this.id = id;
         this.isSpawned = isSpawned;
         this.frequency = frequency;
+        this.entityId = entityId;
 
     }
 
@@ -119,7 +123,7 @@ public class VirtualMissile {
 
         BlockState state = level.getBlockState(blockPosition());
 
-        if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || tickCount > 20)) {
+        if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || tickCount > 20) || position.y <= level.getMinBuildHeight()) {
 
             SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 
@@ -150,6 +154,8 @@ public class VirtualMissile {
             float deltaZ = (float) (position.z - startZ);
 
             float distanceTraveled = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+
+            Electrodynamics.LOGGER.info("" + distanceTraveled);
 
             double maxRadii = MAX_CRUISING_ALTITUDE - ARC_TURN_HEIGHT_MIN;
 
@@ -244,9 +250,15 @@ public class VirtualMissile {
             missile.startX = startX;
             missile.startZ = startZ;
 
-            level.addFreshEntity(missile);
+            if(level.addFreshEntity(missile)) {
+                setSpawned(true, missile.getId());
+            }
 
-            setSpawned(true);
+
+        }
+
+        if(isSpawned && (!level.hasChunkAt(blockPosition()) || level.getEntity(entityId) == null)) {
+            setSpawned(false, -1);
         }
 
     }
@@ -263,8 +275,9 @@ public class VirtualMissile {
         return hasExploded;
     }
 
-    public void setSpawned(boolean spawned) {
+    public void setSpawned(boolean spawned, int id) {
         isSpawned = spawned;
+        entityId = id;
     }
 
     public AABB getBoundingBox() {

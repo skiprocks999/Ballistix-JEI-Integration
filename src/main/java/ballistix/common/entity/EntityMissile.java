@@ -5,10 +5,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.prefab.utilities.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import org.joml.Vector3f;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
@@ -92,7 +90,7 @@ public class EntityMissile extends Entity {
                 return;
             }
 
-            if(!blockPosition().equals(missile.blockPosition())) {
+            if (!blockPosition().equals(missile.blockPosition())) {
                 setPos(missile.position);
                 setDeltaMovement(missile.deltaMovement);
                 speed = missile.speed;
@@ -214,7 +212,9 @@ public class EntityMissile extends Entity {
 
         }
 
-        setPos(new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z));
+        Vec3 vec = new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z);
+
+        setPos(vec);
 
         if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
             speed += 0.02F;
@@ -258,9 +258,7 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        Vec3.CODEC.encode(new Vec3(getX(), getY(), getZ()), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("position", tag));
         compound.putInt("range", missileType);
-        Vec3.CODEC.encode(getDeltaMovement(), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("movement", tag));
         if (id != null) {
             UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
         }
@@ -272,9 +270,7 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("position")).ifSuccess(pair -> setPos(pair.getFirst()));
         missileType = compound.getInt("range");
-        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("movement")).ifSuccess(pair -> setDeltaMovement(pair.getFirst()));
         UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
         BlockPos.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("target")).ifSuccess(pair -> target = pair.getFirst());
         startX = compound.getFloat("startx");
@@ -299,23 +295,14 @@ public class EntityMissile extends Entity {
     }
 
     @Override
-    public void onRemovedFromLevel() {
-        removeMissile();
-    }
-
-    @Override
     public void remove(RemovalReason reason) {
-        if (!level().isClientSide && (reason == RemovalReason.UNLOADED_TO_CHUNK || reason == RemovalReason.UNLOADED_WITH_PLAYER)) {
-            removeMissile();
+        if (!level().isClientSide) {
+            if (id != null) {
+                VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
+                if (missile != null) missile.setSpawned(false, -1);
+            }
         }
         super.remove(reason);
-    }
-
-    public void removeMissile() {
-        if (id != null) {
-            VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
-            if (missile != null) missile.setSpawned(false);
-        }
     }
 
 }
