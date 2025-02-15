@@ -48,7 +48,7 @@ public class BallistixAttachmentTypes {
                 HashSet<BlockPos> tiles = new HashSet<>();
 
                 for (int j = 0; j < setSize; j++) {
-                    tiles.add(BlockPos.CODEC.parse(new Dynamic<>(NbtOps.INSTANCE, stored.get("pos" + j))).result().get());
+                    BlockPos.CODEC.decode(NbtOps.INSTANCE, stored.get("pos" + j)).ifSuccess(pair -> tiles.add(pair.getFirst()));
                 }
 
                 data.put(freq, tiles);

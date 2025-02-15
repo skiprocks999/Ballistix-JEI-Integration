@@ -1,12 +1,17 @@
 package ballistix.api.turret;
 
 import ballistix.api.missile.virtual.VirtualMissile;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 public interface ITarget<T> {
 
     Vec3 getTargetLocation();
+
+    public default BlockPos getTargetBlockPos() {
+        return new BlockPos((int) Math.floor(getTargetLocation().x), (int) Math.floor(getTargetLocation().y), (int) Math.floor(getTargetLocation().z));
+    }
 
     float getTargetSpeed();
 

@@ -57,13 +57,13 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if(heat.get() > 0) {
+        if (heat.get() > 0) {
             heat.set(heat.get() - 1.0);
         }
-        if(!canFire.get()) {
+        if (!canFire.get()) {
             firing.set(false);
         }
-        if(heat.get() < Constants.LASER_TURRET_COOLTHRESHHOLD) {
+        if (heat.get() < Constants.LASER_TURRET_COOLTHRESHHOLD) {
             overheated.set(false);
             firing.set(false);
         }
@@ -72,7 +72,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     @Override
     public void fireTickServer(long ticks) {
 
-        if(overheated.get()) {
+        if (overheated.get()) {
             firing.set(false);
             return;
         }
@@ -85,7 +85,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
         float damage = (float) (multiplier * Constants.LASER_TURRET_BASE_DAMAGE);
 
-        if(livingTarget == null) {
+        if (livingTarget == null) {
 
             VirtualMissile missile = (VirtualMissile) target.getTarget();
 
@@ -100,7 +100,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
         heat.set(heat.get() + 2.0);
 
-        if(heat.get() > Constants.LASER_TURRET_MAXHEAT) {
+        if (heat.get() > Constants.LASER_TURRET_MAXHEAT) {
             overheated.set(true);
         }
 
@@ -109,11 +109,11 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
     @Override
     public void tickClient(ComponentTickable tickable) {
-        if(shouldPlaySound() && !isPlaying) {
+        if (shouldPlaySound() && !isPlaying) {
             isPlaying = true;
             SoundBarrierMethods.playTileSound(BallistixSounds.SOUND_LASER_TURRETFIRING.get(), SoundSource.BLOCKS, this, 1.0F, 1.0F, true);
         }
-        if(overheated.get() && level.random.nextDouble() < 0.5) {
+        if (overheated.get() && level.random.nextDouble() < 0.5) {
             level.addParticle(ParticleTypes.LARGE_SMOKE, getBlockPos().getX() + level.random.nextDouble(), getBlockPos().getY() + level.random.nextDouble(), getBlockPos().getZ() + level.random.nextDouble(), 0, 0, 0);
         }
     }
@@ -146,35 +146,37 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
         ITarget target = super.getTarget(ticks);
 
-        if(target != null) {
+        if (target != null && raycastToBlockPos(level, getBlockPos(), target.getTargetBlockPos()).isEmpty()) {
+
             livingTarget = null;
             targetPos.set(target.getTargetLocation());
             return target;
+
         }
 
-        if(livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
+        if (livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
             livingTarget = null;
         }
 
-        if(ticks % 5 == 0) {
+        if (ticks % 5 == 0) {
 
             LivingEntity selected = null;
             double lastMag = 0;
 
             Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? Player.class : LivingEntity.class;
 
-            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
-                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
+            for (LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
+                if (raycastToBlockPos(level, getBlockPos(), entity.blockPosition()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();
                     double deltaZ = entity.getZ() - getBlockPos().getZ();
 
                     double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                    if(selected == null) {
+                    if (selected == null) {
                         selected = entity;
                         lastMag = mag;
-                    } else if(mag < lastMag){
+                    } else if (mag < lastMag) {
                         selected = entity;
                     }
                 }
@@ -183,7 +185,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
             livingTarget = selected;
         }
 
-        if(livingTarget != null) {
+        if (livingTarget != null) {
             target = new ITarget.TargetLivingEntity(livingTarget);
             targetingEntity.set(true);
             targetPos.set(target.getTargetLocation());

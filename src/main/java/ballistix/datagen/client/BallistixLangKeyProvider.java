@@ -269,7 +269,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                         "missile targeting range. Mobs and players are additionally set on fire when damaged by the laser turret. It must have a clear line of site to the mob also.");
 
                 addGuidebook("chapter.missiledefense.railgunturret1","The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires %1$ss that destroy a missile on contact. It is able to engage missiles up to %2$s blocks, and this range can be increased with range upgrades. It has no minimum engagement range. The turret must wait %3$s ticks between shots, and can " +
-                        "only hold up to 10 rods at a time. Like with the Laser Turret, it is incredibly power-hungry. The turret has a maximum elevation of 45 degrees and a maximum depression of 45 degrees.");
+                        "only hold up to 64 rods at a time. Like with the Laser Turret, it is incredibly power-hungry. The turret has a maximum elevation of 45 degrees and a maximum depression of 45 degrees.");
                 addGuidebook("chapter.missiledefense.railgunturret2","Like with the CIWS and Laser Turrets, the Railgun Turret can engage players and mobs up to one quarter the distance of its missile engagement range. The steel rod will deal 20 damage on impact, but the turret must have a clear line of site to engage!");
 
 
