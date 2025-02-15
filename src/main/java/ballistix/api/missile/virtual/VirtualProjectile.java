@@ -9,7 +9,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,11 +32,11 @@ public abstract class VirtualProjectile {
     public final UUID id;
     protected boolean hasExploded = false;
     protected boolean isSpawned = false;
-
     public float distanceTraveled = 0.0F;
     protected int tickCount = 0;
+    protected int entityId = -1;
 
-    protected VirtualProjectile(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, boolean canHitPlayers, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned) {
+    protected VirtualProjectile(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, boolean canHitPlayers, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
         this(speed, position, deltaMovement, range, rotation, canHitPlayers, id);
         this.distanceTraveled = distanceTraveled;
         this.hasExploded = hasExploded;
@@ -52,7 +54,7 @@ public abstract class VirtualProjectile {
     }
 
     // only ticks on server
-    public void tick(Level level) {
+    public void tick(ServerLevel level) {
         boolean isClient = level.isClientSide();
 
         boolean isServer = !isClient;
@@ -136,9 +138,15 @@ public abstract class VirtualProjectile {
 
         distanceTraveled += speed;
 
-        if(!isSpawned && level.hasChunkAt(blockPosition())) {
-            spawnNewEntity(level);
-            setSpawned(true);
+        if(!isSpawned && level.hasChunkAt(blockPosition()) && level.isPositionEntityTicking(blockPosition())) {
+            Entity entity = makeNewEntity(level);
+            if(level.addFreshEntity(entity)) {
+                setSpawned(true, entity.getId());
+            }
+        }
+
+        if(isSpawned && (!level.hasChunkAt(blockPosition()) || level.getEntity(entityId) == null)) {
+            setSpawned(false, -1);
         }
     }
 
@@ -154,15 +162,16 @@ public abstract class VirtualProjectile {
         return new BlockPos((int) Math.floor(position.x), (int) Math.floor(position.y), (int) Math.floor(position.z));
     }
 
-    public void setSpawned(boolean spawned) {
+    public void setSpawned(boolean spawned, int id) {
         isSpawned = spawned;
+        entityId = id;
     }
 
     public boolean hasExploded() {
         return hasExploded;
     }
 
-    public abstract void spawnNewEntity(Level world);
+    public abstract Entity makeNewEntity(Level world);
 
     public static class VirtualBullet extends VirtualProjectile {
 
@@ -175,11 +184,12 @@ public abstract class VirtualProjectile {
                 Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
                 UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
                 Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
-                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned)
+                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+                Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
         ).apply(instance, VirtualBullet::new));
 
-        protected VirtualBullet(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned) {
-            super(speed, position, deltaMovement, range, rotation, true, distanceTraveled, id, hasExploded, isSpawned);
+        protected VirtualBullet(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
+            super(speed, position, deltaMovement, range, rotation, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
         }
 
         public VirtualBullet(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation) {
@@ -202,14 +212,14 @@ public abstract class VirtualProjectile {
         }
 
         @Override
-        public void spawnNewEntity(Level world) {
+        public Entity makeNewEntity(Level world) {
             EntityBullet bullet = new EntityBullet(world);
             bullet.setPos(position);
             bullet.setDeltaMovement(deltaMovement);
             bullet.rotation = rotation;
             bullet.id = id;
             bullet.speed = speed;
-            world.addFreshEntity(bullet);
+            return bullet;
         }
     }
 
@@ -224,13 +234,13 @@ public abstract class VirtualProjectile {
                 Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
                 UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
                 Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
-                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned)
+                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+                Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
         ).apply(instance, VirtualRailgunRound::new));
 
-        protected VirtualRailgunRound(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned) {
-            super(speed, position, deltaMovement, range, rotation, true, distanceTraveled, id, hasExploded, isSpawned);
+        protected VirtualRailgunRound(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
+            super(speed, position, deltaMovement, range, rotation, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
         }
-
         public VirtualRailgunRound(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation) {
             super(speed, position, deltaMovement, range, rotation, true, UUID.randomUUID());
         }
@@ -251,14 +261,14 @@ public abstract class VirtualProjectile {
         }
 
         @Override
-        public void spawnNewEntity(Level world) {
+        public Entity makeNewEntity(Level world) {
             EntityRailgunRound railgunround = new EntityRailgunRound(world);
             railgunround.setPos(position);
             railgunround.setDeltaMovement(deltaMovement);
             railgunround.rotation = rotation;
             railgunround.id = id;
             railgunround.speed = speed;
-            world.addFreshEntity(railgunround);
+            return railgunround;
         }
     }
 
@@ -273,13 +283,13 @@ public abstract class VirtualProjectile {
                 Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
                 UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
                 Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
-                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned)
+                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+                Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
         ).apply(instance, VirtualSAM::new));
 
-        protected VirtualSAM(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned) {
-            super(speed, position, deltaMovement, range, rotation, false, distanceTraveled, id, hasExploded, isSpawned);
+        protected VirtualSAM(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
+            super(speed, position, deltaMovement, range, rotation, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
         }
-
         public VirtualSAM(float speed, Vec3 position, Vec3 deltaMovement, float range, Vector3f rotation) {
             super(speed, position, deltaMovement, range, rotation, false, UUID.randomUUID());
         }
@@ -295,14 +305,14 @@ public abstract class VirtualProjectile {
         }
 
         @Override
-        public void spawnNewEntity(Level world) {
+        public Entity makeNewEntity(Level world) {
             EntitySAM sam = new EntitySAM(world);
             sam.setPos(position);
             sam.setDeltaMovement(deltaMovement);
             sam.rotation = rotation;
             sam.id = id;
             sam.speed = speed;
-            world.addFreshEntity(sam);
+            return sam;
         }
     }
 

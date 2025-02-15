@@ -27,7 +27,7 @@ public class MissileManager {
 
         for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : missiles.entrySet()) {
 
-            Level level = event.getServer().getLevel(entry.getKey());
+            ServerLevel level = event.getServer().getLevel(entry.getKey());
 
             //level isn't loaded
             if (level == null) {
@@ -56,7 +56,7 @@ public class MissileManager {
 
         for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> entry : bullets.entrySet()) {
 
-            Level level = event.getServer().getLevel(entry.getKey());
+            ServerLevel level = event.getServer().getLevel(entry.getKey());
 
             //level isn't loaded
             if (level == null) {
@@ -85,7 +85,7 @@ public class MissileManager {
 
         for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : railgunrounds.entrySet()) {
 
-            Level level = event.getServer().getLevel(entry.getKey());
+            ServerLevel level = event.getServer().getLevel(entry.getKey());
 
             //level isn't loaded
             if (level == null) {
@@ -114,7 +114,7 @@ public class MissileManager {
 
         for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> entry : sams.entrySet()) {
 
-            Level level = event.getServer().getLevel(entry.getKey());
+            ServerLevel level = event.getServer().getLevel(entry.getKey());
 
             //level isn't loaded
             if (level == null) {
