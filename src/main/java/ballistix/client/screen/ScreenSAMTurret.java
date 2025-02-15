@@ -18,6 +18,7 @@ import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElect
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -99,7 +100,7 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
 
             if(turret.hasNoPower.get()) {
                 status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
-            } else if (turret.boundFireControl.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
+            } else if (turret.boundFireControl.get().equals(BlockEntityUtils.OUT_OF_REACH)) {
                 status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
             } else if (!turret.hasTarget.get()) {
                 status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);

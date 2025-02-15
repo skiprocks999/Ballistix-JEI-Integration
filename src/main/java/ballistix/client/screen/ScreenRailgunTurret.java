@@ -22,6 +22,7 @@ import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElect
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -139,7 +140,7 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
                     }
                 } else {
-                    if (turret.boundFireControl.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
+                    if (turret.boundFireControl.get().equals(BlockEntityUtils.OUT_OF_REACH)) {
                         status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
                     } else if (!turret.hasTarget.get()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);

@@ -4,6 +4,8 @@ import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
+import electrodynamics.api.electricity.formatting.ChatFormatter;
+import electrodynamics.api.electricity.formatting.DisplayUnit;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
 import electrodynamics.prefab.screen.component.types.ScreenComponentFillArea;
@@ -11,11 +13,19 @@ import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import electrodynamics.prefab.tile.components.IComponentType;
+import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
+import electrodynamics.prefab.utilities.ElectroTextUtils;
 import electrodynamics.prefab.utilities.math.Color;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 
@@ -33,7 +43,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		imageHeight += 20;
 		inventoryLabelY += 20;
 
-		addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
+		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation,-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
 
 		addEditBox(xCoordField = new ScreenComponentEditBox(10, 20, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(yCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
@@ -208,6 +218,21 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
+	}
+
+	private List<? extends FormattedCharSequence> getElectricInformation() {
+		ArrayList<FormattedCharSequence> list = new ArrayList<>();
+
+		TileMissileSilo silo = menu.getSafeHost();
+		if (silo == null) {
+			return list;
+		}
+
+		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
+		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnit.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(Constants.MISSILESILO_USAGE, DisplayUnit.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(ElectroTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnit.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+
+		return list;
 	}
 
 }

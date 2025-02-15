@@ -140,6 +140,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addTooltip("tracker.none", "NONE");
                 addTooltip("missile.range", "Range: %s Blocks");
                 addTooltip("missile.unlimited", "Unlimited");
+                addTooltip("missilesilo.charge", "Charge: %1$s / %2$s");
 
                 addTooltip("turret.blockrange", "Block Range");
                 addTooltip("turret.entityrange", "Entity Range");

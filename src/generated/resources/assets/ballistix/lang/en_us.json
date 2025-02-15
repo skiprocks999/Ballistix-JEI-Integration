@@ -170,6 +170,7 @@
   "tooltip.ballistix.laserdesignator.nofrequency": "Unbound",
   "tooltip.ballistix.missile.range": "Range: %s Blocks",
   "tooltip.ballistix.missile.unlimited": "Unlimited",
+  "tooltip.ballistix.missilesilo.charge": "Charge: %1$s / %2$s",
   "tooltip.ballistix.radar.frequencymanager": "Frequency Manager",
   "tooltip.ballistix.radar.frequencymanager.delete": "Delete",
   "tooltip.ballistix.radar.redstone": "Redstone",
