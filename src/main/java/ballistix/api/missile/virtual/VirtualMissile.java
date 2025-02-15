@@ -125,7 +125,7 @@ public class VirtualMissile {
             return;
         }
 
-        if(blastEntity != null && (blastEntity.isRemoved() || blastEntity.detonated)) {
+        if(blastEntity != null && (blastEntity.isRemoved() || blastEntity.getBlast().hasStarted)) {
             hasExploded = true;
             return;
         }
