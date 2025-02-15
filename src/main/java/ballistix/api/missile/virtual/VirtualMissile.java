@@ -2,6 +2,7 @@ package ballistix.api.missile.virtual;
 
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.Constants;
 import com.mojang.serialization.Codec;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class VirtualMissile {
@@ -61,6 +63,9 @@ public class VirtualMissile {
     private int tickCount = 0;
     public final int frequency;
     private int entityId = -1;
+
+    @Nullable
+    private EntityBlast blastEntity;
 
     private VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, float initialHealth, int missileType, int blastOrdinal, boolean hasExploded, UUID id, boolean isSpawned, int frequency, int entityId) {
 
@@ -121,23 +126,33 @@ public class VirtualMissile {
             return;
         }
 
+        if(blastEntity != null && (blastEntity.isRemoved() || blastEntity.detonated)) {
+            hasExploded = true;
+            return;
+        }
+
         BlockState state = level.getBlockState(blockPosition());
 
         if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || tickCount > 20) || position.y <= level.getMinBuildHeight()) {
 
             SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 
-            position = new Vec3(position.x - speed * deltaMovement.x * 2, position.y - speed * deltaMovement.y * 2, position.z - speed * deltaMovement.z * 2);
+            position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
 
             Blast b = explosive.createBlast(level, blockPosition());
 
             if (b != null) {
 
-                b.performExplosion();
+                if (b.isInstantaneous()) {
+                    b.performExplosion();
 
-                hasExploded = true;
+                    hasExploded = true;
 
+                } else {
+                    blastEntity = b.performExplosion();
+                }
                 return;
+
             }
 
         }
@@ -237,7 +252,7 @@ public class VirtualMissile {
             speed += 0.02F;
         }
 
-        if(!isSpawned && level.hasChunkAt(blockPosition()) && level.isPositionEntityTicking(blockPosition())) {
+        if (!isSpawned && level.hasChunkAt(blockPosition()) && level.isPositionEntityTicking(blockPosition())) {
 
             EntityMissile missile = new EntityMissile(level);
             missile.setPos(position);
@@ -250,13 +265,13 @@ public class VirtualMissile {
             missile.startX = startX;
             missile.startZ = startZ;
 
-            if(level.addFreshEntity(missile)) {
+            if (level.addFreshEntity(missile)) {
                 setSpawned(true, missile.getId());
             }
 
         }
 
-        if(isSpawned && (!level.hasChunkAt(blockPosition()) || level.getEntity(entityId) == null)) {
+        if (isSpawned && (!level.hasChunkAt(blockPosition()) || level.getEntity(entityId) == null)) {
             setSpawned(false, -1);
         }
 
