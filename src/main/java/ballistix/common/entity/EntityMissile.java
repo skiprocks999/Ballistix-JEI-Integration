@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 
 import ballistix.api.missile.MissileManager;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.entity.EntityInLevelCallback;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityMissile extends Entity {
@@ -65,7 +67,7 @@ public class EntityMissile extends Entity {
         builder.define(START_X, 0.0F);
         builder.define(START_Z, 0.0F);
         builder.define(SPEED, 0.0F);
-        builder.define(IS_ITEM, false);
+        builder.define(IS_ITEM, true);
     }
 
     @Override
@@ -261,6 +263,9 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
+        if(level() instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
+            setRemoved(RemovalReason.DISCARDED);
+        }
         compound.putInt("range", missileType);
         if (id != null) {
             UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
@@ -306,6 +311,11 @@ public class EntityMissile extends Entity {
             }
         }
         super.remove(reason);
+    }
+
+    @Override
+    public boolean isAlwaysTicking() {
+        return true;
     }
 
 }

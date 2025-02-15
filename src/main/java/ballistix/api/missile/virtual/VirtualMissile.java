@@ -10,10 +10,10 @@ import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -102,7 +102,7 @@ public class VirtualMissile {
     }
 
     //ticks on server only
-    public void tick(Level level) {
+    public void tick(ServerLevel level) {
 
         tickCount++;
 
@@ -237,7 +237,7 @@ public class VirtualMissile {
             speed += 0.02F;
         }
 
-        if(!isSpawned && level.hasChunkAt(blockPosition())) {
+        if(!isSpawned && level.hasChunkAt(blockPosition()) && level.isPositionEntityTicking(blockPosition())) {
 
             EntityMissile missile = new EntityMissile(level);
             missile.setPos(position);
@@ -253,7 +253,6 @@ public class VirtualMissile {
             if(level.addFreshEntity(missile)) {
                 setSpawned(true, missile.getId());
             }
-
 
         }
 

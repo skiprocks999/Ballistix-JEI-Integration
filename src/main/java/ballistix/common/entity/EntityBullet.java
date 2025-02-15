@@ -6,6 +6,7 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.server.level.ServerLevel;
 import org.joml.Vector3f;
 
 import ballistix.registers.BallistixEntities;
@@ -74,7 +75,7 @@ public class EntityBullet extends Entity {
                 return;
             }
 
-            if(blockPosition().equals(bullet.blockPosition())) {
+            if (blockPosition().equals(bullet.blockPosition())) {
                 setPos(bullet.position);
                 setDeltaMovement(bullet.deltaMovement);
                 speed = bullet.speed;
@@ -110,8 +111,6 @@ public class EntityBullet extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("position")).ifSuccess(pair -> setPos(pair.getFirst()));
-        Vec3.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("movement")).ifSuccess(pair -> setDeltaMovement(pair.getFirst()));
         UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
         rotation = new Vector3f(compound.getFloat("xrot"), compound.getFloat("yrot"), compound.getFloat("zrot"));
         compound.putFloat("speed", speed);
@@ -119,15 +118,32 @@ public class EntityBullet extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        Vec3.CODEC.encode(new Vec3(getX(), getY(), getZ()), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("position", tag));
-        Vec3.CODEC.encode(getDeltaMovement(), NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("movement", tag));
-        if(id != null) {
+        if (level() instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
+            setRemoved(RemovalReason.DISCARDED);
+        }
+        if (id != null) {
             UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
         }
         compound.putFloat("xrot", rotation.x);
         compound.putFloat("yrot", rotation.y);
         compound.putFloat("zrot", rotation.z);
         speed = compound.getFloat("speed");
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (!level().isClientSide) {
+            if (id != null) {
+                VirtualProjectile.VirtualBullet missile = MissileManager.getBullet(level().dimension(), id);
+                if (missile != null) missile.setSpawned(false, -1);
+            }
+        }
+        super.remove(reason);
+    }
+
+    @Override
+    public boolean isAlwaysTicking() {
+        return true;
     }
 
 }
