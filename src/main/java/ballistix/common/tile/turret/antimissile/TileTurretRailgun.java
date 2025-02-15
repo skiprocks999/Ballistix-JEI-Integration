@@ -46,17 +46,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     @Override
     public ComponentInventory getInventory() {
-        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3)) {
-            @Override
-            public int getMaxStackSize(ItemStack stack) {
-                return stack.is(ElectrodynamicsTags.Items.ROD_STEEL) ? 10 : super.getMaxStackSize();
-            }
-
-            @Override
-            public int getMaxStackSize() {
-                return 12;
-            }
-        }.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
+        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
             if (index == 0) {
                 return stack.is(ElectrodynamicsTags.Items.ROD_STEEL);
