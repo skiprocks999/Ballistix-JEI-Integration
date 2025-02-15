@@ -64,7 +64,7 @@ public class VirtualMissile {
     private int entityId = -1;
 
     @Nullable
-    private EntityBlast blastEntity;
+    public EntityBlast blastEntity;
 
     private VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, float initialHealth, int missileType, int blastOrdinal, boolean hasExploded, UUID id, boolean isSpawned, int frequency, int entityId) {
 
@@ -125,8 +125,9 @@ public class VirtualMissile {
             return;
         }
 
-        if(blastEntity != null && (blastEntity.isRemoved() || blastEntity.getBlast().hasStarted)) {
-            hasExploded = true;
+        if(blastEntity != null) {
+            if(blastEntity.isRemoved() || blastEntity.getBlast().hasStarted)
+        	hasExploded = true;
             return;
         }
 
@@ -136,7 +137,6 @@ public class VirtualMissile {
 
             SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 
-            position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
 
             Blast b = explosive.createBlast(level, blockPosition());
 
@@ -149,6 +149,7 @@ public class VirtualMissile {
 
                 } else {
                     blastEntity = b.performExplosion();
+                    position = new Vec3(position.x -speed * deltaMovement.x, position.y -  speed * deltaMovement.y, position.z -  speed * deltaMovement.z);
                 }
                 return;
 

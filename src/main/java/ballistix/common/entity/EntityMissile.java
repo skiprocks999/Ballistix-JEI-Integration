@@ -36,6 +36,7 @@ public class EntityMissile extends Entity {
     private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CURRENTLYEXPLODING = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
 
 
     public int missileType = -1;
@@ -43,6 +44,7 @@ public class EntityMissile extends Entity {
     @Nullable
     public UUID id;
     public boolean isItem = false;
+    public boolean isExploding = false;
     public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
     public float startX;
     public float startZ;
@@ -64,6 +66,7 @@ public class EntityMissile extends Entity {
         builder.define(START_Z, 0.0F);
         builder.define(SPEED, 0.0F);
         builder.define(IS_ITEM, true);
+        builder.define(CURRENTLYEXPLODING, false);
     }
 
     @Override
@@ -90,6 +93,10 @@ public class EntityMissile extends Entity {
                 removeAfterChangingDimensions();
                 return;
             }
+	    if(missile.blastEntity != null)
+	    {
+		isExploding = true;
+	    }
 
             if (!blockPosition().equals(missile.blockPosition())) {
                 setPos(missile.position);
@@ -107,6 +114,7 @@ public class EntityMissile extends Entity {
             entityData.set(START_Z, startZ);
             entityData.set(SPEED, speed);
             entityData.set(IS_ITEM, isItem);
+            entityData.set(CURRENTLYEXPLODING, isExploding);
 
         } else {
 
@@ -116,7 +124,11 @@ public class EntityMissile extends Entity {
             startZ = entityData.get(START_Z);
             speed = entityData.get(SPEED);
             isItem = entityData.get(IS_ITEM);
-
+            isExploding = entityData.get(CURRENTLYEXPLODING);
+        }
+        if(isExploding)
+        {
+            return;
         }
 
         if (getDeltaMovement().length() > 0) {
