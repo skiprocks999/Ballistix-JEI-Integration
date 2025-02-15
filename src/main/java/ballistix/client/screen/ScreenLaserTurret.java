@@ -5,6 +5,7 @@ import java.util.List;
 
 import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
+import electrodynamics.prefab.utilities.BlockEntityUtils;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -143,7 +144,7 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
                     }
                 } else {
-                    if (turret.boundFireControl.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
+                    if (turret.boundFireControl.get().equals(BlockEntityUtils.OUT_OF_REACH)) {
                         status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
                     } else if (!turret.hasTarget.get()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);

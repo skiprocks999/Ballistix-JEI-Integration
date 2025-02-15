@@ -27,23 +27,7 @@ public class VirtualMissile {
     public static final int WORLD_BUILD_HEIGHT = 320;
     public static final int ARC_TURN_HEIGHT_MIN = 400;
 
-    public static final Codec<VirtualMissile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Vec3.CODEC.fieldOf("position").forGetter(instance0 -> instance0.position),
-            Vec3.CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement),
-            Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed),
-            Codec.BOOL.fieldOf("isitem").forGetter(instance0 -> instance0.isItem),
-            Codec.FLOAT.fieldOf("startx").forGetter(instance0 -> instance0.startX),
-            Codec.FLOAT.fieldOf("startz").forGetter(instance0 -> instance0.startZ),
-            BlockPos.CODEC.fieldOf("target").forGetter(instance0 -> instance0.target),
-            Codec.FLOAT.fieldOf("health").forGetter(instance0 -> instance0.health),
-            Codec.INT.fieldOf("missiletype").forGetter(instance0 -> instance0.missileType),
-            Codec.INT.fieldOf("blasttype").forGetter(instance0 -> instance0.blastOrdinal),
-            Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
-            UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
-            Codec.BOOL.fieldOf("isspawned").forGetter(instance0 -> instance0.isSpawned),
-            Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency),
-            Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
-    ).apply(instance, VirtualMissile::new));
+    public static final Codec<VirtualMissile> CODEC = RecordCodecBuilder.create(instance -> instance.group(Vec3.CODEC.fieldOf("position").forGetter(instance0 -> instance0.position), Vec3.CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement), Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed), Codec.BOOL.fieldOf("isitem").forGetter(instance0 -> instance0.isItem), Codec.FLOAT.fieldOf("startx").forGetter(instance0 -> instance0.startX), Codec.FLOAT.fieldOf("startz").forGetter(instance0 -> instance0.startZ), BlockPos.CODEC.fieldOf("target").forGetter(instance0 -> instance0.target), Codec.FLOAT.fieldOf("health").forGetter(instance0 -> instance0.health), Codec.INT.fieldOf("missiletype").forGetter(instance0 -> instance0.missileType), Codec.INT.fieldOf("blasttype").forGetter(instance0 -> instance0.blastOrdinal), Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded), UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id), Codec.BOOL.fieldOf("isspawned").forGetter(instance0 -> instance0.isSpawned), Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency), Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)).apply(instance, VirtualMissile::new));
 
     public Vec3 position = Vec3.ZERO;
     public Vec3 deltaMovement = Vec3.ZERO;
@@ -125,20 +109,21 @@ public class VirtualMissile {
             return;
         }
 
-        if(blastEntity != null) {
-            if(blastEntity.isRemoved() || blastEntity.getBlast().hasStarted)
-        	hasExploded = true;
+        if (blastEntity != null) {
+            if (blastEntity.isRemoved() || blastEntity.getBlast().hasStarted) {
+                hasExploded = true;
+            }
             return;
         }
 
-        BlockState state = level.getBlockState(blockPosition());
+        BlockPos collisionPos = projectMovementForCollision(level);
 
-        if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || tickCount > 20) || position.y <= level.getMinBuildHeight()) {
+        if (collisionPos != null && (isItem || tickCount > 20) || position.y <= level.getMinBuildHeight()) {
 
             SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 
 
-            Blast b = explosive.createBlast(level, blockPosition());
+            Blast b = explosive.createBlast(level, collisionPos);
 
             if (b != null) {
 
@@ -149,7 +134,7 @@ public class VirtualMissile {
 
                 } else {
                     blastEntity = b.performExplosion();
-                    position = new Vec3(position.x -speed * deltaMovement.x, position.y -  speed * deltaMovement.y, position.z -  speed * deltaMovement.z);
+                    position = new Vec3(position.x - speed * deltaMovement.x, position.y - speed * deltaMovement.y, position.z - speed * deltaMovement.z);
                 }
                 return;
 
@@ -244,7 +229,7 @@ public class VirtualMissile {
 
         }
 
-        if(blastEntity == null) {
+        if (blastEntity == null) {
             position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
         }
 
@@ -296,6 +281,34 @@ public class VirtualMissile {
 
     public AABB getBoundingBox() {
         return new AABB(position.x - 0.5F, position.y, position.z - 0.5F, position.x + 0.5F, position.y + 1.0F, position.z + 0.5F);
+    }
+
+    @Nullable
+    public BlockPos projectMovementForCollision(ServerLevel world) {
+
+        Vec3 currPos = position.scale(1.0);
+
+        int iterations = Math.abs((int) Math.ceil(speed));
+
+        BlockPos pos;
+        BlockState state;
+
+        for (int i = 0; i < iterations; i++) {
+
+            pos = new BlockPos((int) Math.floor(currPos.x), (int) Math.floor(currPos.y), (int) Math.floor(currPos.z));
+            state = world.getBlockState(pos);
+
+            if (state.getCollisionShape(world, blockPosition()).isEmpty()) {
+                currPos.add(deltaMovement);
+                continue;
+            }
+
+            return pos;
+
+        }
+
+        return null;
+
     }
 
 }

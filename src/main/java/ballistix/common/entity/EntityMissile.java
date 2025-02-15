@@ -93,10 +93,9 @@ public class EntityMissile extends Entity {
                 removeAfterChangingDimensions();
                 return;
             }
-	    if(missile.blastEntity != null)
-	    {
-		isExploding = true;
-	    }
+            if (missile.blastEntity != null) {
+                isExploding = true;
+            }
 
             if (!blockPosition().equals(missile.blockPosition())) {
                 setPos(missile.position);
@@ -126,8 +125,7 @@ public class EntityMissile extends Entity {
             isItem = entityData.get(IS_ITEM);
             isExploding = entityData.get(CURRENTLYEXPLODING);
         }
-        if(isExploding)
-        {
+        if (isExploding) {
             return;
         }
 
@@ -271,7 +269,7 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        if(level() instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
+        if (level() instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
             setRemoved(RemovalReason.DISCARDED);
         }
         compound.putInt("range", missileType);

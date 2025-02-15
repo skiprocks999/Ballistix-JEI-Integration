@@ -102,6 +102,8 @@ public abstract class GenericTileTurret extends GenericTile {
             return;
         }
 
+        electro.setJoulesStored(electro.getJoulesStored() - usage);
+
         tickServerActive(tickable);
 
         target = getTarget(tickable.getTicks());
