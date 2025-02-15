@@ -31,7 +31,7 @@ public class EntityBlast extends Entity {
 	public boolean shouldRenderCustom = false;
 	public int ticksWhenCustomRender;
 
-	private boolean detonated = false;
+	public boolean detonated = false;
 
 	@Override
 	public boolean shouldRender(double x, double y, double z) {
