@@ -7,7 +7,6 @@ import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.Constants;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -126,7 +125,7 @@ public class VirtualMissile {
             return;
         }
 
-        if(blastEntity != null && (blastEntity.isRemoved() || blastEntity.detonated)) {
+        if(blastEntity != null && (blastEntity.isRemoved() || blastEntity.getBlast().hasStarted)) {
             hasExploded = true;
             return;
         }
@@ -169,8 +168,6 @@ public class VirtualMissile {
             float deltaZ = (float) (position.z - startZ);
 
             float distanceTraveled = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-
-            Electrodynamics.LOGGER.info("" + distanceTraveled);
 
             double maxRadii = MAX_CRUISING_ALTITUDE - ARC_TURN_HEIGHT_MIN;
 
@@ -246,7 +243,9 @@ public class VirtualMissile {
 
         }
 
-        position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
+        if(blastEntity == null) {
+            position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
+        }
 
         if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
             speed += 0.02F;
