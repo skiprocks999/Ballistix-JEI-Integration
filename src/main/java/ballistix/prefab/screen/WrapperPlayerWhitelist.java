@@ -88,6 +88,8 @@ public class WrapperPlayerWhitelist {
 
             turret.whitelistedPlayers.get().add(addEditBox.getValue());
 
+            turret.whitelistedPlayers.updateServer();
+
         }).setLabel(BallistixTextUtils.gui("turret.playerwhitelist.add")));
 
         screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 10, y + 35, 156, 15, screen.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(50));
