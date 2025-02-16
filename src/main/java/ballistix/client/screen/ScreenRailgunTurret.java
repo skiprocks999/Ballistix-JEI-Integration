@@ -6,7 +6,6 @@ import java.util.List;
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.Constants;
-import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;

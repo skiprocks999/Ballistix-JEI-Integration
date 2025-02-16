@@ -5,7 +5,6 @@ import java.util.List;
 
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.Constants;
-import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;

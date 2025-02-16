@@ -5,21 +5,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import ballistix.api.missile.virtual.VirtualMissile;
-import ballistix.api.missile.virtual.VirtualProjectile;
-import com.mojang.serialization.Codec;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Codec;
 
 import ballistix.References;
+import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.api.missile.virtual.VirtualProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
