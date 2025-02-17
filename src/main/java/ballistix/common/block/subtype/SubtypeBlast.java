@@ -26,24 +26,31 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.Shapes;
 
 public enum SubtypeBlast implements ISubtype {
+
+	//Tier 0
 	obsidian(BlastObsidian::new, 120),
+	//Tier 1
 	condensive(BlastCondensive::new, 30),
 	attractive(BlastAttractive::new, 30),
 	repulsive(BlastRepulsive::new, 30),
 	incendiary(BlastIncendiary::new, 80),
 	shrapnel(BlastShrapnel::new, 40),
-	debilitation(BlastDebilitation::new, 80),
 	chemical(BlastChemical::new, 100),
-	emp(BlastEMP::new, 80),
+	//Tier 2
+	fragmentation(BlastFragmentation::new, 100),
+	contagious(BlastContagious::new, 100),
 	breaching(BlastBreaching::new, 5),
 	thermobaric(BlastThermobaric::new, 100),
-	contagious(BlastContagious::new, 100),
-	fragmentation(BlastFragmentation::new, 100),
-	landmine(BlastLandmine::new, 5, VoxelShapeProvider.createOmni(Shapes.create(0, 0, 0, 16.0 / 16.0, 3.0 / 16.0, 16.0 / 16.0))),
+	debilitation(BlastDebilitation::new, 80),
+	//Tier 3
+	emp(BlastEMP::new, 80),
 	nuclear(BlastNuclear::new, 200),
+	//Tier 4
 	antimatter(BlastAntimatter::new, 400),
 	largeantimatter(BlastLargeAntimatter::new, 600),
-	darkmatter(BlastDarkmatter::new, 400);
+	darkmatter(BlastDarkmatter::new, 400),
+	//Other
+	landmine(BlastLandmine::new, 5, VoxelShapeProvider.createOmni(Shapes.create(0, 0, 0, 16.0 / 16.0, 3.0 / 16.0, 16.0 / 16.0)));
 
 	public final Blast.BlastFactory<?> factory;
 	public final int fuse;

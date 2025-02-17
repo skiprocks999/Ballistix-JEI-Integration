@@ -22,25 +22,47 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 	@Override
 	protected void registerStatesAndModels() {
 
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.attractive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.chemical), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.obsidian), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.repulsive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.attractive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.chemical), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.obsidian), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.repulsive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
+		//simpleExplosive(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
 
-		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter)), true);
-		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter)), true);
+		//Tier 0
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.obsidian), existingBlock(blockLoc("explosiveobsidian")), true);
+		//Tier 1
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.chemical), existingBlock(blockLoc("explosivechemical")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.attractive), existingBlock(blockLoc("explosiveattractive")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.repulsive), existingBlock(blockLoc("explosiverepulsive")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), existingBlock(blockLoc("explosiveincendiary")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), existingBlock(blockLoc("explosiveshrapnel")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), existingBlock(blockLoc("explosivecondensive")), true);
+		//Tier 2
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), existingBlock(blockLoc("explosivethermobaric")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), existingBlock(blockLoc("explosivebreaching")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), existingBlock(blockLoc("explosivedebilitation")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), existingBlock(blockLoc("explosivecontagious")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), existingBlock(blockLoc("explosivefragmentation")), true);
+		//Tier 3
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), existingBlock(blockLoc("explosiveemp")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), existingBlock(blockLoc("explosivenuclear")), true);
+		//Tier 4
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), existingBlock(blockLoc("explosiveantimatter")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), existingBlock(blockLoc("explosivedarkmatter")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter), existingBlock(blockLoc("explosivelargeantimatter")), true);
+		//Other
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine)), true);
-		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter), existingBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter)), true);
+
+
 
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo)), 90, 0, false);
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar)), 90, 0, false);
