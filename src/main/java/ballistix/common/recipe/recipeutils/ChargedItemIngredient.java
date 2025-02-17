@@ -63,7 +63,12 @@ public class ChargedItemIngredient implements ICustomIngredient {
 
     @Override
     public Stream<ItemStack> getItems() {
-        return Arrays.stream(ingredient.getItems());
+        ItemStack[] items = ingredient.getItems();
+        for(ItemStack stack : items) {
+            IItemElectric.setEnergyStored(stack, charge.getJoules());
+            IItemElectric.setMaximumCapacity(stack, charge.getJoules());
+        }
+        return Arrays.stream(items);
     }
 
     @Override

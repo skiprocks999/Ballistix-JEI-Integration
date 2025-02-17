@@ -92,9 +92,9 @@ public class BlastContagious extends Blast {
 				}
 
 				if (entity instanceof LivingEntity living) {
-					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360, 2));
-					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360, 2));
-					living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 360, 3));
+					living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 360, 2));
+					living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 360, 2));
+					living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 360, 3));
 					if (callCount % 10 == 0) {
 						living.hurt(living.damageSources().source(BallistixDamageTypes.CHEMICAL_GAS), 4);
 					}
